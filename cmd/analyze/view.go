@@ -16,7 +16,7 @@ func (m model) View() string {
 	if m.inOverviewMode() {
 		freeLabel := ""
 		if m.diskFree > 0 {
-			freeLabel = fmt.Sprintf("  %s(%s free)%s", colorGray, humanizeBytes(m.diskFree), colorReset)
+			freeLabel = fmt.Sprintf("  %s(%s 可用)%s", colorGray, humanizeBytes(m.diskFree), colorReset)
 		}
 		fmt.Fprintf(&b, "%sAnalyze Disk%s%s\n", colorPurpleBold, colorReset, freeLabel)
 		if m.overviewScanning {
@@ -39,7 +39,7 @@ func (m model) View() string {
 	} else {
 		fmt.Fprintf(&b, "%sAnalyze Disk%s  %s%s%s", colorPurpleBold, colorReset, colorGray, displayPath(m.path), colorReset)
 		if !m.scanning {
-			fmt.Fprintf(&b, "  |  Total: %s", humanizeBytes(m.totalSize))
+			fmt.Fprintf(&b, "  |  总计： %s", humanizeBytes(m.totalSize))
 		}
 		fmt.Fprintf(&b, "\n\n")
 	}
@@ -50,7 +50,7 @@ func (m model) View() string {
 			count = atomic.LoadInt64(m.deleteCount)
 		}
 
-		fmt.Fprintf(&b, "%s%s%s%s Deleting: %s%s items%s removed, please wait...\n",
+		fmt.Fprintf(&b, "%s%s%s%s Deleting: %s%s items%s removed, 请稍候...\n",
 			colorCyan, colorBold,
 			spinnerFrames[m.spinner],
 			colorReset,
@@ -139,7 +139,7 @@ func (m model) View() string {
 		}
 	} else {
 		if len(m.entries) == 0 {
-			fmt.Fprintln(&b, "  Empty directory")
+			fmt.Fprintln(&b, "  空目录")
 		} else {
 			if m.inOverviewMode() {
 				maxSize := maxDirEntrySize(m.entries)
@@ -274,31 +274,31 @@ func (m model) View() string {
 	fmt.Fprintln(&b)
 	if m.inOverviewMode() {
 		if len(m.history) > 0 {
-			fmt.Fprintf(&b, "%s↑↓←→ | Enter | R Refresh | O Open | P Preview | F File | Esc Back | Q/Ctrl+C Quit%s\n", colorGray, colorReset)
+			fmt.Fprintf(&b, "%s↑↓←→ | 回车 | R 刷新 | O 打开 | P 预览 | F 文件 | ESC 返回 | Q/Ctrl+C 退出%s\n", colorGray, colorReset)
 		} else {
-			fmt.Fprintf(&b, "%s↑↓→ | Enter | R Refresh | O Open | P Preview | F File | Esc/Q Quit%s\n", colorGray, colorReset)
+			fmt.Fprintf(&b, "%s↑↓→ | 回车 | R 刷新 | O 打开 | P 预览 | F 文件 | ESC/Q 退出%s\n", colorGray, colorReset)
 		}
 	} else if m.showLargeFiles {
 		selectCount := len(m.largeMultiSelected)
 		if selectCount > 0 {
-			fmt.Fprintf(&b, "%s↑↓← | Space Select | R Refresh | O Open | P Preview | F File | ⌫ Del %d | Esc Back | Q/Ctrl+C Quit%s\n", colorGray, selectCount, colorReset)
+			fmt.Fprintf(&b, "%s↑↓← | 空格选择 | R 刷新 | O 打开 | P 预览 | F 文件 | ⌫ 删除 %d | ESC 返回 | Q/Ctrl+C 退出%s\n", colorGray, selectCount, colorReset)
 		} else {
-			fmt.Fprintf(&b, "%s↑↓← | Space Select | R Refresh | O Open | P Preview | F File | ⌫ Del | Esc Back | Q/Ctrl+C Quit%s\n", colorGray, colorReset)
+			fmt.Fprintf(&b, "%s↑↓← | 空格选择 | R 刷新 | O 打开 | P 预览 | F 文件 | ⌫ 删除 | ESC 返回 | Q/Ctrl+C 退出%s\n", colorGray, colorReset)
 		}
 	} else {
 		largeFileCount := len(m.largeFiles)
 		selectCount := len(m.multiSelected)
 		if selectCount > 0 {
 			if largeFileCount > 0 {
-				fmt.Fprintf(&b, "%s↑↓←→ | Space Select | Enter | R Refresh | O Open | P Preview | F File | ⌫ Del %d | T Top %d | Esc Back | Q/Ctrl+C Quit%s\n", colorGray, selectCount, largeFileCount, colorReset)
+				fmt.Fprintf(&b, "%s↑↓←→ | 空格选择 | 回车 | R 刷新 | O 打开 | P 预览 | F 文件 | ⌫ 删除 %d | T 顶部 %d | ESC 返回 | Q/Ctrl+C 退出%s\n", colorGray, selectCount, largeFileCount, colorReset)
 			} else {
-				fmt.Fprintf(&b, "%s↑↓←→ | Space Select | Enter | R Refresh | O Open | P Preview | F File | ⌫ Del %d | Esc Back | Q/Ctrl+C Quit%s\n", colorGray, selectCount, colorReset)
+				fmt.Fprintf(&b, "%s↑↓←→ | 空格选择 | 回车 | R 刷新 | O 打开 | P 预览 | F 文件 | ⌫ 删除 %d | ESC 返回 | Q/Ctrl+C 退出%s\n", colorGray, selectCount, colorReset)
 			}
 		} else {
 			if largeFileCount > 0 {
-				fmt.Fprintf(&b, "%s↑↓←→ | Space Select | Enter | R Refresh | O Open | P Preview | F File | ⌫ Del | T Top %d | Esc Back | Q/Ctrl+C Quit%s\n", colorGray, largeFileCount, colorReset)
+				fmt.Fprintf(&b, "%s↑↓←→ | 空格选择 | 回车 | R 刷新 | O 打开 | P 预览 | F 文件 | ⌫ 删除 | T 顶部 %d | ESC 返回 | Q/Ctrl+C 退出%s\n", colorGray, largeFileCount, colorReset)
 			} else {
-				fmt.Fprintf(&b, "%s↑↓←→ | Space Select | Enter | R Refresh | O Open | P Preview | F File | ⌫ Del | Esc Back | Q/Ctrl+C Quit%s\n", colorGray, colorReset)
+				fmt.Fprintf(&b, "%s↑↓←→ | 空格选择 | 回车 | R 刷新 | O 打开 | P 预览 | F 文件 | ⌫ 删除 | ESC 返回 | Q/Ctrl+C 退出%s\n", colorGray, colorReset)
 			}
 		}
 	}
@@ -329,12 +329,12 @@ func (m model) View() string {
 		}
 
 		if deleteCount > 1 {
-			fmt.Fprintf(&b, "%sDelete:%s %d items, %s  %sPress Enter to confirm  |  ESC cancel%s\n",
+			fmt.Fprintf(&b, "%s删除：%s %d items, %s  %s按回车确认  |  ESC 取消%s\n",
 				colorRed, colorReset,
 				deleteCount, humanizeBytes(totalDeleteSize),
 				colorGray, colorReset)
 		} else {
-			fmt.Fprintf(&b, "%sDelete:%s %s, %s  %sPress Enter to confirm  |  ESC cancel%s\n",
+			fmt.Fprintf(&b, "%s删除：%s %s, %s  %s按回车确认  |  ESC 取消%s\n",
 				colorRed, colorReset,
 				m.deleteTarget.Name, humanizeBytes(m.deleteTarget.Size),
 				colorGray, colorReset)

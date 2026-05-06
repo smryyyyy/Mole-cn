@@ -285,7 +285,7 @@ debug_operation_detail() {
 
 # Log individual file action with metadata
 debug_file_action() {
-    local action="$1" # e.g., "Would remove", "Removing"
+    local action="$1" # e.g., "Would remove", "正在移除"
     local file_path="$2"
     local file_size="${3:-}"
     local file_age="${4:-}"

@@ -2,7 +2,7 @@
 # User Data Cleanup Module
 set -euo pipefail
 clean_user_essentials() {
-    start_section_spinner "Scanning caches..."
+    start_section_spinner "正在扫描 caches..."
     safe_clean ~/Library/Caches/* "User app cache"
     stop_section_spinner
 
@@ -33,7 +33,7 @@ clean_user_essentials() {
             local emptied_via_finder=false
             # Skip AppleScript during tests to avoid permission dialogs
             if [[ "${MOLE_TEST_MODE:-0}" == "1" || "${MOLE_TEST_NO_AUTH:-0}" == "1" ]]; then
-                debug_log "Skipping Finder AppleScript in test mode"
+                debug_log "正在跳过 Finder AppleScript in test mode"
             else
                 if run_with_timeout 5 osascript -e 'tell application "Finder" to empty trash' > /dev/null 2>&1; then
                     emptied_via_finder=true
@@ -102,7 +102,7 @@ _clean_incomplete_downloads() {
         for f in $pattern; do
             [[ -e "$f" ]] || continue
             if lsof -F n -- "$f" > /dev/null 2>&1; then
-                echo -e "  ${GRAY}${ICON_WARNING}${NC} Skipping active download: $(basename "$f")"
+                echo -e "  ${GRAY}${ICON_WARNING}${NC} 正在跳过 active download: $(basename "$f")"
                 continue
             fi
             safe_clean "$f" "$label" || true
@@ -132,7 +132,7 @@ _clean_mail_downloads() {
     for target_path in "${mail_dirs[@]}"; do
         if [[ -d "$target_path" ]]; then
             if [[ "$spinner_active" == "false" && -t 1 ]]; then
-                start_section_spinner "Cleaning old Mail attachments..."
+                start_section_spinner "正在清理 old Mail attachments..."
                 spinner_active=true
             fi
             local dir_size_kb=0
@@ -185,7 +185,7 @@ _darwin_user_runtime_dir_is_safe() {
     case "$kind:$resolved" in
         temp:/private/var/folders/*/*/T | cache:/private/var/folders/*/*/C) ;;
         *)
-            debug_log "Skipping unexpected Darwin user runtime dir: $runtime_dir -> $resolved"
+            debug_log "正在跳过 unexpected Darwin user runtime dir: $runtime_dir -> $resolved"
             return 1
             ;;
     esac
@@ -336,7 +336,7 @@ clean_chrome_old_versions() {
     for app_path in "${app_paths[@]}"; do
         [[ -d "$app_path" ]] || continue
 
-        local versions_dir="$app_path/Contents/Frameworks/Google Chrome Framework.framework/Versions"
+        local versions_dir="$app_path/Contents/Frameworks/Google Chrome Framework.framework/版本s"
         [[ -d "$versions_dir" ]] || continue
 
         local current_link="$versions_dir/Current"
@@ -453,7 +453,7 @@ clean_edge_old_versions() {
     for app_path in "${app_paths[@]}"; do
         [[ -d "$app_path" ]] || continue
 
-        local versions_dir="$app_path/Contents/Frameworks/Microsoft Edge Framework.framework/Versions"
+        local versions_dir="$app_path/Contents/Frameworks/Microsoft Edge Framework.framework/版本s"
         [[ -d "$versions_dir" ]] || continue
 
         local current_link="$versions_dir/Current"
@@ -611,7 +611,7 @@ clean_brave_old_versions() {
     for app_path in "${app_paths[@]}"; do
         [[ -d "$app_path" ]] || continue
 
-        local versions_dir="$app_path/Contents/Frameworks/Brave Browser Framework.framework/Versions"
+        local versions_dir="$app_path/Contents/Frameworks/Brave Browser Framework.framework/版本s"
         [[ -d "$versions_dir" ]] || continue
 
         local current_link="$versions_dir/Current"
@@ -712,7 +712,7 @@ scan_external_volumes() {
         fi
         return 0
     fi
-    start_section_spinner "Scanning $volume_count external volumes..."
+    start_section_spinner "正在扫描 $volume_count external volumes..."
     for volume in "${candidate_volumes[@]}"; do
         [[ -d "$volume" && -r "$volume" ]] || continue
         local volume_trash="$volume/.Trashes"
@@ -761,10 +761,10 @@ clean_support_app_data() {
         fi
     fi
 
-    # Do not touch Messages attachments, only preview/sticker caches.
+    # Do not touch Messages attachments, only 预览/sticker caches.
     safe_clean ~/Library/Messages/StickerCache/* "Messages sticker cache"
-    safe_clean ~/Library/Messages/Caches/Previews/Attachments/* "Messages preview attachment cache"
-    safe_clean ~/Library/Messages/Caches/Previews/StickerCache/* "Messages preview sticker cache"
+    safe_clean ~/Library/Messages/Caches/Previews/Attachments/* "Messages 预览 attachment cache"
+    safe_clean ~/Library/Messages/Caches/Previews/StickerCache/* "Messages 预览 sticker cache"
 }
 
 # App caches (merged: macOS system caches + Sandboxed apps).
@@ -819,7 +819,7 @@ directory_has_entries() {
 }
 
 clean_app_caches() {
-    start_section_spinner "Scanning app caches..."
+    start_section_spinner "正在扫描 app caches..."
 
     # macOS system caches (merged from clean_macos_system_caches)
     safe_clean ~/Library/Saved\ Application\ State/* "Saved application states" || true
@@ -831,7 +831,7 @@ clean_app_caches() {
     safe_clean ~/Library/Caches/Quick\ Look/* "QuickLook cache" || true
     safe_clean ~/Library/Caches/com.apple.iconservices* "Icon services cache" || true
     _clean_incomplete_downloads
-    # Do not clean ~/Library/Autosave Information by default: it can contain
+    # Do not clean ~/Library/Autosave 信息rmation by default: it can contain
     # recoverable user documents, not only disposable cache data.
     safe_clean ~/Library/IdentityCaches/* "Identity caches" || true
     safe_clean ~/Library/Suggestions/* "Siri suggestions cache" || true
@@ -866,7 +866,7 @@ clean_app_caches() {
     safe_clean ~/Library/Caches/com.apple.e5rt.e5bundlecache/* "Apple Intelligence runtime cache"
     local containers_dir="$HOME/Library/Containers"
     [[ ! -d "$containers_dir" ]] && return 0
-    start_section_spinner "Scanning sandboxed apps..."
+    start_section_spinner "正在扫描 sandboxed apps..."
     local total_size=0
     local total_size_partial=false
     local cleaned_count=0
@@ -970,7 +970,7 @@ clean_group_container_caches() {
         return 0
     fi
 
-    start_section_spinner "Scanning Group Containers..."
+    start_section_spinner "正在扫描 Group Containers..."
     local total_size=0
     local total_size_partial=false
     local cleaned_count=0
@@ -1226,7 +1226,7 @@ clean_external_volume_target() {
     local found_any=false
     local volume_name="${volume##*/}"
 
-    start_section_spinner "Scanning external volume..."
+    start_section_spinner "正在扫描 external volume..."
 
     local target_path
     for target_path in "${top_level_targets[@]}"; do
@@ -1456,7 +1456,7 @@ clean_browsers() {
 # Cloud storage caches.
 clean_cloud_storage() {
     if [[ "${MO_DEBUG:-0}" == "1" ]]; then
-        echo "[DEBUG] Cleaning cloud storage caches..." >&2
+        echo "[DEBUG] 正在清理 cloud storage caches..." >&2
     fi
     if pgrep -x "Dropbox" > /dev/null 2>&1; then
         echo -e "  ${GRAY}${ICON_WARNING}${NC} Dropbox is running · cache cleanup skipped"
@@ -1482,18 +1482,18 @@ clean_cloud_storage() {
 # Office app caches.
 clean_office_applications() {
     if [[ "${MO_DEBUG:-0}" == "1" ]]; then
-        echo "[DEBUG] Cleaning office application caches..." >&2
+        echo "[DEBUG] 正在清理 office application caches..." >&2
     fi
     safe_clean ~/Library/Caches/com.microsoft.Word "Microsoft Word cache"
     if [[ "${MO_DEBUG:-0}" == "1" ]]; then
-        echo "[DEBUG] Cleaning Word container cache..." >&2
+        echo "[DEBUG] 正在清理 Word container cache..." >&2
     fi
     safe_clean ~/Library/Containers/com.microsoft.Word/Data/Library/Caches/* "Microsoft Word container cache"
     safe_clean ~/Library/Containers/com.microsoft.Word/Data/tmp/* "Microsoft Word temp files"
     safe_clean ~/Library/Containers/com.microsoft.Word/Data/Library/Logs/* "Microsoft Word container logs"
     safe_clean ~/Library/Caches/com.microsoft.Excel "Microsoft Excel cache"
     if [[ "${MO_DEBUG:-0}" == "1" ]]; then
-        echo "[DEBUG] Cleaning Excel container cache..." >&2
+        echo "[DEBUG] 正在清理 Excel container cache..." >&2
     fi
     safe_clean ~/Library/Containers/com.microsoft.Excel/Data/Library/Caches/* "Microsoft Excel container cache"
     safe_clean ~/Library/Containers/com.microsoft.Excel/Data/tmp/* "Microsoft Excel temp files"
@@ -1575,10 +1575,10 @@ app_support_item_size_bytes() {
 clean_application_support_logs() {
     if [[ ! -d "$HOME/Library/Application Support" ]] || ! ls "$HOME/Library/Application Support" > /dev/null 2>&1; then
         note_activity
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Skipped: No permission to access Application Support"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} 已跳过: No permission to access Application Support"
         return 0
     fi
-    start_section_spinner "Scanning Application Support..."
+    start_section_spinner "正在扫描 Application Support..."
     local total_size_bytes=0
     local total_size_partial=false
     local cleaned_count=0
@@ -1657,7 +1657,7 @@ clean_application_support_logs() {
                         app_label="${app_label:0:21}..."
                     fi
                     stop_section_spinner
-                    start_section_spinner "Scanning Application Support... $app_count/$total_apps [$app_label, bulk clean]"
+                    start_section_spinner "正在扫描 Application Support... $app_count/$total_apps [$app_label, bulk clean]"
                     if [[ "$DRY_RUN" != "true" ]]; then
                         # Remove entire candidate directory in one go
                         safe_remove "$candidate" true > /dev/null 2>&1 || true
@@ -1700,7 +1700,7 @@ clean_application_support_logs() {
                                 app_label="${app_label:0:21}..."
                             fi
                             stop_section_spinner
-                            start_section_spinner "Scanning Application Support... $app_count/$total_apps [$app_label, $candidate_item_count items]"
+                            start_section_spinner "正在扫描 Application Support... $app_count/$total_apps [$app_label, $candidate_item_count items]"
                             last_progress_update=$current_time
                         fi
                     fi
@@ -1735,7 +1735,7 @@ clean_application_support_logs() {
                         container_label="${container_label:0:21}..."
                     fi
                     stop_section_spinner
-                    start_section_spinner "Scanning Application Support... group [$container_label, bulk clean]"
+                    start_section_spinner "正在扫描 Application Support... group [$container_label, bulk clean]"
                     if [[ "$DRY_RUN" != "true" ]]; then
                         safe_remove "$candidate" true > /dev/null 2>&1 || true
                     fi
@@ -1774,7 +1774,7 @@ clean_application_support_logs() {
                                 container_label="${container_label:0:21}..."
                             fi
                             stop_section_spinner
-                            start_section_spinner "Scanning Application Support... group [$container_label, $candidate_item_count items]"
+                            start_section_spinner "正在扫描 Application Support... group [$container_label, $candidate_item_count items]"
                             last_progress_update=$current_time
                         fi
                     fi

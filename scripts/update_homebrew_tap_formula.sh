@@ -47,7 +47,7 @@ while [[ $# -gt 0 ]]; do
             exit 0
             ;;
         *)
-            echo "Unknown argument: $1" >&2
+            echo "未知参数： $1" >&2
             usage >&2
             exit 1
             ;;
@@ -60,7 +60,7 @@ if [[ -z "$formula_path" || -z "$tag" || -z "$source_sha" || -z "$arm_sha" || -z
 fi
 
 if [[ ! -f "$formula_path" ]]; then
-    echo "Formula not found: $formula_path" >&2
+    echo "未找到公式： $formula_path" >&2
     exit 1
 fi
 

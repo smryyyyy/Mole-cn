@@ -103,7 +103,7 @@ clean_service_worker_cache() {
         fi
         note_activity
         if [[ "$spinner_was_running" == "true" ]]; then
-            MOLE_SPINNER_PREFIX="  " start_inline_spinner "Scanning browser Service Worker caches..."
+            MOLE_SPINNER_PREFIX="  " start_inline_spinner "正在扫描 browser Service Worker caches..."
         fi
     fi
 }

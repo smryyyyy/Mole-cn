@@ -210,7 +210,7 @@ final_cut_pro_path_has_protected_component() {
 
     case "$path" in
         */Original\ Media | */Original\ Media/* | \
-            */CurrentVersion.flexolibrary | */CurrentVersion.plist | */Settings.plist | \
+            */Current版本.flexolibrary | */Current版本.plist | */Settings.plist | \
             */Motion\ Templates | */Motion\ Templates/* | \
             */Final\ Cut\ Pro\ Backups | */Final\ Cut\ Pro\ Backups/*)
             return 0

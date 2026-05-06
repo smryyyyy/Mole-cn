@@ -27,7 +27,7 @@ source "$SCRIPT_DIR/lib/manage/whitelist.sh"
 
 print_header() {
     printf '\n'
-    echo -e "${PURPLE_BOLD}Optimize and Check${NC}"
+    echo -e "${PURPLE_BOLD}优化与检查${NC}"
 }
 
 # Bash-native JSON parsing helpers (no jq dependency).
@@ -256,7 +256,7 @@ cleanup_path() {
         return
     fi
     if should_protect_path "$expanded_path"; then
-        echo -e "${GRAY}${ICON_WARNING}${NC} Protected $label"
+        echo -e "${GRAY}${ICON_WARNING}${NC} 受保护 $label"
         return
     fi
 
@@ -283,7 +283,7 @@ cleanup_path() {
             echo -e "${GREEN}${ICON_SUCCESS}${NC} $label"
         fi
     else
-        echo -e "${GRAY}${ICON_WARNING}${NC} Skipped $label${NC}"
+        echo -e "${GRAY}${ICON_WARNING}${NC} 已跳过 $label${NC}"
         echo -e "${GRAY}${ICON_REVIEW}${NC} ${GRAY}Grant Full Disk Access to your terminal, then retry${NC}"
     fi
 }
@@ -320,19 +320,19 @@ ask_for_security_fixes() {
     fi
 
     echo ""
-    echo -e "${BLUE}SECURITY FIXES${NC}"
+    echo -e "${BLUE}安全修复${NC}"
     for entry in "${SECURITY_FIXES[@]}"; do
         IFS='|' read -r _ label <<< "$entry"
         echo -e "  ${ICON_LIST} $label"
     done
     echo ""
     export MOLE_SECURITY_FIXES_SHOWN=true
-    echo -ne "${GRAY}${ICON_REVIEW}${NC} ${YELLOW}Apply now?${NC} ${GRAY}Enter confirm / Space cancel${NC}: "
+    echo -ne "${GRAY}${ICON_REVIEW}${NC} ${YELLOW}立即应用？${NC} ${GRAY}回车确认 / 空格取消${NC}: "
 
     local key
     if ! key=$(read_key); then
         export MOLE_SECURITY_FIXES_SKIPPED=true
-        echo -e "\n  ${GRAY}${ICON_WARNING}${NC} Security fixes skipped"
+        echo -e "\n  ${GRAY}${ICON_WARNING}${NC} 安全修复已跳过"
         echo ""
         return 1
     fi
@@ -342,7 +342,7 @@ ask_for_security_fixes() {
         return 0
     else
         export MOLE_SECURITY_FIXES_SKIPPED=true
-        echo -e "\n  ${GRAY}${ICON_WARNING}${NC} Security fixes skipped"
+        echo -e "\n  ${GRAY}${ICON_WARNING}${NC} 安全修复已跳过"
         echo ""
         return 1
     fi
@@ -350,11 +350,11 @@ ask_for_security_fixes() {
 
 apply_firewall_fix() {
     if sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on > /dev/null 2>&1; then
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Firewall enabled"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} 防火墙已启用"
         FIREWALL_DISABLED=false
         return 0
     fi
-    echo -e "  ${GRAY}${ICON_WARNING}${NC} Failed to enable firewall, check permissions"
+    echo -e "  ${GRAY}${ICON_WARNING}${NC} 防火墙启用失败，请检查权限"
     return 1
 }
 
@@ -367,7 +367,7 @@ apply_touchid_fix() {
 
 perform_security_fixes() {
     if ! ensure_sudo_session "Security changes require admin access"; then
-        echo -e "${GRAY}${ICON_WARNING}${NC} Skipped security fixes, sudo denied"
+        echo -e "${GRAY}${ICON_WARNING}${NC} 安全修复已跳过，sudo 权限被拒绝"
         return 1
     fi
 
@@ -443,8 +443,8 @@ main() {
     fi
 
     if ! command -v bc > /dev/null 2>&1; then
-        echo -e "${YELLOW}${ICON_ERROR}${NC} Missing dependency: bc"
-        echo -e "${GRAY}Install with: ${GREEN}brew install bc${NC}"
+        echo -e "${YELLOW}${ICON_ERROR}${NC} 缺少依赖：bc"
+        echo -e "${GRAY}安装方法：${GREEN}brew install bc${NC}"
         exit 1
     fi
 
@@ -483,7 +483,7 @@ main() {
                 IFS=', '
                 echo "${CURRENT_WHITELIST_PATTERNS[*]}"
             )
-            echo -e "${ICON_ADMIN} Active Whitelist: ${patterns_list}"
+            echo -e "${ICON_ADMIN} 当前白名单： ${patterns_list}"
         fi
     fi
 
@@ -510,7 +510,7 @@ main() {
     for item in "${items[@]}"; do
         IFS='|' read -r name desc action path <<< "$item"
         if command -v is_whitelisted > /dev/null && is_whitelisted "$action"; then
-            opt_msg "Skipped (whitelisted): $name"
+            opt_msg "已跳过 (whitelisted): $name"
             continue
         fi
         announce_action "$name" "$desc" "safe"

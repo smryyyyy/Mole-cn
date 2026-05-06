@@ -24,7 +24,7 @@ clean_tool_cache() {
     if [[ "$DRY_RUN" != "true" ]]; then
         local command_succeeded=false
         if [[ -t 1 ]]; then
-            start_section_spinner "Cleaning $description..."
+            start_section_spinner "正在清理 $description..."
         fi
         if "$@" > /dev/null 2>&1; then
             command_succeeded=true
@@ -46,7 +46,7 @@ clean_corepack_cache() {
     [[ -n "$corepack_home" && "$corepack_home" == /* ]] || return 0
     case "$corepack_home" in
         / | "$HOME" | "$HOME/" | "$HOME/Library" | "$HOME/Library/")
-            debug_log "Skipping unsafe Corepack cache path: $corepack_home"
+            debug_log "正在跳过 unsafe Corepack cache path: $corepack_home"
             return 0
             ;;
     esac
@@ -126,7 +126,7 @@ clean_dev_npm() {
     local npm_cache_path="$npm_default_cache"
 
     if command -v npm > /dev/null 2>&1; then
-        start_section_spinner "Checking npm cache path..."
+        start_section_spinner "正在检查 npm cache path..."
         npm_cache_path=$(run_with_timeout 2 npm config get cache 2> /dev/null) || npm_cache_path=""
         stop_section_spinner
 
@@ -170,7 +170,7 @@ clean_dev_npm() {
     # Check if pnpm is actually usable (not just Corepack shim)
     if command -v pnpm > /dev/null 2>&1 && COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm --version > /dev/null 2>&1; then
         local pnpm_store_path
-        start_section_spinner "Checking store path..."
+        start_section_spinner "正在检查 store path..."
         pnpm_store_path=$(COREPACK_ENABLE_DOWNLOAD_PROMPT=0 run_with_timeout 2 pnpm store path 2> /dev/null) || pnpm_store_path=""
         stop_section_spinner
 
@@ -188,7 +188,7 @@ clean_dev_npm() {
     local bun_cache_cleaned=false
     local bun_dry_run="${DRY_RUN:-false}"
     if command -v bun > /dev/null 2>&1 && bun --version > /dev/null 2>&1; then
-        if [[ -t 1 ]]; then start_section_spinner "Checking bun cache path..."; fi
+        if [[ -t 1 ]]; then start_section_spinner "正在检查 bun cache path..."; fi
         bun_cache_path=$(run_with_timeout 2 bun pm cache 2> /dev/null) || bun_cache_path=""
         if [[ -t 1 ]]; then stop_section_spinner; fi
 
@@ -208,7 +208,7 @@ clean_dev_npm() {
             bun_cache_cleaned=true
         elif [[ "$bun_dry_run" != "true" ]]; then
             if [[ -t 1 ]]; then
-                start_section_spinner "Cleaning bun cache..."
+                start_section_spinner "正在清理 bun cache..."
             fi
             if run_with_timeout 10 bun pm cache rm > /dev/null 2>&1; then
                 bun_cache_cleaned=true
@@ -506,7 +506,7 @@ clean_xcode_documentation_cache() {
     fi
 
     if ! has_sudo_session; then
-        if ! ensure_sudo_session "Cleaning Xcode documentation cache requires admin access"; then
+        if ! ensure_sudo_session "正在清理 Xcode documentation cache requires admin access"; then
             echo -e "  ${GRAY}${ICON_WARNING}${NC} Xcode documentation cache cleanup skipped (sudo denied)"
             note_activity
             return 0
@@ -685,7 +685,7 @@ clean_xcode_simulator_runtime_volumes() {
     fi
     local runtime_scan_spinner=false
     if [[ -t 1 ]]; then
-        start_section_spinner "Scanning Xcode runtime volumes..."
+        start_section_spinner "正在扫描 Xcode runtime volumes..."
         runtime_scan_spinner=true
     fi
 
@@ -796,7 +796,7 @@ clean_xcode_simulator_runtime_volumes() {
     fi
 
     if ! has_sudo_session; then
-        if ! ensure_sudo_session "Cleaning Xcode runtime volumes requires admin access"; then
+        if ! ensure_sudo_session "正在清理 Xcode runtime volumes requires admin access"; then
             echo -e "  ${YELLOW}${ICON_WARNING}${NC} Xcode runtime volumes · skipped (sudo denied)"
             note_activity
             return 0
@@ -844,7 +844,7 @@ clean_dev_mobile() {
     clean_xcode_simulator_runtime_volumes
 
     if command -v xcrun > /dev/null 2>&1; then
-        debug_log "Checking for unavailable Xcode simulators"
+        debug_log "正在检查 for unavailable Xcode simulators"
         local unavailable_before=0
         local unavailable_after=0
         local removed_unavailable=0
@@ -904,7 +904,7 @@ clean_dev_mobile() {
                     echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Xcode unavailable simulators · already clean"
                     note_activity
                 else
-                    start_section_spinner "Checking unavailable simulators..."
+                    start_section_spinner "正在检查 unavailable simulators..."
 
                     # Capture error output for diagnostics
                     local delete_output
@@ -965,7 +965,7 @@ clean_dev_mobile() {
                                         debug_log "Manually removed simulator: $udid"
                                     else
                                         ((manual_failed++)) || true
-                                        debug_log "Failed to manually remove simulator: $udid"
+                                        debug_log "失败 to manually remove simulator: $udid"
                                     fi
                                 fi
                             done
@@ -1462,7 +1462,7 @@ clean_developer_tools() {
             safe_clean "$lock_dir"/* "Homebrew lock files"
         elif [[ -d "$lock_dir" ]]; then
             if find "$lock_dir" -mindepth 1 -maxdepth 1 -print -quit 2> /dev/null | grep -q .; then
-                debug_log "Skipping read-only Homebrew locks in $lock_dir"
+                debug_log "正在跳过 read-only Homebrew locks in $lock_dir"
             fi
         fi
     done

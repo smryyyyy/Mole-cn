@@ -127,12 +127,12 @@ update_via_homebrew() {
         echo ""
         echo -e "${GREEN}${ICON_SUCCESS}${NC} Already on latest version, ${installed_version:-$current_version}"
         echo ""
-    elif echo "$upgrade_output" | grep -q "Error:"; then
+    elif echo "$upgrade_output" | grep -q "错误:"; then
         log_error "Homebrew upgrade failed"
-        echo "$upgrade_output" | grep "Error:" >&2
+        echo "$upgrade_output" | grep "错误:" >&2
         return 1
     else
-        echo "$upgrade_output" | grep -Ev "^(==>|Updating Homebrew|Warning:)" || true
+        echo "$upgrade_output" | grep -Ev "^(==>|Updating Homebrew|警告:)" || true
         local new_version
         new_version=$(HOMEBREW_NO_ENV_HINTS=1 HOMEBREW_NO_AUTO_UPDATE=1 \
             run_with_timeout 10 brew list --versions mole 2> /dev/null | awk '{print $2}')
@@ -175,7 +175,7 @@ remove_apps_from_dock() {
         local full_path=""
 
         if [[ "$app_path" =~ [[:cntrl:]] ]]; then
-            debug_log "Skipping dock removal for path with control chars: $app_path"
+            debug_log "正在跳过 dock removal for path with control chars: $app_path"
             continue
         fi
 

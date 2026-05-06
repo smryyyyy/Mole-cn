@@ -58,7 +58,7 @@ paginated_multi_select() {
 
     # Validation
     if [[ ${#items[@]} -eq 0 ]]; then
-        echo "No items provided" >&2
+        echo "否 items provided" >&2
         return 1
     fi
 
@@ -166,7 +166,7 @@ paginated_multi_select() {
         printf "${clear_line}${PURPLE_BOLD}%s${NC}  ${GRAY}%d/%d selected${NC}\n" "${title}" "$selected_count" "$total_items" >&2
 
         if [[ $total_items -eq 0 ]]; then
-            printf "${clear_line}${GRAY}No items available${NC}\n" >&2
+            printf "${clear_line}${GRAY}否 items available${NC}\n" >&2
             printf "${clear_line}\n" >&2
             printf "${clear_line}${GRAY}Q${NC} Quit\n" >&2
             printf "${clear_line}" >&2
@@ -212,7 +212,7 @@ paginated_multi_select() {
 
         # Clear any remaining lines at bottom
         printf "${clear_line}\n" >&2
-        printf "${clear_line}${GRAY}${ICON_NAV_UP}${ICON_NAV_DOWN} | Space | Enter Save | Q Cancel${NC}\n" >&2
+        printf "${clear_line}${GRAY}${ICON_NAV_UP}${ICON_NAV_DOWN} | Space | Enter Save | Q 取消${NC}\n" >&2
 
         # Clear one more line to ensure no artifacts
         printf "${clear_line}" >&2

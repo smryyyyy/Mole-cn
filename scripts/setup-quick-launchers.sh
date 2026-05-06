@@ -76,7 +76,7 @@ write_raycast_script() {
 
 set -euo pipefail
 
-echo "🐹 Running ${title}..."
+echo "🐹 正在运行 ${title}..."
 echo ""
 
 MO_BIN="${mo_bin}"
@@ -95,7 +95,7 @@ has_bin() {
 launcher_available() {
     local app="\$1"
     case "\$app" in
-        Terminal) return 0 ;;
+        终端) return 0 ;;
         iTerm|iTerm2) has_app "iTerm" || has_app "iTerm2" ;;
         Alacritty) has_app "Alacritty" ;;
         Kitty) has_bin "kitty" || has_app "kitty" ;;
@@ -114,7 +114,7 @@ detect_launcher_app() {
         echo "\${MO_LAUNCHER_APP}"
         return
     fi
-    local candidates=(Warp Ghostty Alacritty Kitty WezTerm WindTerm Hyper iTerm2 iTerm Terminal)
+    local candidates=(Warp Ghostty Alacritty Kitty WezTerm WindTerm Hyper iTerm2 iTerm 终端)
     local app
     for app in "\${candidates[@]}"; do
         if launcher_available "\$app"; then
@@ -122,17 +122,17 @@ detect_launcher_app() {
             return
         fi
     done
-    echo "Terminal"
+    echo "终端"
 }
 
 launch_with_app() {
     local app="\$1"
     case "\$app" in
-        Terminal)
+        终端)
             if command -v osascript >/dev/null 2>&1; then
                 osascript <<APPLESCRIPT
 set targetCommand to "\${MO_BIN_ESCAPED} \${MO_SUBCOMMAND}"
-tell application "Terminal"
+tell application "终端"
     activate
     do script targetCommand
 end tell
@@ -228,15 +228,15 @@ if launch_with_app "\$TERM_APP"; then
     exit 0
 fi
 
-if [[ "\$TERM_APP" != "Terminal" ]]; then
-    echo "Could not control \$TERM_APP, falling back to Terminal..."
-    if launch_with_app "Terminal"; then
+if [[ "\$TERM_APP" != "终端" ]]; then
+    echo "无法控制 \$TERM_APP, falling back to 终端..."
+    if launch_with_app "终端"; then
         exit 0
     fi
 fi
 
 echo "TERM environment variable not set and no launcher succeeded."
-echo "Run this manually:"
+echo "手动运行："
 echo "    \"\${MO_BIN}\" \${MO_SUBCOMMAND}"
 exit 1
 EOF
@@ -263,9 +263,9 @@ create_raycast_commands() {
 
     log_header "Raycast Configuration"
     log_step "Open Raycast → Settings → Extensions → Script Commands."
-    echo "1. Click \"+\" → Add Script Directory."
-    echo "2. Choose: $dir"
-    echo "3. Click \"Reload Script Directories\"."
+    echo "1. 点击 \"+\" → 添加脚本目录。"
+    echo "2. 选择： $dir"
+    echo "3. 点击 \"Reload Script Directories\"."
 
     if is_interactive; then
         log_header "Finalizing Setup"
@@ -408,7 +408,7 @@ EOF
 main() {
     echo ""
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo "  Mole Quick Launchers"
+    echo "  Mole 快速启动器"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
     local mo_bin

@@ -8,7 +8,7 @@ readonly MOLE_TM_THIN_TIMEOUT=180
 readonly MOLE_TM_THIN_VALUE=9999999999
 readonly MOLE_SQLITE_MAX_SIZE=104857600 # 100MB
 
-# Dry-run aware output.
+# 预览模式 aware output.
 opt_msg() {
     local message="$1"
     if [[ "${MOLE_DRY_RUN:-0}" == "1" ]]; then
@@ -167,7 +167,7 @@ opt_cache_refresh() {
     if [[ "${MO_DEBUG:-}" == "1" ]]; then
         debug_operation_start "Finder Cache Refresh" "Refresh QuickLook thumbnails and icon services"
         debug_operation_detail "Method" "Remove cache files and rebuild via qlmanage"
-        debug_operation_detail "Expected outcome" "Faster Finder preview generation, fixed icon display issues"
+        debug_operation_detail "Expected outcome" "Faster Finder 预览 generation, fixed icon display issues"
         debug_risk_level "LOW" "Caches are automatically rebuilt"
     fi
 
@@ -254,7 +254,7 @@ opt_saved_state_cleanup() {
 opt_fix_broken_configs() {
     local spinner_started="false"
     if [[ -t 1 ]]; then
-        MOLE_SPINNER_PREFIX="  " start_inline_spinner "Checking preferences..."
+        MOLE_SPINNER_PREFIX="  " start_inline_spinner "正在检查 preferences..."
         spinner_started="true"
     fi
 
@@ -291,7 +291,7 @@ opt_network_optimization() {
         opt_msg "DNS cache refreshed"
         opt_msg "mDNSResponder restarted"
     else
-        echo -e "  ${YELLOW}${ICON_WARNING}${NC} Failed to refresh DNS cache"
+        echo -e "  ${YELLOW}${ICON_WARNING}${NC} 失败 to refresh DNS cache"
     fi
 }
 
@@ -341,7 +341,7 @@ opt_quarantine_cleanup() {
         if [[ $exit_code -eq 0 ]]; then
             opt_msg "Quarantine history cleared ($row_count entries)"
         else
-            echo -e "  ${YELLOW}${ICON_WARNING}${NC} Failed to clean quarantine database"
+            echo -e "  ${YELLOW}${ICON_WARNING}${NC} 失败 to clean quarantine database"
         fi
     else
         opt_msg "Quarantine history cleared ($row_count entries)"
@@ -379,7 +379,7 @@ opt_sqlite_vacuum() {
 
     local spinner_started="false"
     if [[ "${MOLE_DRY_RUN:-0}" != "1" && -t 1 ]]; then
-        MOLE_SPINNER_PREFIX="  " start_inline_spinner "Optimizing databases..."
+        MOLE_SPINNER_PREFIX="  " start_inline_spinner "正在优化 databases..."
         spinner_started="true"
     fi
 
@@ -488,7 +488,7 @@ opt_sqlite_vacuum() {
     fi
 
     if [[ $failed -gt 0 ]]; then
-        echo -e "  ${YELLOW}${ICON_WARNING}${NC} Failed on $failed databases"
+        echo -e "  ${YELLOW}${ICON_WARNING}${NC} 失败 on $failed databases"
     fi
 }
 
@@ -534,7 +534,7 @@ opt_launch_services_rebuild() {
             opt_msg "LaunchServices repaired"
             opt_msg "File associations refreshed"
         else
-            echo -e "  ${YELLOW}${ICON_WARNING}${NC} Failed to rebuild LaunchServices"
+            echo -e "  ${YELLOW}${ICON_WARNING}${NC} 失败 to rebuild LaunchServices"
         fi
     else
         if [[ -t 1 ]]; then
@@ -616,7 +616,7 @@ opt_font_cache_rebuild() {
         opt_msg "Font cache cleared"
         opt_msg "System will rebuild font database automatically"
     else
-        echo -e "  ${YELLOW}${ICON_WARNING}${NC} Failed to clear font cache"
+        echo -e "  ${YELLOW}${ICON_WARNING}${NC} 失败 to clear font cache"
     fi
 }
 
@@ -645,7 +645,7 @@ opt_memory_pressure_relief() {
             opt_msg "Inactive memory released"
             opt_msg "System responsiveness improved"
         else
-            echo -e "  ${YELLOW}${ICON_WARNING}${NC} Failed to release memory pressure"
+            echo -e "  ${YELLOW}${ICON_WARNING}${NC} 失败 to release memory pressure"
         fi
     else
         opt_msg "Inactive memory released"
@@ -700,7 +700,7 @@ opt_network_stack_optimize() {
         if [[ "$route_flushed" == "true" ]]; then
             return 0
         fi
-        echo -e "  ${YELLOW}${ICON_WARNING}${NC} Failed to optimize network stack"
+        echo -e "  ${YELLOW}${ICON_WARNING}${NC} 失败 to optimize network stack"
     fi
 }
 
@@ -740,7 +740,7 @@ opt_disk_permissions_repair() {
             opt_msg "User directory permissions repaired"
             opt_msg "File access issues resolved"
         else
-            echo -e "  ${YELLOW}${ICON_WARNING}${NC} Failed to repair permissions, may not be needed"
+            echo -e "  ${YELLOW}${ICON_WARNING}${NC} 失败 to repair permissions, may not be needed"
         fi
     else
         opt_msg "User directory permissions repaired"
@@ -761,7 +761,7 @@ opt_bluetooth_reset() {
     local spinner_started="false"
     local disconnect_notice="Bluetooth devices may disconnect briefly during refresh"
     if [[ -t 1 ]]; then
-        MOLE_SPINNER_PREFIX="  " start_inline_spinner "Checking Bluetooth..."
+        MOLE_SPINNER_PREFIX="  " start_inline_spinner "正在检查 Bluetooth..."
         spinner_started="true"
     fi
 
@@ -869,7 +869,7 @@ opt_spotlight_index_optimize() {
                     opt_msg "Spotlight index rebuild started"
                     echo -e "  ${GRAY}Indexing will continue in background${NC}"
                 else
-                    echo -e "  ${YELLOW}${ICON_WARNING}${NC} Failed to rebuild Spotlight index"
+                    echo -e "  ${YELLOW}${ICON_WARNING}${NC} 失败 to rebuild Spotlight index"
                 fi
             else
                 opt_msg "Spotlight index rebuild started"
@@ -1025,7 +1025,7 @@ opt_periodic_maintenance() {
             opt_msg "Periodic maintenance triggered"
         else
             rc=$?
-            echo -e "  ${YELLOW}${ICON_WARNING}${NC} Failed to run periodic maintenance (exit=$rc)"
+            echo -e "  ${YELLOW}${ICON_WARNING}${NC} 失败 to run periodic maintenance (exit=$rc)"
             if [[ -n "$periodic_output" ]]; then
                 debug_log "periodic stderr: $periodic_output"
             fi
@@ -1299,7 +1299,7 @@ execute_optimization() {
     local path="${2:-}"
 
     if command -v is_whitelisted > /dev/null && is_whitelisted "$action"; then
-        opt_msg "Skipped (whitelisted): $action"
+        opt_msg "已跳过 (whitelisted): $action"
         return 0
     fi
 
@@ -1328,7 +1328,7 @@ execute_optimization() {
         coreduet_cleanup) opt_coreduet_cleanup ;;
         login_items_audit) opt_login_items_audit ;;
         *)
-            echo -e "${YELLOW}${ICON_ERROR}${NC} Unknown action: $action"
+            echo -e "${YELLOW}${ICON_ERROR}${NC} 未知 action: $action"
             return 1
             ;;
     esac

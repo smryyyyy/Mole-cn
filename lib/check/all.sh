@@ -264,7 +264,7 @@ get_first_macos_software_update_summary() {
         /^[[:space:]]*Title:/ {
             title=$0
             sub(/^[[:space:]]*Title: */, "", title)
-            sub(/, Version:.*/, "", title)
+            sub(/, 版本:.*/, "", title)
             sub(/, Size:.*/, "", title)
             combined=tolower(label " " title)
             if (combined ~ /macos|background security improvement|rapid security response|security response/) {
@@ -291,7 +291,7 @@ get_software_updates() {
 
     local spinner_started=false
     if [[ -t 1 && -z "${SOFTWAREUPDATE_SPINNER_SHOWN:-}" ]]; then
-        MOLE_SPINNER_PREFIX="  " start_inline_spinner "Checking system updates..."
+        MOLE_SPINNER_PREFIX="  " start_inline_spinner "正在检查 system updates..."
         spinner_started=true
         export SOFTWAREUPDATE_SPINNER_SHOWN=1
     fi
@@ -359,7 +359,7 @@ check_homebrew_updates() {
         local spinner_started=false
 
         if [[ -t 1 ]]; then
-            MOLE_SPINNER_PREFIX="  " start_inline_spinner "Checking Homebrew updates..."
+            MOLE_SPINNER_PREFIX="  " start_inline_spinner "正在检查 Homebrew updates..."
             spinner_started=true
         fi
 
@@ -428,7 +428,7 @@ check_homebrew_updates() {
 }
 
 check_appstore_updates() {
-    # Skipped for speed optimization - consolidated into check_macos_update
+    # 已跳过 for speed optimization - consolidated into check_macos_update
     # We can't easily distinguish app store vs macos updates without the slow softwareupdate -l call
     export APPSTORE_UPDATE_COUNT=0
 }
@@ -489,7 +489,7 @@ check_mole_update() {
     else
         # Show spinner while checking
         if [[ -t 1 ]]; then
-            MOLE_SPINNER_PREFIX="  " start_inline_spinner "Checking Mole version..."
+            MOLE_SPINNER_PREFIX="  " start_inline_spinner "正在检查 Mole version..."
         fi
 
         # Try to get latest version from GitHub
@@ -530,10 +530,10 @@ check_mole_update() {
             export MOLE_UPDATE_AVAILABLE="true"
             printf "  ${GRAY}%s${NC} %-12s ${YELLOW}%s${NC}, running %s\n" "$ICON_WARNING" "Mole" "${latest_version} available" "${current_version}"
         else
-            printf "  ${GREEN}✓${NC} %-12s %s\n" "Mole" "Latest version ${current_version}"
+            printf "  ${GREEN}✓${NC} %-12s %s\n" "Mole" "最新版本 ${current_version}"
         fi
     else
-        printf "  ${GREEN}✓${NC} %-12s %s\n" "Mole" "Latest version ${current_version}"
+        printf "  ${GREEN}✓${NC} %-12s %s\n" "Mole" "最新版本 ${current_version}"
     fi
 }
 
@@ -657,7 +657,7 @@ check_login_items() {
     if [[ -t 0 ]]; then
         # Show spinner while getting login items
         if [[ -t 1 ]]; then
-            MOLE_SPINNER_PREFIX="  " start_inline_spinner "Checking login items..."
+            MOLE_SPINNER_PREFIX="  " start_inline_spinner "正在检查 login items..."
         fi
 
         while IFS= read -r login_item; do
@@ -681,11 +681,11 @@ check_login_items() {
     fi
 
     # Show items in a single line (compact)
-    local preview_limit=3
-    ((preview_limit > login_items_count)) && preview_limit=$login_items_count
+    local 预览_limit=3
+    ((预览_limit > login_items_count)) && 预览_limit=$login_items_count
 
     local items_display=""
-    for ((i = 0; i < preview_limit; i++)); do
+    for ((i = 0; i < 预览_limit; i++)); do
         if [[ $i -eq 0 ]]; then
             items_display="${login_items_list[$i]}"
         else
@@ -693,8 +693,8 @@ check_login_items() {
         fi
     done
 
-    if ((login_items_count > preview_limit)); then
-        local remaining=$((login_items_count - preview_limit))
+    if ((login_items_count > 预览_limit)); then
+        local remaining=$((login_items_count - 预览_limit))
         items_display="${items_display} +${remaining}"
     fi
 
@@ -712,7 +712,7 @@ check_cache_size() {
 
     # Show spinner while calculating cache size
     if [[ -t 1 ]]; then
-        MOLE_SPINNER_PREFIX="  " start_inline_spinner "Scanning cache..."
+        MOLE_SPINNER_PREFIX="  " start_inline_spinner "正在扫描 cache..."
     fi
 
     for cache_path in "${cache_paths[@]}"; do
@@ -820,11 +820,11 @@ check_orphan_launch_agents() {
     local s=""
     ((count > 1)) && s="s"
     echo -e "  ${GRAY}${ICON_WARNING}${NC} Launch Agents ${YELLOW}${count} orphan${s}${NC}"
-    local preview="${orphans[0]}"
-    ((count > 1)) && preview="${preview}, ${orphans[1]}"
-    ((count > 2)) && preview="${preview}, ${orphans[2]}"
-    ((count > 3)) && preview="${preview} +$((count - 3))"
-    echo -e "    ${GRAY}${preview}${NC}"
+    local 预览="${orphans[0]}"
+    ((count > 1)) && 预览="${预览}, ${orphans[1]}"
+    ((count > 2)) && 预览="${预览}, ${orphans[2]}"
+    ((count > 3)) && 预览="${预览} +$((count - 3))"
+    echo -e "    ${GRAY}${预览}${NC}"
 }
 
 check_brew_health() {
@@ -856,10 +856,10 @@ check_brew_health() {
         local s=""
         ((n > 1)) && s="s"
         echo -e "  ${GRAY}${ICON_WARNING}${NC} Brew Taps    ${YELLOW}${n} unused tap${s}${NC}"
-        local preview="${stale_taps[0]}"
-        ((n > 1)) && preview="${preview}, ${stale_taps[1]}"
-        ((n > 2)) && preview="${preview} +$((n - 2))"
-        echo -e "    ${GRAY}${preview}${NC}"
+        local 预览="${stale_taps[0]}"
+        ((n > 1)) && 预览="${预览}, ${stale_taps[1]}"
+        ((n > 2)) && 预览="${预览} +$((n - 2))"
+        echo -e "    ${GRAY}${预览}${NC}"
     fi
 }
 
@@ -888,11 +888,11 @@ check_nonstandard_apps() {
     local s=""
     ((count > 1)) && s="s"
     echo -e "  ${GRAY}${ICON_INFO}${NC} Pkg Apps     ${BLUE}${count} app${s}${NC} in /usr/local or /opt"
-    local preview="${nonstandard_apps[0]}"
-    ((count > 1)) && preview="${preview}, ${nonstandard_apps[1]}"
-    ((count > 2)) && preview="${preview}, ${nonstandard_apps[2]}"
-    ((count > 3)) && preview="${preview} +$((count - 3))"
-    echo -e "    ${GRAY}${preview}${NC}"
+    local 预览="${nonstandard_apps[0]}"
+    ((count > 1)) && 预览="${预览}, ${nonstandard_apps[1]}"
+    ((count > 2)) && 预览="${预览}, ${nonstandard_apps[2]}"
+    ((count > 3)) && 预览="${预览} +$((count - 3))"
+    echo -e "    ${GRAY}${预览}${NC}"
     echo -e "    ${GRAY}Run 'mo uninstall' to manage these apps${NC}"
 }
 

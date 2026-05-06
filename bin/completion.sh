@@ -149,7 +149,7 @@ if [[ $# -eq 0 ]]; then
         mkdir -p "$fish_dir"
         "$completion_name" completion fish > "$mole_file"
         # mo.fish sources mole.fish so Fish loads mo completions on `mo<Tab>`
-        printf '# Mole completions for mo (alias) -- auto-generated, do not edit\n' > "$mo_file"
+        printf '# Mole 补全s for mo (alias) -- auto-generated, do not edit\n' > "$mo_file"
         printf 'source %s\n' "$mole_file" >> "$mo_file"
 
         if [[ -f "$mole_file" ]]; then
@@ -260,7 +260,7 @@ if [[ $# -eq 0 ]]; then
         touch "$config_file"
     fi
 
-    # Remove previous Mole completion lines to avoid duplicates
+    # Remove previous Mole 补全 lines to avoid duplicates
     if [[ -f "$config_file" ]]; then
         original_mode=""
         original_mode="$(stat -f '%Mp%Lp' "$config_file" 2> /dev/null || true)"

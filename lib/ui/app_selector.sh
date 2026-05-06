@@ -3,7 +3,7 @@
 
 set -euo pipefail
 
-# Note: get_display_width() is now defined in lib/core/ui.sh
+# 否te: get_display_width() is now defined in lib/core/ui.sh
 
 # Format app info for display
 format_app_display() {
@@ -83,7 +83,7 @@ MOLE_SELECTION_RESULT=""
 # shellcheck disable=SC2154  # apps_data is set by caller
 select_apps_for_uninstall() {
     if [[ ${#apps_data[@]} -eq 0 ]]; then
-        log_warning "No applications available for uninstallation"
+        log_warning "否 applications available for uninstallation"
         return 1
     fi
 
@@ -172,9 +172,9 @@ select_apps_for_uninstall() {
     export MOLE_MENU_FILTER_NAMES="$names_newline"
 
     # Use paginated menu - result will be stored in MOLE_SELECTION_RESULT
-    # Note: paginated_multi_select enters alternate screen and handles clearing
+    # 否te: paginated_multi_select enters alternate screen and handles clearing
     MOLE_SELECTION_RESULT=""
-    paginated_multi_select "Select Apps to Remove" "${menu_options[@]}"
+    paginated_multi_select "选择要移除的应用" "${menu_options[@]}"
     local exit_code=$?
 
     # Clean env leakage for safety
@@ -186,7 +186,7 @@ select_apps_for_uninstall() {
     fi
 
     if [[ -z "$MOLE_SELECTION_RESULT" ]]; then
-        echo "No apps selected"
+        echo "否 apps selected"
         return 1
     fi
 

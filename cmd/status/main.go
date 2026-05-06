@@ -264,14 +264,14 @@ func runJSONMode() {
 
 	data, err := collector.Collect()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error collecting metrics: %v\n", err)
+		fmt.Fprintf(os.Stderr, "收集指标时出错: %v\n", err)
 		os.Exit(1)
 	}
 
 	encoder := json.NewEncoder(os.Stdout)
 	encoder.SetIndent("", "  ")
 	if err := encoder.Encode(data); err != nil {
-		fmt.Fprintf(os.Stderr, "error encoding JSON: %v\n", err)
+		fmt.Fprintf(os.Stderr, "编码 JSON 时出错: %v\n", err)
 		os.Exit(1)
 	}
 }
@@ -280,7 +280,7 @@ func runJSONMode() {
 func runTUIMode() {
 	p := tea.NewProgram(newModel(), tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
-		fmt.Fprintf(os.Stderr, "system status error: %v\n", err)
+		fmt.Fprintf(os.Stderr, "系统状态错误: %v\n", err)
 		os.Exit(1)
 	}
 }

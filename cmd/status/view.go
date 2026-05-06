@@ -145,7 +145,7 @@ func renderHeader(m MetricsSnapshot, errMsg string, animFrame int, termWidth int
 	title := titleStyle.Render("Status")
 
 	scoreStyle := getScoreStyle(m.HealthScore)
-	scoreText := subtleStyle.Render("Health ") + scoreStyle.Render(fmt.Sprintf("● %d", m.HealthScore))
+	scoreText := subtleStyle.Render("健康状态 ") + scoreStyle.Render(fmt.Sprintf("● %d", m.HealthScore))
 
 	// Hardware info for a single line.
 	infoParts := []string{}
@@ -289,7 +289,7 @@ func renderCPUCard(cpu CPUStatus, thermal ThermalStatus) cardData {
 		headerText += fmt.Sprintf(" @ %s°C", colorizeTemp(thermal.CPUTemp))
 	}
 
-	lines = append(lines, fmt.Sprintf("Total  %s  %s", usageBar, headerText))
+	lines = append(lines, fmt.Sprintf("总计  %s  %s", usageBar, headerText))
 
 	if cpu.PerCoreEstimated {
 		lines = append(lines, subtleStyle.Render("Per-core data unavailable, using averaged load"))
@@ -313,10 +313,10 @@ func renderCPUCard(cpu CPUStatus, thermal ThermalStatus) cardData {
 
 	// Load line at the end
 	if cpu.PCoreCount > 0 && cpu.ECoreCount > 0 {
-		lines = append(lines, fmt.Sprintf("Load   %.2f / %.2f / %.2f, %dP+%dE",
+		lines = append(lines, fmt.Sprintf("负载   %.2f / %.2f / %.2f, %dP+%dE",
 			cpu.Load1, cpu.Load5, cpu.Load15, cpu.PCoreCount, cpu.ECoreCount))
 	} else {
-		lines = append(lines, fmt.Sprintf("Load   %.2f / %.2f / %.2f, %d cores",
+		lines = append(lines, fmt.Sprintf("负载   %.2f / %.2f / %.2f, %d cores",
 			cpu.Load1, cpu.Load5, cpu.Load15, cpu.LogicalCPU))
 	}
 
@@ -329,11 +329,11 @@ func renderMemoryCard(mem MemoryStatus, cardWidth int) cardData {
 
 	var lines []string
 	// Line 1: Used
-	lines = append(lines, fmt.Sprintf("Used   %s  %5.1f%%", progressBar(mem.UsedPercent), mem.UsedPercent))
+	lines = append(lines, fmt.Sprintf("已用   %s  %5.1f%%", progressBar(mem.UsedPercent), mem.UsedPercent))
 
 	// Line 2: Free
 	freePercent := 100 - mem.UsedPercent
-	lines = append(lines, fmt.Sprintf("Free   %s  %5.1f%%", progressBar(freePercent), freePercent))
+	lines = append(lines, fmt.Sprintf("空闲   %s  %5.1f%%", progressBar(freePercent), freePercent))
 
 	if hasSwap {
 		// Layout with Swap:
@@ -344,7 +344,7 @@ func renderMemoryCard(mem MemoryStatus, cardWidth int) cardData {
 		if mem.SwapTotal > 0 {
 			swapPercent = (float64(mem.SwapUsed) / float64(mem.SwapTotal)) * 100.0
 		}
-		swapLine := fmt.Sprintf("Swap   %s  %5.1f%%", progressBar(swapPercent), swapPercent)
+		swapLine := fmt.Sprintf("交换空间   %s  %5.1f%%", progressBar(swapPercent), swapPercent)
 		swapText := fmt.Sprintf("%s/%s", humanBytesCompact(mem.SwapUsed), humanBytesCompact(mem.SwapTotal))
 		swapLineWithText := swapLine + " " + swapText
 		if cardWidth > 0 && lipgloss.Width(swapLineWithText) <= cardWidth {
@@ -355,17 +355,17 @@ func renderMemoryCard(mem MemoryStatus, cardWidth int) cardData {
 			lines = append(lines, swapLine)
 		}
 
-		lines = append(lines, fmt.Sprintf("Total  %s / %s", humanBytes(mem.Used), humanBytes(mem.Total)))
-		lines = append(lines, fmt.Sprintf("Avail  %s", humanBytes(mem.Total-mem.Used))) // Simplified avail logic for consistency
+		lines = append(lines, fmt.Sprintf("总计  %s / %s", humanBytes(mem.Used), humanBytes(mem.Total)))
+		lines = append(lines, fmt.Sprintf("可用  %s", humanBytes(mem.Total-mem.Used))) // Simplified avail logic for consistency
 	} else {
 		// Layout without Swap:
 		// 3. Total
 		// 4. Cached (if > 0)
 		// 5. Avail
-		lines = append(lines, fmt.Sprintf("Total  %s / %s", humanBytes(mem.Used), humanBytes(mem.Total)))
+		lines = append(lines, fmt.Sprintf("总计  %s / %s", humanBytes(mem.Used), humanBytes(mem.Total)))
 
 		if mem.Cached > 0 {
-			lines = append(lines, fmt.Sprintf("Cached %s", humanBytes(mem.Cached)))
+			lines = append(lines, fmt.Sprintf("已缓存 %s", humanBytes(mem.Cached)))
 		}
 		// Calculate available if not provided directly, or use Total-Used as proxy if needed,
 		// but typically available is more nuanced. Using what we have.
@@ -373,7 +373,7 @@ func renderMemoryCard(mem MemoryStatus, cardWidth int) cardData {
 		// in simple terms for this view or we could use the passed definition.
 		// Original code calculated: available := mem.Total - mem.Used
 		available := mem.Total - mem.Used
-		lines = append(lines, fmt.Sprintf("Avail  %s", humanBytes(available)))
+		lines = append(lines, fmt.Sprintf("可用  %s", humanBytes(available)))
 	}
 	// Memory pressure status.
 	if mem.Pressure != "" {
@@ -418,12 +418,12 @@ func renderDiskCard(disks []DiskStatus, io DiskIOStatus, trashSize uint64, trash
 		if trashApprox {
 			prefix = "~"
 		}
-		lines = append(lines, fmt.Sprintf("%-6s %s%s", "Trash", prefix, humanBytesShort(trashSize)))
+		lines = append(lines, fmt.Sprintf("%-6s %s%s", "废纸篓", prefix, humanBytesShort(trashSize)))
 	}
 	readBar := ioBar(io.ReadRate)
 	writeBar := ioBar(io.WriteRate)
-	lines = append(lines, fmt.Sprintf("Read   %s  %.1f MB/s", readBar, io.ReadRate))
-	lines = append(lines, fmt.Sprintf("Write  %s  %.1f MB/s", writeBar, io.WriteRate))
+	lines = append(lines, fmt.Sprintf("读取   %s  %.1f MB/s", readBar, io.ReadRate))
+	lines = append(lines, fmt.Sprintf("写入   %s  %.1f MB/s", writeBar, io.WriteRate))
 	return cardData{icon: iconDisk, title: "Disk", lines: lines}
 }
 
@@ -463,7 +463,7 @@ func formatDiskMetaLine(d DiskStatus) string {
 	if d.Fstype != "" {
 		parts = append(parts, strings.ToUpper(d.Fstype))
 	}
-	return fmt.Sprintf("Total  %s", strings.Join(parts, " · "))
+	return fmt.Sprintf("总计  %s", strings.Join(parts, " · "))
 }
 
 func ioBar(rate float64) string {
@@ -533,7 +533,7 @@ func renderNetworkCard(netStats []NetworkStatus, history NetworkHistory, proxy P
 		lines = []string{subtleStyle.Render("Collecting...")}
 	} else {
 		// Calculate dynamic width
-		// Layout: "Down   " (7) + graph + "  " (2) + rate (approx 10-12)
+		// Layout: "下载   " (7) + graph + "  " (2) + rate (approx 10-12)
 		// Safe margin: 22 chars.
 		// We target 16 chars to match progressBar implementation for visual consistency.
 		graphWidth := min(max(cardWidth-22, 5), 16)
@@ -541,8 +541,8 @@ func renderNetworkCard(netStats []NetworkStatus, history NetworkHistory, proxy P
 		// sparkline graphs
 		rxSparkline := sparkline(history.RxHistory, totalRx, graphWidth)
 		txSparkline := sparkline(history.TxHistory, totalTx, graphWidth)
-		lines = append(lines, fmt.Sprintf("Down   %s  %s", rxSparkline, formatRate(totalRx)))
-		lines = append(lines, fmt.Sprintf("Up     %s  %s", txSparkline, formatRate(totalTx)))
+		lines = append(lines, fmt.Sprintf("下载   %s  %s", rxSparkline, formatRate(totalRx)))
+		lines = append(lines, fmt.Sprintf("上传   %s  %s", txSparkline, formatRate(totalTx)))
 		// Show proxy and IP on one line.
 		var infoParts []string
 		if proxy.Enabled {
@@ -616,7 +616,7 @@ func renderBatteryCard(batts []BatteryStatus, thermal ThermalStatus) cardData {
 		if b.Percent < 20 && statusLower != "charging" && statusLower != "charged" {
 			percentText = dangerStyle.Render(percentText)
 		}
-		lines = append(lines, fmt.Sprintf("Level  %s  %s", batteryProgressBar(b.Percent), percentText))
+		lines = append(lines, fmt.Sprintf("电量  %s  %s", batteryProgressBar(b.Percent), percentText))
 
 		// Add capacity line if available.
 		if b.Capacity > 0 {
@@ -626,7 +626,7 @@ func renderBatteryCard(batts []BatteryStatus, thermal ThermalStatus) cardData {
 			} else if b.Capacity < 85 {
 				capacityText = warnStyle.Render(capacityText)
 			}
-			lines = append(lines, fmt.Sprintf("Health %s  %s", batteryProgressBar(float64(b.Capacity)), capacityText))
+			lines = append(lines, fmt.Sprintf("健康状态 %s  %s", batteryProgressBar(float64(b.Capacity)), capacityText))
 		}
 
 		if thermal.AdapterPower > 0 && isPoweredByAC(statusLower) {
@@ -670,7 +670,7 @@ func renderBatteryCard(batts []BatteryStatus, thermal ThermalStatus) cardData {
 		}
 
 		if b.CycleCount > 0 {
-			cycleText := fmt.Sprintf("%d cycles", b.CycleCount)
+			cycleText := fmt.Sprintf("%d 次循环", b.CycleCount)
 			if b.CycleCount > batteryCycleDanger {
 				cycleText = dangerStyle.Render(cycleText)
 			} else if b.CycleCount > batteryCycleWarn {
@@ -685,7 +685,7 @@ func renderBatteryCard(batts []BatteryStatus, thermal ThermalStatus) cardData {
 		}
 
 		if thermal.FanSpeed > 0 {
-			healthParts = append(healthParts, fmt.Sprintf("%d RPM", thermal.FanSpeed))
+			healthParts = append(healthParts, fmt.Sprintf("%d 转/分", thermal.FanSpeed))
 		}
 
 		if len(healthParts) > 0 {

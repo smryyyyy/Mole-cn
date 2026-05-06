@@ -79,7 +79,7 @@ paginated_multi_select() {
 
     # Validation
     if [[ ${#items[@]} -eq 0 ]]; then
-        echo "No items provided" >&2
+        echo "否 items provided" >&2
         return 1
     fi
 
@@ -400,9 +400,9 @@ paginated_multi_select() {
     draw_header() {
         printf "\033[1;1H" >&2
         if [[ -n "$filter_text" ]]; then
-            printf "\r\033[2K${PURPLE_BOLD}%s${NC}  ${YELLOW}/ Search: ${filter_text}_${NC}  ${GRAY}(%d/%d)${NC}\n" "${title}" "${#view_indices[@]}" "$total_items" >&2
+            printf "\r\033[2K${PURPLE_BOLD}%s${NC}  ${YELLOW}/ 搜索： ${filter_text}_${NC}  ${GRAY}(%d/%d)${NC}\n" "${title}" "${#view_indices[@]}" "$total_items" >&2
         elif [[ -n "${MOLE_READ_KEY_FORCE_CHAR:-}" ]]; then
-            printf "\r\033[2K${PURPLE_BOLD}%s${NC}  ${YELLOW}/ Search: _ ${NC}${GRAY}(type to search)${NC}\n" "${title}" >&2
+            printf "\r\033[2K${PURPLE_BOLD}%s${NC}  ${YELLOW}/ 搜索： _ ${NC}${GRAY}(type to search)${NC}\n" "${title}" >&2
         else
             printf "\r\033[2K${PURPLE_BOLD}%s${NC}  ${GRAY}%d/%d selected${NC}\n" "${title}" "$selected_count" "$total_items" >&2
         fi
@@ -440,11 +440,11 @@ paginated_multi_select() {
         # Visible slice
         local visible_total=${#view_indices[@]}
         if [[ $visible_total -eq 0 ]]; then
-            printf "${clear_line}No items available\n" >&2
+            printf "${clear_line}否 items available\n" >&2
             for ((i = 0; i < items_per_page; i++)); do
                 printf "${clear_line}\n" >&2
             done
-            printf "${clear_line}${GRAY}${ICON_NAV_UP}${ICON_NAV_DOWN}  |  Space  |  Enter Save  |  Q Cancel${NC}\n" >&2
+            printf "${clear_line}${GRAY}${ICON_NAV_UP}${ICON_NAV_DOWN}  |  Space  |  Enter Save  |  Q 取消${NC}\n" >&2
             printf "${clear_line}" >&2
             return
         fi
@@ -505,7 +505,7 @@ paginated_multi_select() {
         local page_ctrl="${GRAY}h/l Page${NC}"
         local space_select="${GRAY}Space Select${NC}"
         local enter="${GRAY}Enter Save${NC}"
-        local cancel_label="${GRAY}Q Cancel${NC}"
+        local cancel_label="${GRAY}Q 取消${NC}"
 
         local reverse_arrow="↑"
         [[ "$sort_reverse" == "true" ]] && reverse_arrow="↓"
@@ -893,7 +893,7 @@ paginated_multi_select() {
                     fi
                 fi
 
-                # 3. Confirm and exit with current selections
+                # 3. 确认 and exit with current selections
                 local -a selected_indices=()
                 for ((i = 0; i < total_items; i++)); do
                     if [[ ${selected[i]} == true ]]; then

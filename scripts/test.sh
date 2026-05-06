@@ -17,7 +17,7 @@ export MOLE_TEST_NO_AUTH=1
 source "$PROJECT_ROOT/lib/core/file_ops.sh"
 
 echo "==============================="
-echo "Mole Test Runner"
+echo "Mole 测试运行器"
 echo "==============================="
 echo ""
 
@@ -48,7 +48,7 @@ report_unit_result() {
 
 enforce_timeout_dependency_in_ci
 
-echo "1. Linting test scripts..."
+echo "1. 正在检查测试脚本语法..."
 if command -v shellcheck > /dev/null 2>&1; then
     TEST_FILES=()
     while IFS= read -r file; do
@@ -69,7 +69,7 @@ else
 fi
 echo ""
 
-echo "2. Running unit tests..."
+echo "2. 正在运行 unit tests..."
 if command -v bats > /dev/null 2>&1 && [ -d "tests" ]; then
     if [[ -z "${TERM:-}" ]]; then
         export TERM="xterm-256color"
@@ -206,7 +206,7 @@ else
 fi
 echo ""
 
-echo "3. Running Go tests..."
+echo "3. 正在运行 Go tests..."
 if command -v go > /dev/null 2>&1; then
     GO_TEST_CACHE="${MOLE_GO_TEST_CACHE:-/tmp/mole-go-build-cache}"
     mkdir -p "$GO_TEST_CACHE"
@@ -223,7 +223,7 @@ else
 fi
 echo ""
 
-echo "4. Testing module loading..."
+echo "4. 正在测试模块加载..."
 if bash -c 'source lib/core/common.sh && echo "OK"' > /dev/null 2>&1; then
     printf "${GREEN}${ICON_SUCCESS} Module loading passed${NC}\n"
 else
@@ -232,7 +232,7 @@ else
 fi
 echo ""
 
-echo "5. Running integration tests..."
+echo "5. 正在运行 integration tests..."
 # Quick syntax check for main scripts
 if bash -n mole && bash -n bin/clean.sh && bash -n bin/optimize.sh; then
     printf "${GREEN}${ICON_SUCCESS} Integration tests passed${NC}\n"
@@ -242,7 +242,7 @@ else
 fi
 echo ""
 
-echo "6. Testing installation..."
+echo "6. 正在测试安装..."
 # Installation script is macOS-specific; skip this test on non-macOS platforms
 if [[ "$(uname -s)" != "Darwin" ]]; then
     printf "${YELLOW}${ICON_WARNING} Installation test skipped (non-macOS)${NC}\n"

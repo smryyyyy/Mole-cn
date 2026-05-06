@@ -137,7 +137,7 @@ perform_updates() {
     local total_count=0
 
     if [[ -n "${MOLE_UPDATE_AVAILABLE:-}" && "${MOLE_UPDATE_AVAILABLE}" == "true" ]]; then
-        echo -e "${BLUE}Updating Mole...${NC}"
+        echo -e "${BLUE}正在更新 Mole...${NC}"
         local mole_bin="${SCRIPT_DIR}/../../mole"
         [[ ! -f "$mole_bin" ]] && mole_bin=$(command -v mole 2> /dev/null || echo "")
 

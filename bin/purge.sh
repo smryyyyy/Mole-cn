@@ -153,7 +153,7 @@ perform_purge() {
     # Show scanning with spinner below the title line
     if [[ -t 1 ]]; then
         # Print title ONCE with newline; spinner occupies the line below
-        printf '%s\n' "${PURPLE_BOLD}Purge Project Artifacts${NC}"
+        printf '%s\n' "${PURPLE_BOLD}清理项目构建产物${NC}"
 
         # Capture terminal width in parent (most reliable before forking)
         local _parent_cols=80
@@ -210,7 +210,7 @@ perform_purge() {
         ) &
         monitor_pid=$!
     else
-        echo -e "${PURPLE_BOLD}Purge Project Artifacts${NC}"
+        echo -e "${PURPLE_BOLD}清理项目构建产物${NC}"
     fi
 
     clean_project_artifacts
@@ -277,15 +277,15 @@ perform_purge() {
 show_help() {
     echo -e "${PURPLE_BOLD}Mole Purge${NC}, Clean old project build artifacts"
     echo ""
-    echo -e "${YELLOW}Usage:${NC} mo purge [options]"
+    echo -e "${YELLOW}用法：${NC} mo purge [options]"
     echo ""
-    echo -e "${YELLOW}Options:${NC}"
-    echo "  --paths         Edit custom scan directories"
-    echo "  --dry-run       Preview purge actions without making changes"
-    echo "  --debug         Enable debug logging"
-    echo "  --help          Show this help message"
+    echo -e "${YELLOW}选项：${NC}"
+    echo "  --paths         编辑自定义扫描目录"
+    echo "  --dry-run       预览清理操作，不实际执行更改"
+    echo "  --debug         启用调试日志"
+    echo "  --help          显示此帮助信息"
     echo ""
-    echo -e "${YELLOW}Default Paths:${NC}"
+    echo -e "${YELLOW}默认路径：${NC}"
     for path in "${DEFAULT_PURGE_SEARCH_PATHS[@]}"; do
         echo "  * $path"
     done
@@ -315,8 +315,8 @@ main() {
                 export MOLE_DRY_RUN=1
                 ;;
             *)
-                echo "Unknown option: $arg"
-                echo "Use 'mo purge --help' for usage information"
+                echo "未知选项： $arg"
+                echo "使用 'mo purge --help' 查看用法信息"
                 exit 1
                 ;;
         esac
@@ -324,7 +324,7 @@ main() {
 
     start_purge
     if [[ "${MOLE_DRY_RUN:-0}" == "1" ]]; then
-        echo -e "${YELLOW}${ICON_DRY_RUN} DRY RUN MODE${NC}, No project artifacts will be removed"
+        echo -e "${YELLOW}${ICON_DRY_RUN} 预览模式${NC}, 不会移除任何项目构建产物"
         printf '\n'
     fi
     hide_cursor

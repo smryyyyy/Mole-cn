@@ -51,11 +51,11 @@ check_launch_agents() {
     else
         printf "  ${GRAY}%s${NC} %-14s ${YELLOW}%s${NC}\n" "$ICON_WARNING" "Launch Agents" "${broken_count} broken"
 
-        local preview_limit=3
-        ((preview_limit > broken_count)) && preview_limit=$broken_count
+        local 预览_limit=3
+        ((预览_limit > broken_count)) && 预览_limit=$broken_count
 
         local detail=""
-        for ((i = 0; i < preview_limit; i++)); do
+        for ((i = 0; i < 预览_limit; i++)); do
             if [[ $i -eq 0 ]]; then
                 detail="${broken_labels[$i]}"
             else
@@ -63,8 +63,8 @@ check_launch_agents() {
             fi
         done
 
-        if ((broken_count > preview_limit)); then
-            local remaining=$((broken_count - preview_limit))
+        if ((broken_count > 预览_limit)); then
+            local remaining=$((broken_count - 预览_limit))
             detail="${detail} +${remaining}"
         fi
 
@@ -125,12 +125,12 @@ check_version_mismatches() {
     fi
 
     if [[ ${#conflicts[@]} -eq 0 ]]; then
-        echo -e "  ${GREEN}✓${NC} Versions       No conflicts"
+        echo -e "  ${GREEN}✓${NC} 版本s       No conflicts"
     else
         local description
         description=$(printf '%s; ' "${conflicts[@]}")
         description="${description%; }"
-        printf "  ${GRAY}%s${NC} %-14s ${YELLOW}%s${NC}\n" "$ICON_WARNING" "Versions" "$description"
+        printf "  ${GRAY}%s${NC} %-14s ${YELLOW}%s${NC}\n" "$ICON_WARNING" "版本s" "$description"
     fi
 }
 

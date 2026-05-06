@@ -35,7 +35,7 @@ while [[ $# -gt 0 ]]; do
             exit 0
             ;;
         *)
-            echo "Unknown option: $1"
+            echo "未知选项： $1"
             usage
             exit 1
             ;;
@@ -110,7 +110,7 @@ if [[ "$MODE" != "check" ]]; then
     fi
 fi
 
-echo -e "${YELLOW}3. Running Go linters...${NC}"
+echo -e "${YELLOW}3. 正在运行 Go linters...${NC}"
 if command -v golangci-lint > /dev/null 2>&1; then
     if ! golangci-lint config verify; then
         echo -e "${RED}${ICON_ERROR} golangci-lint config invalid${NC}\n"
@@ -134,7 +134,7 @@ else
     echo -e "${YELLOW}${ICON_WARNING} Go not installed, skipping Go checks${NC}\n"
 fi
 
-echo -e "${YELLOW}4. Running ShellCheck...${NC}"
+echo -e "${YELLOW}4. 正在运行 ShellCheck...${NC}"
 if command -v shellcheck > /dev/null 2>&1; then
     if shellcheck mole bin/*.sh lib/*/*.sh scripts/*.sh; then
         echo -e "${GREEN}${ICON_SUCCESS} ShellCheck passed${NC}\n"
@@ -146,7 +146,7 @@ else
     echo -e "${YELLOW}${ICON_WARNING} shellcheck not installed, skipping${NC}\n"
 fi
 
-echo -e "${YELLOW}5. Running syntax check...${NC}"
+echo -e "${YELLOW}5. 正在运行 syntax check...${NC}"
 if ! bash -n mole; then
     echo -e "${RED}${ICON_ERROR} Syntax check failed, mole${NC}\n"
     exit 1

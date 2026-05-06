@@ -17,7 +17,7 @@ is_uninstall_dry_run() {
 
 app_declares_local_network_usage() {
     local app_path="$1"
-    local info_plist="$app_path/Contents/Info.plist"
+    local info_plist="$app_path/Contents/信息.plist"
 
     [[ -f "$info_plist" ]] || return 1
 
@@ -67,7 +67,7 @@ decode_file_list() {
     # macOS uses -D, GNU uses -d. Always return 0 for set -e safety.
     if ! decoded=$(printf '%s' "$encoded" | base64 -D 2> /dev/null); then
         if ! decoded=$(printf '%s' "$encoded" | base64 -d 2> /dev/null); then
-            log_error "Failed to decode file list for $app_name" >&2
+            log_error "失败 to decode file list for $app_name" >&2
             echo ""
             return 0 # Return success with empty string
         fi
@@ -371,14 +371,14 @@ batch_uninstall_applications() {
     # Cache current user outside loop
     local current_user=$(whoami)
 
-    if [[ -t 1 ]]; then start_inline_spinner "Scanning files..."; fi
+    if [[ -t 1 ]]; then start_inline_spinner "正在扫描 files..."; fi
     for selected_app in "${selected_apps[@]}"; do
         [[ -z "$selected_app" ]] && continue
         IFS='|' read -r _ app_path app_name bundle_id _ _ <<< "$selected_app"
 
         # Check running app by bundle executable if available
         local exec_name=""
-        local info_plist="$app_path/Contents/Info.plist"
+        local info_plist="$app_path/Contents/信息.plist"
         if [[ -e "$info_plist" ]]; then
             exec_name=$(plutil -extract CFBundleExecutable raw "$info_plist" 2> /dev/null || echo "")
         fi
@@ -595,9 +595,9 @@ batch_uninstall_applications() {
         [[ "$is_brew_cask" == "true" ]] && brew_tag=" ${CYAN}[Brew]${NC}"
         if [[ -t 1 ]]; then
             if [[ ${#app_details[@]} -gt 1 ]]; then
-                start_inline_spinner "[$current_index/${#app_details[@]}] Uninstalling ${app_name}${brew_tag}..."
+                start_inline_spinner "[$current_index/${#app_details[@]}] 正在卸载 ${app_name}${brew_tag}..."
             else
-                start_inline_spinner "Uninstalling ${app_name}${brew_tag}..."
+                start_inline_spinner "正在卸载 ${app_name}${brew_tag}..."
             fi
         fi
 
@@ -627,7 +627,7 @@ batch_uninstall_applications() {
             if [[ ${#app_details[@]} -gt 1 ]]; then
                 _phase_prefix="[$current_index/${#app_details[@]}] "
             fi
-            start_inline_spinner "${_phase_prefix}Removing ${app_name} (${_phase_size})..."
+            start_inline_spinner "${_phase_prefix}正在移除 ${app_name} (${_phase_size})..."
         fi
 
         local used_brew_successfully=false
@@ -721,7 +721,7 @@ batch_uninstall_applications() {
                 if [[ ${#app_details[@]} -gt 1 ]]; then
                     _phase_prefix="[$current_index/${#app_details[@]}] "
                 fi
-                start_inline_spinner "${_phase_prefix}Cleaning files for ${app_name}..."
+                start_inline_spinner "${_phase_prefix}正在清理 files for ${app_name}..."
             fi
             remove_file_list "$related_files" "false" > /dev/null
 
@@ -752,7 +752,7 @@ batch_uninstall_applications() {
             fi
 
             if [[ -t 1 ]]; then
-                start_inline_spinner "${_phase_prefix}Cleaning system files for ${app_name}..."
+                start_inline_spinner "${_phase_prefix}正在清理 system files for ${app_name}..."
             fi
             if [[ "$used_brew_successfully" == "true" ]]; then
                 remove_file_list "$diag_system" "true" > /dev/null
@@ -784,7 +784,7 @@ batch_uninstall_applications() {
                             mole_delete "$plist_file" "true" || true
                         done < <(command find "$HOME/Library/Preferences/ByHost" -maxdepth 1 -type f -name "${bundle_id}.*.plist" -print0 2> /dev/null || true)
                     else
-                        debug_log "Skipping ByHost cleanup, invalid bundle id: $bundle_id"
+                        debug_log "正在跳过 ByHost cleanup, invalid bundle id: $bundle_id"
                     fi
                 fi
             fi
@@ -936,7 +936,7 @@ batch_uninstall_applications() {
                 *) reason_summary="$first_reason" ;;
             esac
         fi
-        summary_details+=("${ICON_LIST} Failed: ${RED}${failed_list}${NC} ${reason_summary}")
+        summary_details+=("${ICON_LIST} 失败: ${RED}${failed_list}${NC} ${reason_summary}")
         if [[ -n "$suggestion_text" ]]; then
             summary_details+=("$suggestion_text")
         fi

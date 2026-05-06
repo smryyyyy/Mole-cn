@@ -24,8 +24,8 @@ for arg in "$@"; do
             exit 0
             ;;
         *)
-            echo "Unknown check option: $arg"
-            echo "Use 'mo check --help' for supported options."
+            echo "未知的检查选项： $arg"
+            echo "使用 'mo check --help' 查看支持的选项。"
             exit 1
             ;;
     esac
@@ -62,10 +62,10 @@ main() {
 
     # Run all checks in parallel with spinner
     if [[ -t 1 ]]; then
-        echo -ne "${PURPLE_BOLD}System Check${NC}  "
+        echo -ne "${PURPLE_BOLD}系统检查${NC}  "
         start_inline_spinner "Running checks..."
     else
-        echo -e "${PURPLE_BOLD}System Check${NC}"
+        echo -e "${PURPLE_BOLD}系统检查${NC}"
         echo ""
     fi
 

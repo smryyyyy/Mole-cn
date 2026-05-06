@@ -245,9 +245,9 @@ brew_uninstall_cask() {
     fi
     [[ -n "$app_path" && -e "$app_path" ]] && app_gone=false
 
-    # Success: uninstall worked and both are gone, or already uninstalled
+    # 成功: uninstall worked and both are gone, or already uninstalled
     if $cask_gone && $app_gone; then
-        debug_log "Successfully uninstalled cask '$cask_name'"
+        debug_log "成功fully uninstalled cask '$cask_name'"
         return 0
     fi
 

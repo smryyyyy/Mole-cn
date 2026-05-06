@@ -14,7 +14,7 @@ clean_ds_store_tree() {
     local spinner_active="false"
     if [[ -t 1 ]]; then
         MOLE_SPINNER_PREFIX="  "
-        start_inline_spinner "Cleaning Finder metadata..."
+        start_inline_spinner "正在清理 Finder metadata..."
         spinner_active="true"
     fi
     local -a exclude_paths=(
@@ -80,14 +80,14 @@ scan_installed_apps() {
                 if cat "$cache_file" > "$installed_bundles" 2> /dev/null; then
                     return 0
                 else
-                    debug_log "Warning: Failed to read cache, rebuilding"
+                    debug_log "警告: 失败 to read cache, rebuilding"
                 fi
             else
-                debug_log "Warning: Cache file empty or unreadable, rebuilding"
+                debug_log "警告: Cache file empty or unreadable, rebuilding"
             fi
         fi
     fi
-    debug_log "Scanning installed applications, cache expired or missing"
+    debug_log "正在扫描 installed applications, cache expired or missing"
     local -a app_dirs=(
         "/Applications"
         "/System/Applications"
@@ -111,7 +111,7 @@ scan_installed_apps() {
             done < <(find "$app_dir" -name '*.app' -maxdepth 3 -type d 2> /dev/null)
             local count=0
             for app_path in "${app_paths[@]:-}"; do
-                local plist_path="$app_path/Contents/Info.plist"
+                local plist_path="$app_path/Contents/信息.plist"
                 [[ ! -f "$plist_path" ]] && continue
                 local bundle_id=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$plist_path" 2> /dev/null || echo "")
                 if [[ -n "$bundle_id" && "$bundle_id" != "missing value" ]]; then
@@ -305,10 +305,10 @@ is_claude_vm_bundle_orphaned() {
 clean_orphaned_app_data() {
     if ! ls "$HOME/Library/Caches" > /dev/null 2>&1; then
         stop_section_spinner
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Skipped: No permission to access Library folders"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} 已跳过: No permission to access Library folders"
         return 0
     fi
-    start_section_spinner "Scanning installed apps..."
+    start_section_spinner "正在扫描 installed apps..."
     local installed_bundles=$(create_temp_file)
     scan_installed_apps "$installed_bundles"
     stop_section_spinner
@@ -316,7 +316,7 @@ clean_orphaned_app_data() {
     echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Found $app_count active/installed apps"
     local orphaned_count=0
     local total_orphaned_kb=0
-    start_section_spinner "Scanning orphaned app resources..."
+    start_section_spinner "正在扫描 orphaned app resources..."
 
     # Dynamically discover Claude VM bundles (path may vary across versions).
     local claude_support_dir="$HOME/Library/Application Support/Claude"
@@ -324,7 +324,7 @@ clean_orphaned_app_data() {
         while IFS= read -r -d '' claude_vm_bundle; do
             if is_claude_vm_bundle_orphaned "$claude_vm_bundle" "$installed_bundles"; then
                 if is_path_whitelisted "$claude_vm_bundle"; then
-                    debug_log "Skipping whitelisted orphan: $claude_vm_bundle"
+                    debug_log "正在跳过 whitelisted orphan: $claude_vm_bundle"
                     continue
                 fi
                 local claude_vm_size_kb
@@ -388,7 +388,7 @@ clean_orphaned_app_data() {
                     bundle_id="${bundle_id%.plist}"
                     if is_bundle_orphaned "$bundle_id" "$match" "$installed_bundles"; then
                         if is_path_whitelisted "$match"; then
-                            debug_log "Skipping whitelisted orphan: $match"
+                            debug_log "正在跳过 whitelisted orphan: $match"
                             continue
                         fi
                         local size_kb
@@ -423,7 +423,7 @@ clean_orphaned_system_services() {
         return 0
     fi
 
-    start_section_spinner "Scanning orphaned system services..."
+    start_section_spinner "正在扫描 orphaned system services..."
 
     local orphaned_count=0
     local -a orphaned_files=()
@@ -681,7 +681,7 @@ clean_orphaned_system_services() {
         local -a kept_files=()
         for orphan_file in "${orphaned_files[@]}"; do
             if is_path_whitelisted "$orphan_file"; then
-                debug_log "Skipping whitelisted orphan service: $orphan_file"
+                debug_log "正在跳过 whitelisted orphan service: $orphan_file"
                 continue
             fi
             kept_files+=("$orphan_file")
@@ -704,7 +704,7 @@ clean_orphaned_system_services() {
                 debug_log "[DRY RUN] Would remove orphaned service: $orphan_file"
             else
                 if should_protect_path "$orphan_file"; then
-                    debug_log "Skipping protected orphaned service: $orphan_file"
+                    debug_log "正在跳过 protected orphaned service: $orphan_file"
                     skipped_protected_count=$((skipped_protected_count + 1))
                     continue
                 fi
@@ -721,7 +721,7 @@ clean_orphaned_system_services() {
                     removed_count=$((removed_count + 1))
                     removed_kb=$((removed_kb + file_size_kb))
                 else
-                    debug_log "Failed to remove orphaned service: $orphan_file"
+                    debug_log "失败 to remove orphaned service: $orphan_file"
                     failed_count=$((failed_count + 1))
                 fi
             fi
@@ -830,7 +830,7 @@ clean_orphaned_container_stubs() {
             _container_stub_app_exists "$bundle_id" "$app_path" && continue
 
             if is_path_whitelisted "$container_dir" 2> /dev/null; then
-                debug_log "Skipping whitelisted stub container: $container_dir"
+                debug_log "正在跳过 whitelisted stub container: $container_dir"
                 continue
             fi
 
@@ -844,7 +844,7 @@ clean_orphaned_container_stubs() {
                     removed_count=$((removed_count + 1))
                     log_operation "${MOLE_CURRENT_COMMAND:-clean}" "REMOVED" "$container_dir" "stub-container"
                 else
-                    debug_log "Failed to remove stub container: $container_dir"
+                    debug_log "失败 to remove stub container: $container_dir"
                     failed_count=$((failed_count + 1))
                     log_operation "${MOLE_CURRENT_COMMAND:-clean}" "FAILED" "$container_dir" "stub-container"
                 fi

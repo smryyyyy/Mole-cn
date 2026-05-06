@@ -105,7 +105,7 @@ declare -a DEFAULT_WHITELIST_PATTERNS=(
     "$HOME/Library/Caches/com.apple.finder"
     "$HOME/Library/Mobile Documents*"
     # System-critical caches that affect macOS functionality and stability
-    # CRITICAL: Removing these will cause system search and UI issues
+    # CRITICAL: 正在移除 these will cause system search and UI issues
     "$HOME/Library/Caches/com.apple.FontRegistry*"
     "$HOME/Library/Caches/com.apple.spotlight*"
     "$HOME/Library/Caches/com.apple.Spotlight*"
@@ -683,7 +683,7 @@ mktemp_file() {
     local error_msg
     # Add .XXXXXX suffix to work with both BSD and GNU mktemp
     if ! error_msg=$(mktemp "$(mole_temp_path_template "$prefix")" 2>&1); then
-        echo "Error: Failed to create temporary file: $error_msg" >&2
+        echo "错误: 失败 to create temporary file: $error_msg" >&2
         return 1
     fi
     temp="$error_msg"
@@ -727,9 +727,9 @@ SECTION_ACTIVITY=0
 # fallback wording, dry-run export behavior). Before changing any of them,
 # read the cross references first:
 #
-#   - lib/core/base.sh   (this file): purple arrow header, "Nothing to tidy"
+#   - lib/core/base.sh   (this file): purple arrow header, "无需整理"
 #                                     fallback, no dry-run export.
-#   - bin/clean.sh:      purple arrow header, "Nothing to clean" fallback,
+#   - bin/clean.sh:      purple arrow header, "无需清理" fallback,
 #                        appends '=== title ===' to EXPORT_LIST_FILE under
 #                        DRY_RUN, stops the section spinner on close.
 #   - bin/purge.sh:      blue ━━━ box header, no fallback message, writes
@@ -749,10 +749,10 @@ start_section() {
 }
 
 # End a section
-# Shows "Nothing to tidy" if no activity was recorded
+# Shows "无需整理" if no activity was recorded
 end_section() {
     if [[ "${TRACK_SECTION:-0}" == "1" && "${SECTION_ACTIVITY:-0}" == "0" ]]; then
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Nothing to tidy"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} 无需清理"
     fi
     TRACK_SECTION=0
 }
@@ -767,7 +767,7 @@ note_activity() {
 # Start a section spinner with optional message
 # Usage: start_section_spinner "message"
 start_section_spinner() {
-    local message="${1:-Scanning...}"
+    local message="${1:-正在扫描...}"
     stop_inline_spinner || true
     if [[ -t 1 ]]; then
         MOLE_SPINNER_PREFIX="  " start_inline_spinner "$message"
@@ -841,7 +841,7 @@ update_progress_if_needed() {
     if [[ $((current_time - last_time)) -ge $interval ]]; then
         # Update the spinner with progress
         stop_section_spinner
-        start_section_spinner "Scanning items... $completed/$total"
+        start_section_spinner "正在扫描项目... $completed/$total"
 
         # Update the last_update_time variable
         eval "$last_update_var=$current_time"

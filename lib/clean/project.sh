@@ -369,7 +369,7 @@ is_protected_vendor_dir() {
         return 0
     fi
 
-    # Unknown vendor type - protect by default (conservative approach)
+    # 未知 vendor type - protect by default (conservative approach)
     return 0
 }
 
@@ -1001,7 +1001,7 @@ clean_project_artifacts() {
     previous_term_trap=$(trap -p TERM || true)
     trap cleanup_scan INT TERM
     trap_installed_by_this_call=true
-    # Scanning is started from purge.sh with start_inline_spinner
+    # 正在扫描 is started from purge.sh with start_inline_spinner
     # Launch all scans in parallel
     for path in "${PURGE_SEARCH_PATHS[@]}"; do
         if [[ -d "$path" ]]; then
@@ -1576,7 +1576,7 @@ clean_project_artifacts() {
             continue
         fi
         if [[ -t 1 ]]; then
-            start_inline_spinner "Cleaning $display_item_path..."
+            start_inline_spinner "正在清理 $display_item_path..."
         fi
         local removal_recorded=false
         if [[ -e "$item_path" ]]; then

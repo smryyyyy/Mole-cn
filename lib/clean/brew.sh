@@ -13,7 +13,7 @@ clean_homebrew() {
         fi
         return 0
     fi
-    # Keep behavior consistent with dry-run preview.
+    # Keep behavior consistent with dry-run 预览.
     if is_path_whitelisted "$HOME/Library/Caches/Homebrew"; then
         echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Homebrew · skipped whitelist"
         return 0
@@ -92,7 +92,7 @@ clean_homebrew() {
         local brew_output
         brew_output=$(cat "$brew_tmp_file" 2> /dev/null || echo "")
         local removed_count freed_space
-        removed_count=$(printf '%s\n' "$brew_output" | grep -c "Removing:" 2> /dev/null || true)
+        removed_count=$(printf '%s\n' "$brew_output" | grep -c "正在移除:" 2> /dev/null || true)
         freed_space=$(printf '%s\n' "$brew_output" | grep -o "[0-9.]*[KMGT]B freed" 2> /dev/null | tail -1 || true)
         if [[ $removed_count -gt 0 ]] || [[ -n "$freed_space" ]]; then
             if [[ -n "$freed_space" ]]; then
@@ -110,7 +110,7 @@ clean_homebrew() {
         local autoremove_output
         autoremove_output=$(cat "$autoremove_tmp_file" 2> /dev/null || echo "")
         local removed_packages
-        removed_packages=$(printf '%s\n' "$autoremove_output" | grep -c "^Uninstalling" 2> /dev/null || true)
+        removed_packages=$(printf '%s\n' "$autoremove_output" | grep -c "^正在卸载" 2> /dev/null || true)
         if [[ $removed_packages -gt 0 ]]; then
             echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Removed orphaned dependencies, ${removed_packages} packages"
         fi

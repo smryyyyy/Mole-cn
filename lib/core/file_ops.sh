@@ -10,7 +10,7 @@ if [[ -n "${MOLE_FILE_OPS_LOADED:-}" ]]; then
 fi
 readonly MOLE_FILE_OPS_LOADED=1
 
-# Error codes for removal operations
+# 错误 codes for removal operations
 readonly MOLE_ERR_SIP_PROTECTED=10
 readonly MOLE_ERR_AUTH_FAILED=11
 readonly MOLE_ERR_READONLY_FS=12
@@ -198,7 +198,7 @@ safe_remove() {
         return 0
     fi
 
-    # Dry-run mode: log but don't delete
+    # 预览模式 mode: log but don't delete
     if [[ "${MOLE_DRY_RUN:-0}" == "1" ]]; then
         if [[ "${MO_DEBUG:-}" == "1" ]]; then
             local file_type="file"
@@ -233,7 +233,7 @@ safe_remove() {
         return 0
     fi
 
-    debug_log "Removing: $path"
+    debug_log "正在移除: $path"
 
     # Calculate size before deletion for logging.
     # Accept pre-computed size to skip redundant I/O when the caller already measured.
@@ -274,7 +274,7 @@ safe_remove() {
             debug_log "Permission denied: $path, may need Full Disk Access"
             log_operation "${MOLE_CURRENT_COMMAND:-clean}" "FAILED" "$path" "permission denied"
         else
-            [[ "$silent" != "true" ]] && log_error "Failed to remove: $path"
+            [[ "$silent" != "true" ]] && log_error "失败 to remove: $path"
             log_operation "${MOLE_CURRENT_COMMAND:-clean}" "FAILED" "$path" "error"
         fi
         return 1
@@ -403,7 +403,7 @@ safe_sudo_remove() {
             return "$MOLE_ERR_AUTH_FAILED"
             ;;
         *)
-            log_error "Failed to remove, sudo: $path"
+            log_error "失败 to remove, sudo: $path"
             log_operation "${MOLE_CURRENT_COMMAND:-clean}" "FAILED" "$path" "sudo error"
             return 1
             ;;
@@ -440,7 +440,7 @@ mole_delete() {
 
     [[ -z "$path" ]] && return 1
 
-    # Nothing to do if path does not exist (but a broken symlink still counts).
+    # 无需操作 if path does not exist (but a broken symlink still counts).
     if [[ ! -e "$path" && ! -L "$path" ]]; then
         return 0
     fi
@@ -493,7 +493,7 @@ mole_delete() {
         if [[ -z "${_MOLE_TRASH_FALLBACK_WARNED:-}" ]]; then
             _MOLE_TRASH_FALLBACK_WARNED=1
             export _MOLE_TRASH_FALLBACK_WARNED
-            printf 'Warning: Trash unavailable, removing permanently. Subsequent files this session also bypass Trash.\n' >&2
+            printf '警告: Trash unavailable, removing permanently. Subsequent files this session also bypass Trash.\n' >&2
         fi
         debug_log "Trash move failed, falling back to permanent delete: $path"
     fi
@@ -635,7 +635,7 @@ _mole_warn_log_broken() {
     [[ -n "${_MOLE_DELETE_LOG_WARNED:-}" ]] && return 0
     _MOLE_DELETE_LOG_WARNED=1
     export _MOLE_DELETE_LOG_WARNED
-    printf 'Warning: deletions audit log unavailable (%s). Forensic trail incomplete this session.\n' "$1" >&2
+    printf '警告: deletions audit log unavailable (%s). Forensic trail incomplete this session.\n' "$1" >&2
 }
 
 # ============================================================================
@@ -792,7 +792,7 @@ get_path_size_kb() {
     if [[ "$size" =~ ^[0-9]+$ ]]; then
         echo "$size"
     else
-        [[ "${MO_DEBUG:-}" == "1" ]] && debug_log "get_path_size_kb: Failed to get size for $path (returned: $size)"
+        [[ "${MO_DEBUG:-}" == "1" ]] && debug_log "get_path_size_kb: 失败 to get size for $path (returned: $size)"
         echo "0"
     fi
 }

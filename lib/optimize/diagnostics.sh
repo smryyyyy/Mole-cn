@@ -286,7 +286,7 @@ opt_diag_detach_candidates() {
             echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Detached ${mount_path}"
         else
             failed=$((failed + 1))
-            echo -e "  ${YELLOW}${ICON_WARNING}${NC} Failed to detach ${mount_path}"
+            echo -e "  ${YELLOW}${ICON_WARNING}${NC} 失败 to detach ${mount_path}"
         fi
     done <<< "$candidates"
 

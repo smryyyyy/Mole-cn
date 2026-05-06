@@ -142,15 +142,15 @@ get_source_display() {
 
     # Match against known paths and return friendly names
     case "$dir_path" in
-        "$HOME/Downloads"*) echo "Downloads" ;;
-        "$HOME/Desktop"*) echo "Desktop" ;;
-        "$HOME/Documents"*) echo "Documents" ;;
-        "$HOME/Public"*) echo "Public" ;;
-        "$HOME/Library/Downloads"*) echo "Library" ;;
-        "/Users/Shared"*) echo "Shared" ;;
+        "$HOME/Downloads"*) echo "下载" ;;
+        "$HOME/Desktop"*) echo "桌面" ;;
+        "$HOME/Documents"*) echo "文稿" ;;
+        "$HOME/Public"*) echo "共享" ;;
+        "$HOME/Library/Downloads"*) echo "库" ;;
+        "/Users/Shared"*) echo "共享" ;;
         "$HOME/Library/Caches/Homebrew"*) echo "Homebrew" ;;
         "$HOME/Library/Mobile Documents/com~apple~CloudDocs/Downloads"*) echo "iCloud" ;;
-        "$HOME/Library/Containers/com.apple.mail"*) echo "Mail" ;;
+        "$HOME/Library/Containers/com.apple.mail"*) echo "邮件" ;;
         *"Telegram Desktop"*) echo "Telegram" ;;
         *) echo "${dir_path##*/}" ;;
     esac
@@ -233,7 +233,7 @@ collect_installers() {
 
     if [[ ${#all_files[@]} -eq 0 ]]; then
         if [[ "${IN_ALT_SCREEN:-0}" != "1" ]]; then
-            echo -e "${GREEN}${ICON_SUCCESS}${NC} Great! No installer files to clean"
+            echo -e "${GREEN}${ICON_SUCCESS}${NC} 很好！没有需要清理的安装程序文件"
         fi
         return 1
     fi
@@ -549,7 +549,7 @@ delete_selected_installers() {
     confirm_human=$(bytes_to_human "$confirm_size")
 
     # Show files to be deleted
-    echo -e "${PURPLE_BOLD}Files to be removed:${NC}"
+    echo -e "${PURPLE_BOLD}待移除的文件：${NC}"
     for idx in "${selected_indices[@]}"; do
         if [[ "$idx" =~ ^[0-9]+$ ]] && [[ $idx -lt ${#INSTALLER_PATHS[@]} ]]; then
             local file_path="${INSTALLER_PATHS[$idx]}"
@@ -629,7 +629,7 @@ perform_installers() {
             IN_ALT_SCREEN=0
         fi
         printf '\n'
-        echo -e "${GREEN}${ICON_SUCCESS}${NC} Great! No installer files to clean"
+        echo -e "${GREEN}${ICON_SUCCESS}${NC} 很好！没有需要清理的安装程序文件"
         printf '\n'
         return 2 # Nothing to clean
     fi
@@ -698,14 +698,14 @@ main() {
                 export MOLE_DRY_RUN=1
                 ;;
             *)
-                echo "Unknown option: $arg"
+                echo "未知选项：$arg"
                 exit 1
                 ;;
         esac
     done
 
     if [[ "${MOLE_DRY_RUN:-0}" == "1" ]]; then
-        echo -e "${YELLOW}${ICON_DRY_RUN} DRY RUN MODE${NC}, No installer files will be removed"
+        echo -e "${YELLOW}${ICON_DRY_RUN} 预览模式${NC}，不会移除任何安装程序文件"
         printf '\n'
     fi
 

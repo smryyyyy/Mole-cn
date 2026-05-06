@@ -184,7 +184,7 @@ resolve_source_dir() {
             stop_line_spinner
             # Only exit early for version tags (not for main/dev branches)
             if [[ "$branch" != "main" && "$branch" != "dev" ]]; then
-                log_error "Failed to fetch version ${branch}. Check if tag exists."
+                log_error "失败 to fetch version ${branch}. Check if tag exists."
                 exit 1
             fi
         fi
@@ -206,11 +206,11 @@ resolve_source_dir() {
     fi
     stop_line_spinner
 
-    log_error "Failed to fetch source files. Ensure curl or git is available."
+    log_error "失败 to fetch source files. Ensure curl or git is available."
     exit 1
 }
 
-# Version helpers
+# 版本 helpers
 get_source_version() {
     local source_mole="$SOURCE_DIR/mole"
     if [[ -f "$source_mole" ]]; then
@@ -437,9 +437,9 @@ check_requirements() {
 
             echo -e "${YELLOW}Mole is installed via Homebrew${NC}"
             echo ""
-            echo "Choose one:"
-            echo -e "  1. Update via Homebrew: ${GREEN}brew upgrade mole${NC}"
-            echo -e "  2. Switch to manual: ${GREEN}brew uninstall --force mole${NC} then re-run this"
+            echo "请选择："
+            echo -e "  1. 通过 Homebrew 更新： ${GREEN}brew upgrade mole${NC}"
+            echo -e "  2. 切换到手动安装： ${GREEN}brew uninstall --force mole${NC} 然后重新运行此脚本"
             echo ""
             exit 1
         else
@@ -460,7 +460,7 @@ create_directories() {
     fi
 
     if ! mkdir -p "$CONFIG_DIR" "$CONFIG_DIR/bin" "$CONFIG_DIR/lib"; then
-        log_error "Failed to create config directory: $CONFIG_DIR"
+        log_error "失败 to create config directory: $CONFIG_DIR"
         exit 1
     fi
 
@@ -493,9 +493,9 @@ build_binary_from_source() {
     fi
 
     if [[ -t 1 ]]; then
-        start_line_spinner "Building ${binary_name} from source..."
+        start_line_spinner "正在从源码构建 ${binary_name}..."
     else
-        echo "Building ${binary_name} from source..."
+        echo "正在从源码构建 ${binary_name}..."
     fi
 
     if (cd "$SOURCE_DIR" && go build -ldflags="-s -w" -o "$target_path" "./$cmd_dir" > /dev/null 2>&1); then
@@ -506,7 +506,7 @@ build_binary_from_source() {
     fi
 
     if [[ -t 1 ]]; then stop_line_spinner; fi
-    log_warning "Failed to build ${binary_name} from source"
+    log_warning "失败 to build ${binary_name} from source"
     return 1
 }
 
@@ -523,12 +523,12 @@ download_binary() {
     if [[ -f "$SOURCE_DIR/bin/${binary_name}-go" ]]; then
         cp "$SOURCE_DIR/bin/${binary_name}-go" "$target_path"
         chmod +x "$target_path"
-        log_success "Installed local ${binary_name} binary"
+        log_success "已安装 local ${binary_name} binary"
         return 0
     elif [[ -f "$SOURCE_DIR/bin/${binary_name}-darwin-${arch_suffix}" ]]; then
         cp "$SOURCE_DIR/bin/${binary_name}-darwin-${arch_suffix}" "$target_path"
         chmod +x "$target_path"
-        log_success "Installed local ${binary_name} binary"
+        log_success "已安装 local ${binary_name} binary"
         return 0
     fi
 
@@ -552,16 +552,16 @@ download_binary() {
     # Skip preflight network checks to avoid false negatives.
 
     if [[ -t 1 ]]; then
-        start_line_spinner "Downloading ${binary_name}..."
+        start_line_spinner "正在下载 ${binary_name}..."
     else
-        echo "Downloading ${binary_name}..."
+        echo "正在下载 ${binary_name}..."
     fi
 
     if curl -fsSL --connect-timeout 10 --max-time 60 -o "$target_path" "$url"; then
         if [[ -t 1 ]]; then stop_line_spinner; fi
         chmod +x "$target_path"
         xattr -c "$target_path" 2> /dev/null || true
-        log_success "Downloaded ${binary_name} binary"
+        log_success "下载ed ${binary_name} binary"
         return 0
     fi
     if [[ -t 1 ]]; then stop_line_spinner; fi
@@ -571,15 +571,15 @@ download_binary() {
     if [[ -n "$fallback_tag" && "$fallback_tag" != "V${version}" ]]; then
         local fallback_url="https://github.com/tw93/mole/releases/download/${fallback_tag}/${binary_name}-darwin-${arch_suffix}"
         if [[ -t 1 ]]; then
-            start_line_spinner "Retrying ${binary_name} from ${fallback_tag}..."
+            start_line_spinner "正在从 ${fallback_tag} 重试 ${binary_name}..."
         else
-            echo "Retrying ${binary_name} from ${fallback_tag}..."
+            echo "正在从 ${fallback_tag} 重试 ${binary_name}..."
         fi
         if curl -fsSL --connect-timeout 10 --max-time 60 -o "$target_path" "$fallback_url"; then
             if [[ -t 1 ]]; then stop_line_spinner; fi
             chmod +x "$target_path"
             xattr -c "$target_path" 2> /dev/null || true
-            log_success "Downloaded ${binary_name} from ${fallback_tag} (v${version} not yet published)"
+            log_success "下载ed ${binary_name} from ${fallback_tag} (v${version} not yet published)"
             return 0
         fi
         if [[ -t 1 ]]; then stop_line_spinner; fi
@@ -589,7 +589,7 @@ download_binary() {
     if build_binary_from_source "$binary_name" "$target_path"; then
         return 0
     fi
-    log_error "Failed to install ${binary_name} binary"
+    log_error "失败 to install ${binary_name} binary"
     return 1
 }
 
@@ -617,7 +617,7 @@ install_files() {
             maybe_sudo chmod +x "$INSTALL_DIR/mole.new"
             maybe_sudo mv -f "$INSTALL_DIR/mole.new" "$INSTALL_DIR/mole"
 
-            log_success "Installed mole to $INSTALL_DIR"
+            log_success "已安装 mole to $INSTALL_DIR"
         fi
     else
         log_error "mole executable not found in ${SOURCE_DIR:-unknown}"
@@ -631,7 +631,7 @@ install_files() {
             maybe_sudo cp "$SOURCE_DIR/mo" "$INSTALL_DIR/mo.new"
             maybe_sudo chmod +x "$INSTALL_DIR/mo.new"
             maybe_sudo mv -f "$INSTALL_DIR/mo.new" "$INSTALL_DIR/mo"
-            log_success "Installed mo alias"
+            log_success "已安装 mo alias"
         fi
     fi
 
@@ -647,7 +647,7 @@ install_files() {
                 for file in "$CONFIG_DIR/bin/"*; do
                     [[ -e "$file" ]] && chmod +x "$file"
                 done
-                log_success "Installed modules"
+                log_success "已安装 modules"
             fi
         fi
     fi
@@ -661,7 +661,7 @@ install_files() {
             local -a lib_files=("$SOURCE_DIR/lib"/*)
             if [[ ${#lib_files[@]} -gt 0 ]]; then
                 cp -r "${lib_files[@]}" "$CONFIG_DIR/lib/"
-                log_success "Installed libraries"
+                log_success "已安装 libraries"
             fi
         fi
     fi
@@ -745,17 +745,17 @@ print_usage_summary() {
     log_confirm "$message"
 
     echo ""
-    echo "Usage:"
+    echo "用法："
     if [[ ":$PATH:" == *":$INSTALL_DIR:"* ]]; then
-        echo "  mo                           # Interactive menu"
-        echo "  mo clean                     # Deep cleanup"
-        echo "  mo uninstall                 # Remove apps + leftovers"
-        echo "  mo optimize                  # Check and maintain system"
-        echo "  mo analyze                   # Explore disk usage"
-        echo "  mo status                    # Monitor system health"
-        echo "  mo touchid                   # Configure Touch ID for sudo"
-        echo "  mo update                    # Update to latest version"
-        echo "  mo --help                    # Show all commands"
+        echo "  mo                           # 交互式菜单"
+        echo "  mo clean                     # 深度清理"
+        echo "  mo uninstall                 # 移除应用 + 残留"
+        echo "  mo optimize                  # 检查并维护系统"
+        echo "  mo analyze                   # 探索磁盘使用情况"
+        echo "  mo status                    # 监控系统健康"
+        echo "  mo touchid                   # 配置 Touch ID 用于 sudo"
+        echo "  mo update                    # 更新到最新版本"
+        echo "  mo --help                    # 显示所有命令"
     else
         echo "  $INSTALL_DIR/mo                           # Interactive menu"
         echo "  $INSTALL_DIR/mo clean                     # Deep cleanup"
@@ -824,7 +824,7 @@ perform_update() {
         else
             log_error "Cannot update Homebrew-managed Mole without full installation"
             echo ""
-            echo "Please update via Homebrew:"
+            echo "请通过 Homebrew 更新："
             echo -e "  ${GREEN}brew upgrade mole${NC}"
             exit 1
         fi
@@ -858,17 +858,17 @@ perform_update() {
     VERBOSE=0
     create_directories || {
         VERBOSE=$old_verbose
-        log_error "Failed to create directories"
+        log_error "失败 to create directories"
         exit 1
     }
     install_files || {
         VERBOSE=$old_verbose
-        log_error "Failed to install files"
+        log_error "失败 to install files"
         exit 1
     }
     verify_installation || {
         VERBOSE=$old_verbose
-        log_error "Failed to verify installation"
+        log_error "失败 to verify installation"
         exit 1
     }
     setup_path

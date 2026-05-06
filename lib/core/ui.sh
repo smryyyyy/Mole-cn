@@ -413,34 +413,52 @@ format_last_used_summary() {
     local value="$1"
 
     case "$value" in
-        "" | "Unknown")
-            echo "Unknown"
+        "" | "未知")
+            echo "未知"
             return 0
             ;;
-        "Never" | "Recent" | "Today" | "Yesterday" | "This year" | "Old")
+        "从未" | "Recently" | "今天" | "昨天" | "今年" | "很久以前" | "Recent" | "Today" | "Yesterday" | "This year" | "Old")
             echo "$value"
             return 0
             ;;
     esac
 
+    if [[ $value =~ ^([0-9]+)[[:space:]]*[天]前$ ]]; then
+        echo "${BASH_REMATCH[1]}d前"
+        return 0
+    fi
+    if [[ $value =~ ^([0-9]+)[[:space:]]*[周]前$ ]]; then
+        echo "${BASH_REMATCH[1]}w前"
+        return 0
+    fi
+    if [[ $value =~ ^([0-9]+)[[:space:]]*个?月前$ ]]; then
+        echo "${BASH_REMATCH[1]}m前"
+        return 0
+    fi
+    if [[ $value =~ ^([0-9]+)[[:space:]]*年前$ ]]; then
+        echo "${BASH_REMATCH[1]}y前"
+        return 0
+    fi
+
+    # 兼容英文格式
     if [[ $value =~ ^([0-9]+)[[:space:]]+days?\ ago$ ]]; then
-        echo "${BASH_REMATCH[1]}d ago"
+        echo "${BASH_REMATCH[1]}d前"
         return 0
     fi
     if [[ $value =~ ^([0-9]+)[[:space:]]+weeks?\ ago$ ]]; then
-        echo "${BASH_REMATCH[1]}w ago"
+        echo "${BASH_REMATCH[1]}w前"
         return 0
     fi
     if [[ $value =~ ^([0-9]+)[[:space:]]+months?\ ago$ ]]; then
-        echo "${BASH_REMATCH[1]}m ago"
+        echo "${BASH_REMATCH[1]}m前"
         return 0
     fi
     if [[ $value =~ ^([0-9]+)[[:space:]]+month\(s\)\ ago$ ]]; then
-        echo "${BASH_REMATCH[1]}m ago"
+        echo "${BASH_REMATCH[1]}m前"
         return 0
     fi
     if [[ $value =~ ^([0-9]+)[[:space:]]+years?\ ago$ ]]; then
-        echo "${BASH_REMATCH[1]}y ago"
+        echo "${BASH_REMATCH[1]}y前"
         return 0
     fi
     echo "$value"

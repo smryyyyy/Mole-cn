@@ -127,7 +127,7 @@ perform_auto_fix() {
     # Ensure sudo access
     if ! has_sudo_session; then
         if ! ensure_sudo_session "System fixes require admin access"; then
-            echo -e "${YELLOW}Skipping auto fixes, admin authentication required${NC}"
+            echo -e "${YELLOW}正在跳过 auto fixes, admin authentication required${NC}"
             echo ""
             return 0
         fi
@@ -141,7 +141,7 @@ perform_auto_fix() {
             fixed_count=$((fixed_count + 1))
             fixed_items+=("Firewall enabled")
         else
-            echo -e "${RED}✗${NC} Failed to enable Firewall"
+            echo -e "${RED}✗${NC} 失败 to enable Firewall"
         fi
         echo ""
     fi
@@ -159,20 +159,20 @@ auth       sufficient     pam_tid.so
             fixed_count=$((fixed_count + 1))
             fixed_items+=("Touch ID configured for sudo")
         else
-            echo -e "${RED}✗${NC} Failed to configure Touch ID"
+            echo -e "${RED}✗${NC} 失败 to configure Touch ID"
         fi
         echo ""
     fi
 
     # Install Rosetta 2
     if [[ -n "${ROSETTA_NOT_INSTALLED:-}" && "${ROSETTA_NOT_INSTALLED}" == "true" ]]; then
-        echo -e "${BLUE}Installing Rosetta 2...${NC}"
-        if sudo softwareupdate --install-rosetta --agree-to-license 2>&1 | grep -qE "(Installing|Installed|already installed)"; then
+        echo -e "${BLUE}正在安装 Rosetta 2...${NC}"
+        if sudo softwareupdate --install-rosetta --agree-to-license 2>&1 | grep -qE "(正在安装|Installed|already installed)"; then
             echo -e "${GREEN}✓${NC} Rosetta 2 installed"
             fixed_count=$((fixed_count + 1))
             fixed_items+=("Rosetta 2 installed")
         else
-            echo -e "${RED}✗${NC} Failed to install Rosetta 2"
+            echo -e "${RED}✗${NC} 失败 to install Rosetta 2"
         fi
         echo ""
     fi

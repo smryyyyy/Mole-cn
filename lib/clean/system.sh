@@ -44,7 +44,7 @@ gpu_cache_dir_is_stale() {
 clean_deep_system() {
     stop_section_spinner
     local cache_cleaned=0
-    start_section_spinner "Cleaning system caches..."
+    start_section_spinner "正在清理 system caches..."
     # Optimized: Single pass for /Library/Caches (3 patterns in 1 scan)
     if sudo test -d "/Library/Caches" 2> /dev/null; then
         while IFS= read -r -d '' file; do
@@ -62,7 +62,7 @@ clean_deep_system() {
     fi
     stop_section_spinner
     [[ $cache_cleaned -eq 1 ]] && log_success "System caches"
-    start_section_spinner "Cleaning system temporary files..."
+    start_section_spinner "正在清理 system temporary files..."
     local tmp_cleaned=0
     local -a sys_temp_dirs=("/private/tmp" "/private/var/tmp")
     for tmp_dir in "${sys_temp_dirs[@]}"; do
@@ -74,13 +74,13 @@ clean_deep_system() {
     done
     stop_section_spinner
     [[ $tmp_cleaned -eq 1 ]] && log_success "System temp files"
-    start_section_spinner "Cleaning system crash reports..."
+    start_section_spinner "正在清理 system crash reports..."
     if sudo find "/Library/Logs/DiagnosticReports" -maxdepth 1 -type f -mtime "+$MOLE_CRASH_REPORT_AGE_DAYS" -print -quit 2> /dev/null | grep -q .; then
         safe_sudo_find_delete "/Library/Logs/DiagnosticReports" "*" "$MOLE_CRASH_REPORT_AGE_DAYS" "f" || true
     fi
     stop_section_spinner
     log_success "System crash reports"
-    start_section_spinner "Cleaning system logs..."
+    start_section_spinner "正在清理 system logs..."
     if sudo find "/private/var/log" -maxdepth 3 -type f \( -name "*.log" -o -name "*.gz" -o -name "*.asl" \) -mtime "+$MOLE_LOG_AGE_DAYS" -print -quit 2> /dev/null | grep -q .; then
         safe_sudo_find_delete "/private/var/log" "*.log" "$MOLE_LOG_AGE_DAYS" "f" || true
         safe_sudo_find_delete "/private/var/log" "*.gz" "$MOLE_LOG_AGE_DAYS" "f" || true
@@ -88,7 +88,7 @@ clean_deep_system() {
     fi
     stop_section_spinner
     log_success "System logs"
-    start_section_spinner "Cleaning third-party system logs..."
+    start_section_spinner "正在清理 third-party system logs..."
     local -a third_party_log_dirs=(
         "/Library/Logs/Adobe"
         "/Library/Logs/CreativeCloud"
@@ -111,12 +111,12 @@ clean_deep_system() {
     fi
     stop_section_spinner
     [[ $third_party_logs_cleaned -eq 1 ]] && log_success "Third-party system logs"
-    start_section_spinner "Scanning system library updates..."
+    start_section_spinner "正在扫描 system library updates..."
     if [[ -d "/Library/Updates" && ! -L "/Library/Updates" ]]; then
         local updates_cleaned=0
         while IFS= read -r -d '' item; do
             if [[ -z "$item" ]] || [[ ! "$item" =~ ^/Library/Updates/[^/]+$ ]]; then
-                debug_log "Skipping malformed path: $item"
+                debug_log "正在跳过 malformed path: $item"
                 continue
             fi
             local item_flags
@@ -133,7 +133,7 @@ clean_deep_system() {
     else
         stop_section_spinner
     fi
-    start_section_spinner "Scanning macOS installer files..."
+    start_section_spinner "正在扫描 macOS installer files..."
     if [[ -d "/macOS Install Data" ]]; then
         local mtime
         mtime=$(get_file_mtime "/macOS Install Data")
@@ -145,7 +145,7 @@ clean_deep_system() {
             if [[ -n "$size_kb" && "$size_kb" -gt 0 ]]; then
                 local size_human
                 size_human=$(bytes_to_human "$((size_kb * 1024))")
-                debug_log "Cleaning macOS Install Data: $size_human, ${age_days} days old"
+                debug_log "正在清理 macOS Install Data: $size_human, ${age_days} days old"
                 if safe_sudo_remove "/macOS Install Data"; then
                     log_success "macOS Install Data, $size_human"
                 fi
@@ -159,23 +159,23 @@ clean_deep_system() {
     # and not matching the currently installed macOS version (recovery safety).
     local installer_cleaned=0
     local current_macos_version=""
-    current_macos_version=$(sw_vers -productVersion 2> /dev/null | cut -d. -f1 || true)
+    current_macos_version=$(sw_vers -product版本 2> /dev/null | cut -d. -f1 || true)
     for installer_app in /Applications/Install\ macOS*.app; do
         [[ -d "$installer_app" ]] || continue
         local app_name
         app_name=$(basename "$installer_app")
         # Skip if installer is currently running
         if pgrep -f "$installer_app" > /dev/null 2>&1; then
-            debug_log "Skipping $app_name: currently running"
+            debug_log "正在跳过 $app_name: currently running"
             continue
         fi
         # Skip if this installer matches the current macOS major version.
         # Users may need it for recovery or reinstallation.
         if [[ -n "$current_macos_version" ]]; then
-            local installer_plist="$installer_app/Contents/Info.plist"
+            local installer_plist="$installer_app/Contents/信息.plist"
             if [[ -f "$installer_plist" ]]; then
                 local installer_version=""
-                installer_version=$(/usr/libexec/PlistBuddy -c "Print :DTPlatformVersion" "$installer_plist" 2> /dev/null | cut -d. -f1 || true)
+                installer_version=$(/usr/libexec/PlistBuddy -c "Print :DTPlatform版本" "$installer_plist" 2> /dev/null | cut -d. -f1 || true)
                 if [[ -n "$installer_version" && "$installer_version" == *"$current_macos_version"* ]]; then
                     debug_log "Keeping $app_name: matches current macOS version ($current_macos_version)"
                     continue
@@ -195,7 +195,7 @@ clean_deep_system() {
         if [[ -n "$size_kb" && "$size_kb" -gt 0 ]]; then
             local size_human
             size_human=$(bytes_to_human "$((size_kb * 1024))")
-            debug_log "Cleaning macOS installer: $app_name, $size_human, ${age_days} days old"
+            debug_log "正在清理 macOS installer: $app_name, $size_human, ${age_days} days old"
             if safe_sudo_remove "$installer_app"; then
                 log_success "$app_name, $size_human"
                 installer_cleaned=$((installer_cleaned + 1))
@@ -204,7 +204,7 @@ clean_deep_system() {
     done
     stop_section_spinner
     [[ $installer_cleaned -gt 0 ]] && debug_log "Cleaned $installer_cleaned macOS installer(s)"
-    start_section_spinner "Scanning browser code signature caches..."
+    start_section_spinner "正在扫描 browser code signature caches..."
     local code_sign_cleaned=0
     while IFS= read -r -d '' cache_dir; do
         if safe_sudo_remove "$cache_dir"; then
@@ -214,7 +214,7 @@ clean_deep_system() {
     stop_section_spinner
     [[ $code_sign_cleaned -gt 0 ]] && log_success "Browser code signature caches, $code_sign_cleaned items"
 
-    start_section_spinner "Cleaning rebuildable system service caches..."
+    start_section_spinner "正在清理 rebuildable system service caches..."
     local rebuildable_cache_cleaned=0
     local -a rebuildable_cache_dirs=(
         "/Library/Caches/com.apple.iconservices.store"
@@ -234,7 +234,7 @@ clean_deep_system() {
         log_success "Rebuildable system caches, $rebuildable_cache_cleaned $rebuildable_cache_label"
     fi
 
-    start_section_spinner "Scanning accessible rebuildable GPU caches..."
+    start_section_spinner "正在扫描 accessible rebuildable GPU caches..."
     local gpu_cache_cleaned=0
     local gpu_cache_dir=""
     while IFS= read -r -d '' gpu_cache_dir; do
@@ -256,18 +256,18 @@ clean_deep_system() {
     fi
 
     local diag_base="/private/var/db/diagnostics"
-    start_section_spinner "Cleaning system diagnostic logs..."
+    start_section_spinner "正在清理 system diagnostic logs..."
     safe_sudo_find_delete "$diag_base" "*" "$MOLE_LOG_AGE_DAYS" "f" || true
     safe_sudo_find_delete "$diag_base" "*.tracev3" "30" "f" || true
     safe_sudo_find_delete "/private/var/db/DiagnosticPipeline" "*" "$MOLE_LOG_AGE_DAYS" "f" || true
     stop_section_spinner
     log_success "System diagnostic logs"
 
-    start_section_spinner "Cleaning power logs..."
+    start_section_spinner "正在清理 power logs..."
     safe_sudo_find_delete "/private/var/db/powerlog" "*" "$MOLE_LOG_AGE_DAYS" "f" || true
     stop_section_spinner
     log_success "Power logs"
-    start_section_spinner "Cleaning memory exception reports..."
+    start_section_spinner "正在清理 memory exception reports..."
     local mem_reports_dir="/private/var/db/reportmemoryexception/MemoryLimitViolations"
     local mem_cleaned=0
     if sudo test -d "$mem_reports_dir" 2> /dev/null; then
@@ -316,7 +316,7 @@ clean_time_machine_failed_backups() {
         echo -e "  ${GREEN}${ICON_SUCCESS}${NC} No incomplete backups found"
         return 0
     fi
-    start_section_spinner "Checking Time Machine configuration..."
+    start_section_spinner "正在检查 Time Machine configuration..."
     local spinner_active=true
     local tm_info
     tm_info=$(run_with_timeout 2 tmutil destinationinfo 2>&1 || echo "failed")
@@ -342,7 +342,7 @@ clean_time_machine_failed_backups() {
         return 0
     fi
     if [[ "$spinner_active" == "true" ]]; then
-        start_section_spinner "Checking backup volumes..."
+        start_section_spinner "正在检查 backup volumes..."
     fi
     # Fast pre-scan for backup volumes to avoid slow tmutil checks.
     local -a backup_volumes=()
@@ -362,7 +362,7 @@ clean_time_machine_failed_backups() {
         return 0
     fi
     if [[ "$spinner_active" == "true" ]]; then
-        start_section_spinner "Scanning backup volumes..."
+        start_section_spinner "正在扫描 backup volumes..."
     fi
     for volume in "${backup_volumes[@]}"; do
         local fs_type
@@ -506,7 +506,7 @@ clean_local_snapshots() {
         return 0
     fi
 
-    start_section_spinner "Checking Time Machine status..."
+    start_section_spinner "正在检查 Time Machine status..."
     local rc_running=0
     tm_is_running || rc_running=$?
 
@@ -522,7 +522,7 @@ clean_local_snapshots() {
         return 0
     fi
 
-    start_section_spinner "Checking local snapshots..."
+    start_section_spinner "正在检查 local snapshots..."
     local snapshot_list
     snapshot_list=$(run_with_timeout 3 tmutil listlocalsnapshots / 2> /dev/null || true)
     stop_section_spinner

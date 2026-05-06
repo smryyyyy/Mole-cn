@@ -463,7 +463,7 @@ readonly DATA_PROTECTED_BUNDLES=(
     "com.alibaba.DingTalkMac"
     "com.alibaba.AliLang.osx"
     "com.alibaba.alilang3.osx.ShipIt"
-    "com.alibaba.AlilangMgr.QueryNetworkInfo"
+    "com.alibaba.AlilangMgr.QueryNetwork信息"
     "us.zoom.xos"
     "com.microsoft.teams*"
     "com.slack.Slack"
@@ -852,7 +852,7 @@ should_protect_path() {
             return 0
             ;;
         # CoreAudio and audio subsystem caches (issue #553)
-        # Cleaning these can cause audio output loss on Intel Macs
+        # 正在清理 these can cause audio output loss on Intel Macs
         *com.apple.coreaudio* | *com.apple.audio.* | *coreaudiod*)
             return 0
             ;;
@@ -967,7 +967,7 @@ _mole_uninstall_is_common_app_name() {
     local lower_name
     lower_name=$(_mole_uninstall_lower "${1:-}")
     case "$lower_name" in
-        music | notes | photos | finder | safari | preview | calendar | contacts | messages | \
+        music | notes | photos | finder | safari | 预览 | calendar | contacts | messages | \
             reminders | clock | weather | stocks | books | news | podcasts | voice | files | \
             store | system | helper | agent | daemon | service | update | sync | backup | \
             cloud | manager | monitor | server | client | worker | runner | launcher | \
@@ -1150,7 +1150,7 @@ find_app_files() {
         "$HOME/Library/Input Methods/$bundle_id.app"
         "$HOME/Library/Screen Savers/$app_name.saver"
         "$HOME/Library/Frameworks/$app_name.framework"
-        "$HOME/Library/Autosave Information/$bundle_id"
+        "$HOME/Library/Autosave 信息rmation/$bundle_id"
         "$HOME/Library/Contextual Menu Items/$app_name.plugin"
         "$HOME/Library/Spotlight/$app_name.mdimporter"
         "$HOME/Library/ColorPickers/$app_name.colorPicker"
@@ -1221,7 +1221,7 @@ find_app_files() {
                 */Library/WebKit | */Library/WebKit/ | \
                 */Library/HTTPStorages | */Library/HTTPStorages/ | \
                 */Library/Application\ Scripts | */Library/Application\ Scripts/ | \
-                */Library/Autosave\ Information | */Library/Autosave\ Information/ | \
+                */Library/Autosave\ 信息rmation | */Library/Autosave\ 信息rmation/ | \
                 */Library/Group\ Containers | */Library/Group\ Containers/)
                 continue
                 ;;
@@ -1312,7 +1312,7 @@ find_app_files() {
         # These are either generic terms or names that overlap with system/common utilities
         local common_words="Music|Notes|Photos|Finder|Safari|Preview|Calendar|Contacts|Messages|Reminders|Clock|Weather|Stocks|Books|News|Podcasts|Voice|Files|Store|System|Helper|Agent|Daemon|Service|Update|Sync|Backup|Cloud|Manager|Monitor|Server|Client|Worker|Runner|Launcher|Driver|Plugin|Extension|Widget|Utility"
         if [[ "$app_name" =~ ^($common_words)$ ]]; then
-            debug_log "Skipping LaunchAgent name search for common word: $app_name"
+            debug_log "正在跳过 LaunchAgent name search for common word: $app_name"
         else
             while IFS= read -r -d '' plist; do
                 local plist_name=$(basename "$plist")
@@ -1420,10 +1420,10 @@ get_diagnostic_report_paths_for_app() {
     [[ -z "$app_path" || -z "$app_name" || -z "$directory" ]] && return 0
     [[ ! -d "$directory" ]] && return 0
 
-    if [[ -f "$app_path/Contents/Info.plist" ]]; then
-        exec_name=$(defaults read "$app_path/Contents/Info.plist" CFBundleExecutable 2> /dev/null || echo "")
+    if [[ -f "$app_path/Contents/信息.plist" ]]; then
+        exec_name=$(defaults read "$app_path/Contents/信息.plist" CFBundleExecutable 2> /dev/null || echo "")
         if [[ -z "$exec_name" ]]; then
-            exec_name=$(grep -A1 "CFBundleExecutable" "$app_path/Contents/Info.plist" 2> /dev/null | grep "<string>" | sed -n 's/.*<string>\([^<]*\)<\/string>.*/\1/p' | head -1)
+            exec_name=$(grep -A1 "CFBundleExecutable" "$app_path/Contents/信息.plist" 2> /dev/null | grep "<string>" | sed -n 's/.*<string>\([^<]*\)<\/string>.*/\1/p' | head -1)
         fi
     fi
     prefix="${exec_name:-$nospace_name}"
@@ -1717,8 +1717,8 @@ force_kill_app() {
 
     # Get the executable name from bundle if app_path is provided
     local exec_name=""
-    if [[ -n "$app_path" && -e "$app_path/Contents/Info.plist" ]]; then
-        exec_name=$(defaults read "$app_path/Contents/Info.plist" CFBundleExecutable 2> /dev/null || echo "")
+    if [[ -n "$app_path" && -e "$app_path/Contents/信息.plist" ]]; then
+        exec_name=$(defaults read "$app_path/Contents/信息.plist" CFBundleExecutable 2> /dev/null || echo "")
     fi
 
     # Use executable name for precise matching, fallback to app name
