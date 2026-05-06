@@ -12,9 +12,9 @@ source "$SCRIPT_DIR/lib/core/commands.sh"
 
 trap cleanup_temp_files EXIT INT TERM
 
-# Version and update helpers
+# 版本 and update helpers
 VERSION="1.37.0"
-MOLE_TAGLINE="Deep clean and optimize your Mac."
+MOLE_TAGLINE="深度清理并优化你的 Mac。"
 
 is_touchid_configured() {
     grep -q "pam_tid.so" /etc/pam.d/sudo /etc/pam.d/sudo_local 2> /dev/null
@@ -129,7 +129,7 @@ is_homebrew_mole_path() {
     return 1
 }
 
-# Install detection (Homebrew vs manual).
+# 安装方式 detection (Homebrew vs manual).
 # Default path checks only the active script, keeping source-tree commands fast.
 # Pass --include-path when update/remove flows intentionally need to inspect
 # an installed `mole` found through PATH.
@@ -204,13 +204,13 @@ check_for_updates() {
             channel=$(get_install_channel)
 
             if [[ "$channel" == "nightly" ]]; then
-                # Nightly: compare commit hashes instead of version numbers
+                # 夜间版: compare commit hashes instead of version numbers
                 local installed_commit latest_commit
                 installed_commit=$(get_install_commit)
                 latest_commit=$(get_latest_commit_from_github)
 
                 if [[ -n "$installed_commit" && -n "$latest_commit" && "${installed_commit:0:7}" != "${latest_commit:0:7}" ]]; then
-                    printf "\nNew nightly commit %s available, run %smo update --nightly%s\n\n" "${latest_commit:0:7}" "$GREEN" "$NC" > "$msg_cache"
+                    printf "\n有新的夜间构建版本 %s 可用，运行 %smo update --nightly%s\n\n" "${latest_commit:0:7}" "$GREEN" "$NC" > "$msg_cache"
                 else
                     echo -n > "$msg_cache"
                 fi
@@ -228,12 +228,12 @@ check_for_updates() {
                         local brew_latest
                         brew_latest=$(get_homebrew_latest_version || true)
                         if [[ -n "$brew_latest" && "$brew_latest" != "$VERSION" && "$(printf '%s\n' "$VERSION" "$brew_latest" | sort -V | head -1)" == "$VERSION" ]]; then
-                            printf "\nUpdate %s available, run %smo update%s\n\n" "$brew_latest" "$GREEN" "$NC" > "$msg_cache"
+                            printf "\n有更新 %s 可用，运行 %smo update%s\n\n" "$brew_latest" "$GREEN" "$NC" > "$msg_cache"
                         else
                             echo -n > "$msg_cache"
                         fi
                     else
-                        printf "\nUpdate %s available, run %smo update%s\n\n" "$latest" "$GREEN" "$NC" > "$msg_cache"
+                        printf "\n有更新 %s 可用，运行 %smo update%s\n\n" "$latest" "$GREEN" "$NC" > "$msg_cache"
                     fi
                 else
                     echo -n > "$msg_cache"
@@ -288,7 +288,7 @@ show_version() {
     local disk_free
     disk_free=$(df -h / 2> /dev/null | awk 'NR==2 {print $4}' || echo "Unknown")
 
-    local install_method="Manual"
+    local install_method="手动安装"
     if is_homebrew_install; then
         install_method="Homebrew"
     fi
@@ -301,9 +301,9 @@ show_version() {
         local commit
         commit=$(get_install_commit)
         if [[ -n "$commit" ]]; then
-            printf 'Channel: Nightly (%s)\n' "$commit"
+            printf '渠道： 夜间版 (%s)\n' "$commit"
         else
-            printf 'Channel: Nightly\n'
+            printf '渠道： 夜间版\n'
         fi
     fi
     printf 'macOS: %s\n' "$os_ver"
@@ -311,16 +311,16 @@ show_version() {
     printf 'Kernel: %s\n' "$kernel"
     printf 'SIP: %s\n' "$sip_status"
     printf 'Disk Free: %s\n' "$disk_free"
-    printf 'Install: %s\n' "$install_method"
-    printf 'Shell: %s\n\n' "${SHELL:-Unknown}"
+    printf '安装方式: %s\n' "$install_method"
+    printf 'Shell： %s\n\n' "${SHELL:-Unknown}"
 }
 
 show_help() {
     show_brand_banner
     echo
-    printf "%s%s%s\n" "$BLUE" "COMMANDS" "$NC"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo" "$NC" "Main menu"
-    for entry in "${MOLE_COMMANDS[@]}"; do
+    printf "%s%s%s\n" "$BLUE" "命令" "$NC"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo" "$NC" "主菜单"
+    for entry in "${MOLE_命令[@]}"; do
         local name="${entry%%:*}"
         local desc="${entry#*:}"
         local display="mo $name"
@@ -329,24 +329,24 @@ show_help() {
         printf "  %s%-28s%s %s\n" "$GREEN" "$display" "$NC" "$desc"
     done
     echo
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo clean --dry-run" "$NC" "Preview cleanup"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo clean --whitelist" "$NC" "Manage protected caches"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo clean --dry-run" "$NC" "预览清理"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo clean --whitelist" "$NC" "管理受保护缓存"
 
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo optimize --dry-run" "$NC" "Preview optimization"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo optimize --whitelist" "$NC" "Manage protected items"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo uninstall --dry-run" "$NC" "Preview app uninstall"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo purge --dry-run" "$NC" "Preview project purge"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo installer --dry-run" "$NC" "Preview installer cleanup"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo touchid enable --dry-run" "$NC" "Preview Touch ID setup"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo completion --dry-run" "$NC" "Preview shell completion edits"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo purge --paths" "$NC" "Configure scan directories"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo analyze /Volumes" "$NC" "Analyze external drives only"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo update --force" "$NC" "Force reinstall latest stable version"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo update --nightly" "$NC" "Install latest unreleased main branch build"
-    printf "  %s%-28s%s %s\n" "$GREEN" "mo remove --dry-run" "$NC" "Preview Mole removal"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo optimize --dry-run" "$NC" "预览优化"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo optimize --whitelist" "$NC" "管理受保护项目"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo uninstall --dry-run" "$NC" "预览应用卸载"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo purge --dry-run" "$NC" "预览项目清理"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo installer --dry-run" "$NC" "预览安装程序清理"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo touchid enable --dry-run" "$NC" "预览 Touch ID 设置"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo completion --dry-run" "$NC" "预览 Shell 补全编辑"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo purge --paths" "$NC" "配置扫描目录"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo analyze /Volumes" "$NC" "仅分析外部驱动器"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo update --force" "$NC" "强制重新安装最新稳定版"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo update --nightly" "$NC" "安装最新未发布的主分支构建"
+    printf "  %s%-28s%s %s\n" "$GREEN" "mo remove --dry-run" "$NC" "预览 Mole 移除"
     echo
-    printf "%s%s%s\n" "$BLUE" "OPTIONS" "$NC"
-    printf "  %s%-28s%s %s\n" "$GREEN" "--debug" "$NC" "Show detailed operation logs"
+    printf "%s%s%s\n" "$BLUE" "选项" "$NC"
+    printf "  %s%-28s%s %s\n" "$GREEN" "--debug" "$NC" "显示详细操作日志"
     echo
 }
 
@@ -366,8 +366,8 @@ update_mole() {
     if is_homebrew_install --include-path; then
         if [[ "$nightly_update" == "true" ]]; then
             local review_icon="${ICON_REVIEW:-☞}"
-            log_error "Nightly update is only available for script installations. Homebrew installs follow stable releases."
-            printf '%s Reinstall via script to use: mo update --nightly\n' "$review_icon"
+            log_error "夜间更新仅适用于脚本安装方式。 Homebrew 安装跟随稳定版发布。"
+            printf '%s 通过脚本重新安装以使用：mo update --nightly\n' "$review_icon"
             exit 1
         fi
         update_via_homebrew "$VERSION"
@@ -376,13 +376,13 @@ update_mole() {
 
     local latest=""
     local download_label="Downloading latest version..."
-    local install_label="Installing update..."
+    local install_label="安装方式ing update..."
     local final_success_label="latest version"
 
     if [[ "$nightly_update" == "true" ]]; then
         latest="main"
         download_label="Downloading nightly installer..."
-        install_label="Installing nightly update..."
+        install_label="安装方式ing nightly update..."
         final_success_label="nightly build (main)"
     else
         latest=$(get_latest_version_from_github)
@@ -412,7 +412,7 @@ update_mole() {
     local installer_url="https://raw.githubusercontent.com/tw93/mole/main/install.sh"
     local tmp_installer
     tmp_installer="$(mktemp_file)" || {
-        log_error "Update failed"
+        log_error "更新失败"
         exit 1
     }
 
@@ -422,7 +422,7 @@ update_mole() {
             local curl_exit=$?
             if [[ -t 1 ]]; then stop_inline_spinner; fi
             rm -f "$tmp_installer"
-            log_error "Update failed, curl error: $curl_exit"
+            log_error "更新失败, curl error: $curl_exit"
 
             case $curl_exit in
                 6) echo -e "${ICON_REVIEW} Could not resolve host. Check DNS or network connection." ;;
@@ -438,7 +438,7 @@ update_mole() {
         download_error=$(wget --timeout=10 --tries=3 -qO "$tmp_installer" "$installer_url" 2>&1) || {
             if [[ -t 1 ]]; then stop_inline_spinner; fi
             rm -f "$tmp_installer"
-            log_error "Update failed, wget error"
+            log_error "更新失败, wget error"
             echo -e "${ICON_REVIEW} Check network connection and try again."
             echo -e "${ICON_REVIEW} URL: $installer_url"
             exit 1
@@ -447,7 +447,7 @@ update_mole() {
         if [[ -t 1 ]]; then stop_inline_spinner; fi
         rm -f "$tmp_installer"
         log_error "curl or wget required"
-        echo -e "${ICON_REVIEW} Install curl with: ${GRAY}brew install curl${NC}"
+        echo -e "${ICON_REVIEW} 安装方式 curl with: ${GRAY}brew install curl${NC}"
         exit 1
     fi
 
@@ -467,8 +467,8 @@ update_mole() {
     fi
 
     if [[ "$requires_sudo" == "true" ]]; then
-        if ! request_sudo_access "Mole update requires admin access"; then
-            log_error "Update aborted, admin access denied"
+        if ! request_sudo_access "Mole 更新需要管理员权限"; then
+            log_error "更新已中止，管理员权限被拒绝"
             rm -f "$tmp_installer"
             exit 1
         fi
@@ -526,7 +526,7 @@ update_mole() {
             if [[ -t 1 ]]; then stop_inline_spinner; fi
             rm -f "$tmp_installer"
             _update_cleanup
-            log_error "Nightly update failed"
+            log_error "夜间版 update failed"
             echo "$install_output" | tail -10 >&2 # Show last 10 lines of error
             exit 1
         fi
@@ -537,7 +537,7 @@ update_mole() {
             if [[ -t 1 ]]; then stop_inline_spinner; fi
             rm -f "$tmp_installer"
             _update_cleanup
-            log_error "Update failed"
+            log_error "更新失败"
             echo "$install_output" | tail -10 >&2 # Show last 10 lines of error
             exit 1
         fi
@@ -551,7 +551,7 @@ update_mole() {
                 if [[ -t 1 ]]; then stop_inline_spinner; fi
                 rm -f "$tmp_installer"
                 _update_cleanup
-                log_error "Update failed"
+                log_error "更新失败"
                 echo "$install_output" | tail -10 >&2 # Show last 10 lines of error
                 exit 1
             fi
@@ -575,9 +575,9 @@ remove_mole() {
     fi
 
     if [[ -t 1 ]]; then
-        start_inline_spinner "Detecting Mole installations..."
+        start_inline_spinner "正在检测 Mole 安装..."
     else
-        echo "Detecting installations..."
+        echo "正在检测安装..."
     fi
 
     local is_homebrew=false
@@ -675,7 +675,7 @@ remove_mole() {
     local manual_count=${#manual_installs[@]}
     local alias_count=${#alias_installs[@]}
     if [[ "$is_homebrew" == "false" && ${manual_count:-0} -eq 0 && ${alias_count:-0} -eq 0 ]]; then
-        printf '%s\n\n' "${YELLOW}No Mole installation detected${NC}"
+        printf '%s\n\n' "${YELLOW}未检测到 Mole 安装${NC}"
         exit 0
     fi
 
@@ -683,29 +683,29 @@ remove_mole() {
     if [[ "$dry_run_mode" == "true" ]]; then
         echo -e "${YELLOW}${ICON_DRY_RUN} DRY RUN MODE${NC}, no files will be removed"
         echo ""
-        echo -e "${YELLOW}Remove Mole${NC}, would delete the following:"
+        echo -e "${YELLOW}移除 Mole${NC}, 将删除以下内容:"
         if [[ "$is_homebrew" == "true" ]]; then
-            echo -e "  ${GRAY}${ICON_LIST} Would run: brew uninstall --force mole${NC}"
+            echo -e "  ${GRAY}${ICON_LIST} 将运行： brew uninstall --force mole${NC}"
         fi
         if [[ ${manual_count:-0} -gt 0 ]]; then
             for install in "${manual_installs[@]}"; do
-                [[ -f "$install" ]] && echo -e "  ${GRAY}${ICON_LIST} Would remove: ${install}${NC}"
+                [[ -f "$install" ]] && echo -e "  ${GRAY}${ICON_LIST} 将移除： ${install}${NC}"
             done
         fi
         if [[ ${alias_count:-0} -gt 0 ]]; then
             for alias in "${alias_installs[@]}"; do
-                [[ -f "$alias" ]] && echo -e "  ${GRAY}${ICON_LIST} Would remove: ${alias}${NC}"
+                [[ -f "$alias" ]] && echo -e "  ${GRAY}${ICON_LIST} 将移除： ${alias}${NC}"
             done
         fi
-        [[ -d "$HOME/.cache/mole" ]] && echo -e "  ${GRAY}${ICON_LIST} Would remove: $HOME/.cache/mole${NC}"
-        [[ -d "$HOME/.config/mole" ]] && echo -e "  ${GRAY}${ICON_LIST} Would remove: $HOME/.config/mole${NC}"
-        [[ -d "$HOME/Library/Logs/mole" ]] && echo -e "  ${GRAY}${ICON_LIST} Would remove: $HOME/Library/Logs/mole${NC}"
+        [[ -d "$HOME/.cache/mole" ]] && echo -e "  ${GRAY}${ICON_LIST} 将移除： $HOME/.cache/mole${NC}"
+        [[ -d "$HOME/.config/mole" ]] && echo -e "  ${GRAY}${ICON_LIST} 将移除： $HOME/.config/mole${NC}"
+        [[ -d "$HOME/Library/Logs/mole" ]] && echo -e "  ${GRAY}${ICON_LIST} 将移除： $HOME/Library/Logs/mole${NC}"
 
-        printf '\n%s\n\n' "${GREEN}${ICON_SUCCESS}${NC} Dry run complete, no changes made"
+        printf '\n%s\n\n' "${GREEN}${ICON_SUCCESS}${NC} 预览完成，未做任何更改"
         exit 0
     fi
 
-    echo -e "${YELLOW}Remove Mole${NC}, will delete the following:"
+    echo -e "${YELLOW}移除 Mole${NC}, 将删除以下内容:"
     if [[ "$is_homebrew" == "true" ]]; then
         echo "  ${ICON_LIST} Mole via Homebrew"
     fi
@@ -735,7 +735,7 @@ remove_mole() {
     if [[ "$is_homebrew" == "true" ]]; then
         if [[ -z "$brew_cmd" ]]; then
             log_error "Homebrew command not found. Please ensure Homebrew is installed and in your PATH."
-            log_warning "Manual step: brew uninstall --force mole"
+            log_warning "手动安装 step: brew uninstall --force mole"
             exit 1
         fi
 
@@ -745,7 +745,7 @@ remove_mole() {
             has_error=true
             log_error "Homebrew uninstallation failed:"
             printf "%s\n" "$brew_uninstall_output" | sed "s/^/${RED}  | ${NC}/" >&2
-            log_warning "Manual step: ${YELLOW}brew uninstall --force mole${NC}"
+            log_warning "手动安装 step: ${YELLOW}brew uninstall --force mole${NC}"
             echo "" # Add a blank line for readability
         else
             log_success "Mole uninstalled via Homebrew."
@@ -793,9 +793,9 @@ remove_mole() {
 
     local final_message
     if [[ "$has_error" == "true" ]]; then
-        final_message="${YELLOW}${ICON_ERROR} Mole uninstalled with some errors, thank you for using Mole!${NC}"
+        final_message="${YELLOW}${ICON_ERROR} Mole 卸载完成，但出现了一些错误, 感谢使用 Mole！${NC}"
     else
-        final_message="${GREEN}${ICON_SUCCESS} Mole uninstalled successfully, thank you for using Mole!${NC}"
+        final_message="${GREEN}${ICON_SUCCESS} Mole 卸载成功, 感谢使用 Mole！${NC}"
     fi
     printf '\n%s\n\n' "$final_message"
 
@@ -831,15 +831,15 @@ show_main_menu() {
 
     printf '\r\033[2K\n'
 
-    printf '\r\033[2K%s\n' "$(show_menu_option 1 "Clean        Free up disk space" "$([[ $selected -eq 1 ]] && echo true || echo false)")"
-    printf '\r\033[2K%s\n' "$(show_menu_option 2 "Uninstall    Remove apps completely" "$([[ $selected -eq 2 ]] && echo true || echo false)")"
-    printf '\r\033[2K%s\n' "$(show_menu_option 3 "Optimize     Check and maintain system" "$([[ $selected -eq 3 ]] && echo true || echo false)")"
-    printf '\r\033[2K%s\n' "$(show_menu_option 4 "Analyze      Explore disk usage" "$([[ $selected -eq 4 ]] && echo true || echo false)")"
-    printf '\r\033[2K%s\n' "$(show_menu_option 5 "Status       Monitor system health" "$([[ $selected -eq 5 ]] && echo true || echo false)")"
+    printf '\r\033[2K%s\n' "$(show_menu_option 1 "清理        释放磁盘空间" "$([[ $selected -eq 1 ]] && echo true || echo false)")"
+    printf '\r\033[2K%s\n' "$(show_menu_option 2 "卸载        彻底移除应用" "$([[ $selected -eq 2 ]] && echo true || echo false)")"
+    printf '\r\033[2K%s\n' "$(show_menu_option 3 "优化        检查并维护系统" "$([[ $selected -eq 3 ]] && echo true || echo false)")"
+    printf '\r\033[2K%s\n' "$(show_menu_option 4 "分析        探索磁盘使用情况" "$([[ $selected -eq 4 ]] && echo true || echo false)")"
+    printf '\r\033[2K%s\n' "$(show_menu_option 5 "状态        监控系统健康" "$([[ $selected -eq 5 ]] && echo true || echo false)")"
 
     if [[ -t 0 ]]; then
         printf '\r\033[2K\n'
-        local controls="${GRAY}↑↓  |  Enter  |  M More  |  V Version"
+        local controls="${GRAY}↑↓  |  Enter  |  M More  |  V 版本"
         if ! is_touchid_configured; then
             controls="${controls}  |  T TouchID"
         elif [[ "${MAIN_MENU_SHOW_UPDATE:-false}" == "true" ]]; then
@@ -1004,8 +1004,8 @@ main() {
                     --force | -f) force_update=true ;;
                     --nightly) nightly_update=true ;;
                     *)
-                        echo "Unknown update option: $arg"
-                        echo "Use 'mole update [--force] [--nightly]' for supported options."
+                        echo "未知的更新选项：$arg"
+                        echo "使用 'mole update [--force] [--nightly]' 查看支持的选项。"
                         exit 1
                         ;;
                 esac
@@ -1019,8 +1019,8 @@ main() {
                 case "$arg" in
                     "--dry-run" | "-n") dry_run_remove=true ;;
                     *)
-                        echo "Unknown remove option: $arg"
-                        echo "Use 'mole remove [--dry-run]' for supported options."
+                        echo "未知的移除选项：$arg"
+                        echo "使用 'mole remove [--dry-run]' 查看支持的选项。"
                         exit 1
                         ;;
                 esac
@@ -1040,8 +1040,8 @@ main() {
             interactive_main_menu
             ;;
         *)
-            echo "Unknown command: ${args[0]}"
-            echo "Use 'mole --help' for usage information."
+            echo "未知命令：${args[0]}"
+            echo "使用 'mole --help' 查看用法信息。"
             exit 1
             ;;
     esac

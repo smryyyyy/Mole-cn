@@ -355,7 +355,7 @@ func (c *Collector) Collect() (MetricsSnapshot, error) {
 	return MetricsSnapshot{
 		CollectedAt:    now,
 		Host:           hostInfo.Hostname,
-		平台：       fmt.Sprintf("%s %s", hostInfo.Platform, hostInfo.PlatformVersion),
+		Platform:       fmt.Sprintf("%s %s", hostInfo.Platform, hostInfo.PlatformVersion),
 		Uptime:         formatUptime(hostInfo.Uptime),
 		UptimeSeconds:  hostInfo.Uptime,
 		Procs:          hostInfo.Procs,
