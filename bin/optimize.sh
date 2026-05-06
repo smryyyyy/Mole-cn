@@ -187,7 +187,7 @@ show_optimization_summary() {
             fi
             summary_details+=("$summary_line3")
         fi
-        summary_details+=("System fully optimized")
+        summary_details+=("系统 fully optimized")
     fi
 
     print_summary_block "$summary_title" "${summary_details[@]}"
@@ -210,7 +210,7 @@ show_system_health() {
     disk_percent=${disk_percent:-0}
     uptime=${uptime:-0}
 
-    printf "${ICON_ADMIN} System  %.0f/%.0f GB RAM | %.0f/%.0f GB Disk | Uptime %.0fd\n" \
+    printf "${ICON_ADMIN} 系统  %.0f/%.0f GB 内存 | %.0f/%.0f GB 磁盘 | 运行时间 %.0fd\n" \
         "$mem_used" "$mem_total" "$disk_used" "$disk_total" "$uptime"
 }
 
@@ -284,7 +284,7 @@ cleanup_path() {
         fi
     else
         echo -e "${GRAY}${ICON_WARNING}${NC} 已跳过 $label${NC}"
-        echo -e "${GRAY}${ICON_REVIEW}${NC} ${GRAY}Grant Full Disk Access to your terminal, then retry${NC}"
+        echo -e "${GRAY}${ICON_REVIEW}${NC} ${GRAY}Grant Full 磁盘 Access to your terminal, then retry${NC}"
     fi
 }
 
@@ -385,7 +385,7 @@ perform_security_fixes() {
     done
 
     if ((applied > 0)); then
-        log_success "Security settings updated"
+        log_success "安全设置已更新"
     fi
     SECURITY_FIXES=()
 }
@@ -457,7 +457,7 @@ main() {
             stop_inline_spinner
         fi
         echo ""
-        log_error "Failed to collect system health data"
+        log_error "收集系统健康数据失败"
         exit 1
     fi
 
@@ -466,8 +466,8 @@ main() {
             stop_inline_spinner
         fi
         echo ""
-        log_error "Invalid system health data format"
-        echo -e "${GRAY}${ICON_REVIEW}${NC} Check if awk, sysctl, and df commands are available"
+        log_error "无效的系统健康数据格式"
+        echo -e "${GRAY}${ICON_REVIEW}${NC} 请检查 awk、sysctl 和 df 命令是否可用"
         exit 1
     fi
 
@@ -503,7 +503,7 @@ main() {
 
     echo ""
     if [[ "${MOLE_DRY_RUN:-0}" != "1" ]]; then
-        ensure_sudo_session "System optimization requires admin access" || true
+        ensure_sudo_session "系统 optimization requires admin access" || true
     fi
 
     export FIRST_ACTION=true

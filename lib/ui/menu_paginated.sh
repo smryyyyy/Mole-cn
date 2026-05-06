@@ -79,7 +79,7 @@ paginated_multi_select() {
 
     # Validation
     if [[ ${#items[@]} -eq 0 ]]; then
-        echo "否 items provided" >&2
+        echo "未提供项目" >&2
         return 1
     fi
 
@@ -404,7 +404,7 @@ paginated_multi_select() {
         elif [[ -n "${MOLE_READ_KEY_FORCE_CHAR:-}" ]]; then
             printf "\r\033[2K${PURPLE_BOLD}%s${NC}  ${YELLOW}/ 搜索： _ ${NC}${GRAY}(type to search)${NC}\n" "${title}" >&2
         else
-            printf "\r\033[2K${PURPLE_BOLD}%s${NC}  ${GRAY}%d/%d selected${NC}\n" "${title}" "$selected_count" "$total_items" >&2
+            printf "\r\033[2K${PURPLE_BOLD}%s${NC}  ${GRAY}%d/%d 已选${NC}\n" "${title}" "$selected_count" "$total_items" >&2
         fi
     }
 
@@ -440,11 +440,11 @@ paginated_multi_select() {
         # Visible slice
         local visible_total=${#view_indices[@]}
         if [[ $visible_total -eq 0 ]]; then
-            printf "${clear_line}否 items available\n" >&2
+            printf "${clear_line}无可用项目\n" >&2
             for ((i = 0; i < items_per_page; i++)); do
                 printf "${clear_line}\n" >&2
             done
-            printf "${clear_line}${GRAY}${ICON_NAV_UP}${ICON_NAV_DOWN}  |  Space  |  Enter Save  |  Q 取消${NC}\n" >&2
+            printf "${clear_line}${GRAY}${ICON_NAV_UP}${ICON_NAV_DOWN}  |  Space  |  回车保存  |  Q 取消${NC}\n" >&2
             printf "${clear_line}" >&2
             return
         fi
@@ -483,9 +483,9 @@ paginated_multi_select() {
         # Build sort status
         local sort_label=""
         case "$sort_mode" in
-            date) sort_label="Date" ;;
-            name) sort_label="Name" ;;
-            size) sort_label="Size" ;;
+            date) sort_label="日期" ;;
+            name) sort_label="名称" ;;
+            size) sort_label="大小" ;;
         esac
         local sort_status="${sort_label}"
 
@@ -502,9 +502,9 @@ paginated_multi_select() {
 
         # Common menu items
         local nav="${GRAY}${ICON_NAV_UP}${ICON_NAV_DOWN}${NC}"
-        local page_ctrl="${GRAY}h/l Page${NC}"
-        local space_select="${GRAY}Space Select${NC}"
-        local enter="${GRAY}Enter Save${NC}"
+        local page_ctrl="${GRAY}h/l 翻页${NC}"
+        local space_select="${GRAY}空格选择${NC}"
+        local enter="${GRAY}回车保存${NC}"
         local cancel_label="${GRAY}Q 取消${NC}"
 
         local reverse_arrow="↑"
@@ -512,10 +512,10 @@ paginated_multi_select() {
 
         local sort_ctrl="${GRAY}S ${sort_status}${NC}"
         local order_ctrl="${GRAY}O ${reverse_arrow}${NC}"
-        local filter_ctrl="${GRAY}/ Search${NC}"
+        local filter_ctrl="${GRAY}/ 搜索${NC}"
 
         if [[ -n "$filter_text" ]]; then
-            local -a _segs_filter=("${GRAY}Backspace${NC}" "${GRAY}Ctrl+U Clear${NC}" "${GRAY}ESC Clear${NC}")
+            local -a _segs_filter=("${GRAY}退格${NC}" "${GRAY}Ctrl+U 清除${NC}" "${GRAY}ESC 清除${NC}")
             _print_wrapped_controls "$sep" "${_segs_filter[@]}"
         elif [[ "$has_metadata" == "true" ]]; then
             # With metadata: show sort controls
@@ -767,7 +767,7 @@ paginated_multi_select() {
 
                     # Incremental update: only redraw header (for count) and current row
                     # Header is at row 1
-                    printf "\033[1;1H\033[2K${PURPLE_BOLD}%s${NC}  ${GRAY}%d/%d selected${NC}\n" "${title}" "$selected_count" "$total_items" >&2
+                    printf "\033[1;1H\033[2K${PURPLE_BOLD}%s${NC}  ${GRAY}%d/%d 已选${NC}\n" "${title}" "$selected_count" "$total_items" >&2
 
                     # Redraw current item row (+3: row 1=header, row 2=blank, row 3=first item)
                     local item_row=$((cursor_pos + 3))

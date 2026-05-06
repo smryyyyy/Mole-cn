@@ -161,38 +161,38 @@ get_optimize_whitelist_items() {
     cat << 'EOF'
 macOS Firewall check|firewall|security_check
 Gatekeeper check|gatekeeper|security_check
-macOS system updates check|check_macos_updates|update_check
-Mole updates check|check_mole_update|update_check
-Homebrew health check (doctor)|check_brew_health|health_check
-SIP status check|check_sip|security_check
-FileVault status check|check_filevault|security_check
-TouchID sudo check|check_touchid|config_check
-Rosetta 2 check|check_rosetta|config_check
-Git configuration check|check_git_config|config_check
-Login items check|check_login_items|config_check
-DNS & Spotlight Check|system_maintenance|optimize_task
-Finder Cache Refresh|cache_refresh|optimize_task
-App State Cleanup|saved_state_cleanup|optimize_task
-Broken Config Repair|fix_broken_configs|optimize_task
-Network Cache Refresh|network_optimization|optimize_task
-Database Optimization|sqlite_vacuum|optimize_task
-LaunchServices Repair|launch_services_rebuild|optimize_task
-Font Cache Rebuild|font_cache_rebuild|optimize_task
-Dock Refresh|dock_refresh|optimize_task
-Prevent Finder .DS_Store|prevent_network_dsstore|optimize_task
-Memory Optimization|memory_pressure_relief|optimize_task
+macOS 系统更新检查|check_macos_updates|update_check
+Mole 更新检查|check_mole_update|update_check
+Homebrew 健康检查 (doctor)|check_brew_health|health_check
+SIP 状态检查|check_sip|security_check
+FileVault 状态检查|check_filevault|security_check
+TouchID sudo 检查|check_touchid|config_check
+Rosetta 2 检查|check_rosetta|config_check
+Git 配置检查|check_git_config|config_check
+登录项检查|check_login_items|config_check
+DNS 与 Spotlight 检查|system_maintenance|optimize_task
+Finder 缓存刷新|cache_refresh|optimize_task
+应用状态清理|saved_state_cleanup|optimize_task
+损坏配置修复|fix_broken_configs|optimize_task
+网络缓存刷新|network_optimization|optimize_task
+数据库优化|sqlite_vacuum|optimize_task
+LaunchServices 修复|launch_services_rebuild|optimize_task
+字体缓存重建|font_cache_rebuild|optimize_task
+Dock 刷新|dock_refresh|optimize_task
+防止 Finder .DS_Store|prevent_network_dsstore|optimize_task
+内存优化|memory_pressure_relief|optimize_task
 Network Stack Refresh|network_stack_optimize|optimize_task
 Permission Repair|disk_permissions_repair|optimize_task
 Bluetooth Refresh|bluetooth_reset|optimize_task
 Spotlight Optimization|spotlight_index_optimize|optimize_task
-Periodic Maintenance|periodic_maintenance|optimize_task
+定期维护|periodic_maintenance|optimize_task
 Shared File Lists|shared_file_list_repair|optimize_task
-Disk Health|disk_verify|optimize_task
-Login Items Audit|login_items_audit|optimize_task
-Quarantine Database Cleanup|quarantine_cleanup|optimize_task
-Launch Agents Cleanup|launch_agents_cleanup|optimize_task
-Notifications|notification_cleanup|optimize_task
-Usage Data|coreduet_cleanup|optimize_task
+磁盘健康|disk_verify|optimize_task
+登录项审计|login_items_audit|optimize_task
+隔离数据库清理|quarantine_cleanup|optimize_task
+启动代理清理|launch_agents_cleanup|optimize_task
+通知|notification_cleanup|optimize_task
+使用数据|coreduet_cleanup|optimize_task
 EOF
 }
 

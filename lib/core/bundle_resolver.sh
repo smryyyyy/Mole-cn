@@ -4,7 +4,7 @@
 # Spotlight (mdfind) is unreliable: indexing can be off for /Applications, Homebrew
 # installs sometimes skip metadata importers, and Spotlight rarely indexes helpers
 # embedded inside .app bundles. This resolver falls back to a direct filesystem
-# scan that reads each app's 信息.plist and checks SMJobBless-registered helpers.
+# scan that reads each app's info.plist and checks SMJobBless-registered helpers.
 
 if [[ -n "${_MOLE_BUNDLE_RESOLVER_LOADED:-}" ]]; then
     return 0
@@ -47,7 +47,7 @@ bundle_has_installed_app() {
         [[ -n "$hit" ]] && return 0
     fi
 
-    # Slow path: walk known app roots. Reads each 信息.plist CFBundleIdentifier
+    # Slow path: walk known app roots. Reads each info.plist CFBundleIdentifier
     # and checks for an SMJobBless helper registered under this bundle ID. This
     # covers the two classes of false positive we saw:
     #   - App-owned launch agents whose bundle ID Spotlight failed to index
@@ -84,7 +84,7 @@ bundle_has_installed_app() {
             if [[ -e "$app/Contents/Library/LaunchServices/$bundle_id" ]]; then
                 return 0
             fi
-            info="$app/Contents/信息.plist"
+            info="$app/Contents/info.plist"
             [[ -f "$info" ]] || continue
             app_bundle=$(plutil -extract CFBundleIdentifier raw "$info" 2> /dev/null || echo "")
             [[ "$app_bundle" == "$bundle_id" ]] && return 0

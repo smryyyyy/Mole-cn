@@ -210,7 +210,7 @@ resolve_source_dir() {
     exit 1
 }
 
-# 版本 helpers
+# version helpers
 get_source_version() {
     local source_mole="$SOURCE_DIR/mole"
     if [[ -f "$source_mole" ]]; then
@@ -341,7 +341,7 @@ parse_args() {
             continue
         fi
         if [[ -n "$version_token" ]]; then
-            log_error "Unexpected argument: $token"
+            log_error "意外的参数： $token"
             exit 1
         fi
         case "$token" in
@@ -363,7 +363,7 @@ parse_args() {
                 unset 'args[$i]'
                 ;;
             *)
-                log_error "Unknown option: $token"
+                log_error "未知选项： $token"
                 exit 1
                 ;;
         esac
@@ -378,7 +378,7 @@ parse_args() {
         case $1 in
             --prefix)
                 if [[ -z "${2:-}" ]]; then
-                    log_error "Missing value for --prefix"
+                    log_error "缺少值： --prefix"
                     exit 1
                 fi
                 INSTALL_DIR="$2"
@@ -386,7 +386,7 @@ parse_args() {
                 ;;
             --config)
                 if [[ -z "${2:-}" ]]; then
-                    log_error "Missing value for --config"
+                    log_error "缺少值： --config"
                     exit 1
                 fi
                 CONFIG_DIR="$2"
@@ -401,11 +401,11 @@ parse_args() {
                 shift 1
                 ;;
             --help | -h)
-                log_error "Unknown option: $1"
+                log_error "未知选项： $1"
                 exit 1
                 ;;
             *)
-                log_error "Unknown option: $1"
+                log_error "未知选项： $1"
                 exit 1
                 ;;
         esac
@@ -415,7 +415,7 @@ parse_args() {
 # Environment checks and directory setup
 check_requirements() {
     if [[ "$OSTYPE" != "darwin"* ]]; then
-        log_error "This tool is designed for macOS only"
+        log_error "此工具仅适用于 macOS"
         exit 1
     fi
 
@@ -443,7 +443,7 @@ check_requirements() {
             echo ""
             exit 1
         else
-            log_warning "Cleaning up stale Homebrew installation..."
+            log_warning "正在清理过时的 Homebrew 安装..."
             brew uninstall --force mole > /dev/null 2>&1 || true
         fi
     fi
@@ -639,7 +639,7 @@ install_files() {
         local source_bin_abs="$(cd "$SOURCE_DIR/bin" && pwd)"
         local config_bin_abs="$(cd "$CONFIG_DIR/bin" && pwd)"
         if [[ "$source_bin_abs" == "$config_bin_abs" ]]; then
-            log_success "Modules already synced"
+            log_success "模块已同步"
         else
             local -a bin_files=("$SOURCE_DIR/bin"/*)
             if [[ ${#bin_files[@]} -gt 0 ]]; then
@@ -656,7 +656,7 @@ install_files() {
         local source_lib_abs="$(cd "$SOURCE_DIR/lib" && pwd)"
         local config_lib_abs="$(cd "$CONFIG_DIR/lib" && pwd)"
         if [[ "$source_lib_abs" == "$config_lib_abs" ]]; then
-            log_success "Libraries already synced"
+            log_success "库已同步"
         else
             local -a lib_files=("$SOURCE_DIR/lib"/*)
             if [[ ${#lib_files[@]} -gt 0 ]]; then
@@ -700,10 +700,10 @@ verify_installation() {
         if "$INSTALL_DIR/mole" --help > /dev/null 2>&1; then
             return 0
         else
-            log_warning "Mole command installed but may not be working properly"
+            log_warning "Mole 命令已安装但可能无法正常工作"
         fi
     else
-        log_error "Installation verification failed"
+        log_error "安装验证失败"
         exit 1
     fi
 }
@@ -795,7 +795,7 @@ perform_install() {
         commit_hash=$(get_source_commit_hash)
     fi
     if ! write_install_channel_metadata "$install_channel" "$commit_hash"; then
-        log_warning "Could not write install channel metadata"
+        log_warning "无法写入安装渠道元数据"
     fi
 
     # Edge installs get a suffix to make the version explicit.
@@ -804,7 +804,7 @@ perform_install() {
         echo ""
         local branch_name="${MOLE_VERSION:-main}"
         log_warning "Edge version installed on ${branch_name} branch"
-        log_info "This is a testing version; use 'mo update' to switch to stable"
+        log_info "这是测试版本；使用 'mo update' 切换到稳定版"
     fi
 
     print_usage_summary "installed" "$installed_version"
@@ -822,7 +822,7 @@ perform_update() {
             source "$SOURCE_DIR/lib/core/common.sh"
             update_via_homebrew "$current_version"
         else
-            log_error "Cannot update Homebrew-managed Mole without full installation"
+            log_error "无法在不完整安装的情况下更新 Homebrew 管理的 Mole"
             echo ""
             echo "请通过 Homebrew 更新："
             echo -e "  ${GREEN}brew upgrade mole${NC}"
@@ -835,7 +835,7 @@ perform_update() {
     installed_version="$(get_installed_version || true)"
 
     if [[ -z "$installed_version" ]]; then
-        log_warning "Mole is not currently installed in $INSTALL_DIR. Running fresh installation."
+        log_warning "Mole 当前未安装在 $INSTALL_DIR. 正在执行全新安装。"
         perform_install
         return
     fi
@@ -845,7 +845,7 @@ perform_update() {
     target_version="$(get_source_version || true)"
 
     if [[ -z "$target_version" ]]; then
-        log_error "Unable to determine the latest Mole version."
+        log_error "无法确定最新版本。"
         exit 1
     fi
 
@@ -887,7 +887,7 @@ perform_update() {
         commit_hash=$(get_source_commit_hash)
     fi
     if ! write_install_channel_metadata "$install_channel" "$commit_hash"; then
-        log_warning "Could not write install channel metadata"
+        log_warning "无法写入安装渠道元数据"
     fi
 
     echo -e "${GREEN}${ICON_SUCCESS}${NC} Updated to latest version, $updated_version"

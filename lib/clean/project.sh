@@ -561,7 +561,7 @@ is_recently_modified() {
     if [[ $age_in_days -lt $age_days ]]; then
         return 0 # Recently modified
     else
-        return 1 # Old enough to clean
+        return 1 # old enough to clean
     fi
 }
 # Args: $1 - path
@@ -986,7 +986,7 @@ clean_project_artifacts() {
         for pid in "${scan_pids[@]+"${scan_pids[@]}"}"; do
             kill "$pid" 2> /dev/null || true
         done
-        # Clean up temp files
+        # Clean up 临时文件
         for temp in "${scan_temps[@]+"${scan_temps[@]}"}"; do
             rm -f "$temp" 2> /dev/null || true
         done

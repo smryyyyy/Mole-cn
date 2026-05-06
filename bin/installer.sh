@@ -37,7 +37,7 @@ readonly INSTALLER_SCAN_PATHS=(
     "$HOME/Library/Downloads"
     "/Users/Shared"
     "/Users/Shared/Downloads"
-    "$HOME/Library/Caches/Homebrew"
+    "$HOME/Library/缓存s/Homebrew"
     "$HOME/Library/Mobile Documents/com~apple~CloudDocs/Downloads"
     "$HOME/Library/Containers/com.apple.mail/Data/Library/Mail Downloads"
     "$HOME/Library/Application Support/Telegram Desktop"
@@ -148,7 +148,7 @@ get_source_display() {
         "$HOME/Public"*) echo "共享" ;;
         "$HOME/Library/Downloads"*) echo "库" ;;
         "/Users/Shared"*) echo "共享" ;;
-        "$HOME/Library/Caches/Homebrew"*) echo "Homebrew" ;;
+        "$HOME/Library/缓存s/Homebrew"*) echo "Homebrew" ;;
         "$HOME/Library/Mobile Documents/com~apple~CloudDocs/Downloads"*) echo "iCloud" ;;
         "$HOME/Library/Containers/com.apple.mail"*) echo "邮件" ;;
         *"Telegram Desktop"*) echo "Telegram" ;;

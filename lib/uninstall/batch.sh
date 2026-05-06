@@ -17,7 +17,7 @@ is_uninstall_dry_run() {
 
 app_declares_local_network_usage() {
     local app_path="$1"
-    local info_plist="$app_path/Contents/信息.plist"
+    local info_plist="$app_path/Contents/info.plist"
 
     [[ -f "$info_plist" ]] || return 1
 
@@ -378,7 +378,7 @@ batch_uninstall_applications() {
 
         # Check running app by bundle executable if available
         local exec_name=""
-        local info_plist="$app_path/Contents/信息.plist"
+        local info_plist="$app_path/Contents/info.plist"
         if [[ -e "$info_plist" ]]; then
             exec_name=$(plutil -extract CFBundleExecutable raw "$info_plist" 2> /dev/null || echo "")
         fi

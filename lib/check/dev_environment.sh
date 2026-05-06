@@ -125,12 +125,12 @@ check_version_mismatches() {
     fi
 
     if [[ ${#conflicts[@]} -eq 0 ]]; then
-        echo -e "  ${GREEN}✓${NC} 版本s       No conflicts"
+        echo -e "  ${GREEN}✓${NC} versions       No conflicts"
     else
         local description
         description=$(printf '%s; ' "${conflicts[@]}")
         description="${description%; }"
-        printf "  ${GRAY}%s${NC} %-14s ${YELLOW}%s${NC}\n" "$ICON_WARNING" "版本s" "$description"
+        printf "  ${GRAY}%s${NC} %-14s ${YELLOW}%s${NC}\n" "$ICON_WARNING" "versions" "$description"
     fi
 }
 

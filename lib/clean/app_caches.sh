@@ -63,14 +63,14 @@ clean_xcode_tools() {
     if pgrep -x "Xcode" > /dev/null 2>&1; then
         xcode_running=true
     fi
-    # Skip Simulator caches/temp files while Simulator is running to avoid crashes.
+    # Skip 模拟器caches/临时文件 while Simulator is running to avoid crashes.
     local simulator_running=false
     if pgrep -x "Simulator" > /dev/null 2>&1; then
         simulator_running=true
     fi
     if [[ "$simulator_running" == "false" ]]; then
-        safe_clean ~/Library/Developer/CoreSimulator/Caches/* "Simulator cache"
-        safe_clean ~/Library/Developer/CoreSimulator/Devices/*/data/tmp/* "Simulator temp files"
+        safe_clean ~/Library/Developer/CoreSimulator/caches/* "模拟器cache"
+        safe_clean ~/Library/Developer/CoreSimulator/Devices/*/data/tmp/* "模拟器临时文件"
         safe_clean ~/Library/Logs/CoreSimulator/* "CoreSimulator logs"
         # Remove unavailable simulator devices (not supported by the current Xcode SDK).
         # run_with_timeout guards against xcrun blocking when only CLT is installed
@@ -115,16 +115,16 @@ clean_xcode_tools() {
             fi
         fi
     else
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Simulator is running, skipping Simulator cache/temp/log cleanup"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} Simulator is running, skipping 模拟器cache/temp/log cleanup"
     fi
     safe_clean ~/Library/Caches/com.apple.dt.Xcode/* "Xcode cache"
-    safe_clean ~/Library/Developer/Xcode/iOS\ Device\ Logs/* "iOS device logs"
-    safe_clean ~/Library/Developer/Xcode/watchOS\ Device\ Logs/* "watchOS device logs"
-    safe_clean ~/Library/Developer/Xcode/Products/* "Xcode build products"
+    safe_clean ~/Library/Developer/Xcode/iOS\ Device\ logs/* "iOS device logs"
+    safe_clean ~/Library/Developer/Xcode/watchOS\ Device\ logs/* "watchOS device logs"
+    safe_clean ~/Library/Developer/Xcode/Products/* "Xcode 构建产物"
     if [[ "$xcode_running" == "false" ]]; then
         clean_xcode_derived_data
-        safe_clean ~/Library/Developer/Xcode/DocumentationCache/* "Xcode documentation cache"
-        safe_clean ~/Library/Developer/Xcode/DocumentationIndex/* "Xcode documentation index"
+        safe_clean ~/Library/Developer/Xcode/DocumentationCache/* "Xcode 文档cache"
+        safe_clean ~/Library/Developer/Xcode/DocumentationIndex/* "Xcode 文档索引"
     else
         echo -e "  ${GRAY}${ICON_WARNING}${NC} Xcode is running, skipping DerivedData/Documentation cleanup"
     fi
@@ -132,56 +132,56 @@ clean_xcode_tools() {
 # Code editors.
 clean_code_editors() {
     safe_clean ~/Library/Application\ Support/Code/logs/* "VS Code logs"
-    safe_clean ~/Library/Application\ Support/Code/Cache/* "VS Code cache"
-    safe_clean ~/Library/Application\ Support/Code/CachedExtensions/* "VS Code extension cache"
-    safe_clean ~/Library/Application\ Support/Code/CachedData/* "VS Code data cache"
+    safe_clean ~/Library/Application\ Support/Code/cache/* "VS Code cache"
+    safe_clean ~/Library/Application\ Support/Code/cachedExtensions/* "VS Code 扩展cache"
+    safe_clean ~/Library/Application\ Support/Code/cachedData/* "VS Code 数据cache"
     safe_clean ~/Library/Caches/com.sublimetext.*/* "Sublime Text cache"
     safe_clean ~/Library/Caches/Zed/* "Zed cache"
     safe_clean ~/Library/Logs/Zed/* "Zed logs"
 }
 # Communication apps.
 clean_communication_apps() {
-    safe_clean ~/Library/Application\ Support/discord/Cache/* "Discord cache"
-    safe_clean ~/Library/Application\ Support/legcord/Cache/* "Legcord cache"
-    safe_clean ~/Library/Application\ Support/Slack/Cache/* "Slack cache"
+    safe_clean ~/Library/Application\ Support/discord/cache/* "Discord cache"
+    safe_clean ~/Library/Application\ Support/legcord/cache/* "Legcord cache"
+    safe_clean ~/Library/Application\ Support/Slack/cache/* "Slack cache"
     safe_clean ~/Library/Caches/us.zoom.xos/* "Zoom cache"
-    safe_clean ~/Library/Caches/com.tencent.xinWeChat/* "WeChat cache"
+    safe_clean ~/Library/Caches/com.tencent.xinWeChat/* "微信cache"
     safe_clean ~/Library/Caches/ru.keepcoder.Telegram/* "Telegram cache"
 
     safe_clean ~/Library/Caches/com.microsoft.teams2/* "Microsoft Teams cache"
     safe_clean ~/Library/Caches/net.whatsapp.WhatsApp/* "WhatsApp cache"
     safe_clean ~/Library/Caches/com.skype.skype/* "Skype cache"
-    safe_clean ~/Library/Caches/com.tencent.meeting/* "Tencent Meeting cache"
-    safe_clean ~/Library/Caches/com.tencent.WeWorkMac/* "WeCom cache"
-    safe_clean ~/Library/Caches/com.feishu.*/* "Feishu cache"
+    safe_clean ~/Library/Caches/com.tencent.meeting/* "腾讯会议cache"
+    safe_clean ~/Library/Caches/com.tencent.WeWorkMac/* "企业微信cache"
+    safe_clean ~/Library/Caches/com.feishu.*/* "飞书cache"
     if [[ -d ~/Library/Application\ Support/Microsoft/Teams ]]; then
-        safe_clean ~/Library/Application\ Support/Microsoft/Teams/Cache/* "Microsoft Teams legacy cache"
-        safe_clean ~/Library/Application\ Support/Microsoft/Teams/Application\ Cache/* "Microsoft Teams legacy application cache"
-        safe_clean ~/Library/Application\ Support/Microsoft/Teams/Code\ Cache/* "Microsoft Teams legacy code cache"
-        safe_clean ~/Library/Application\ Support/Microsoft/Teams/GPUCache/* "Microsoft Teams legacy GPU cache"
-        safe_clean ~/Library/Application\ Support/Microsoft/Teams/logs/* "Microsoft Teams legacy logs"
-        safe_clean ~/Library/Application\ Support/Microsoft/Teams/tmp/* "Microsoft Teams legacy temp files"
+        safe_clean ~/Library/Application\ Support/Microsoft/Teams/cache/* "Microsoft Teams 旧版cache"
+        safe_clean ~/Library/Application\ Support/Microsoft/Teams/Application\ cache/* "Microsoft Teams 旧版应用cache"
+        safe_clean ~/Library/Application\ Support/Microsoft/Teams/Code\ cache/* "Microsoft Teams 旧版代码cache"
+        safe_clean ~/Library/Application\ Support/Microsoft/Teams/GPUCache/* "Microsoft Teams 旧版 GPU cache"
+        safe_clean ~/Library/Application\ Support/Microsoft/Teams/logs/* "Microsoft Teams 旧版logs"
+        safe_clean ~/Library/Application\ Support/Microsoft/Teams/tmp/* "Microsoft Teams 旧版临时文件"
     fi
 }
 # DingTalk.
 clean_dingtalk() {
-    safe_clean ~/Library/Caches/dd.work.exclusive4aliding/* "DingTalk iDingTalk cache"
-    safe_clean ~/Library/Caches/com.alibaba.AliLang.osx/* "AliLang security component"
+    safe_clean ~/Library/Caches/dd.work.exclusive4aliding/* "钉钉cache"
+    safe_clean ~/Library/Caches/com.alibaba.AliLang.osx/* "阿里郎安全组件"
     if [[ -d ~/Library/Application\ Support/iDingTalk ]]; then
-        safe_clean ~/Library/Application\ Support/iDingTalk/log/* "DingTalk logs"
-        safe_clean ~/Library/Application\ Support/iDingTalk/holmeslogs/* "DingTalk holmes logs"
+        safe_clean ~/Library/Application\ Support/iDingTalk/log/* "钉钉logs"
+        safe_clean ~/Library/Application\ Support/iDingTalk/holmesLogs/* "钉钉 holmes logs"
     fi
 }
 # AI assistants.
 clean_ai_apps() {
     safe_clean ~/Library/Caches/com.openai.chat/* "ChatGPT cache"
-    safe_clean ~/Library/Caches/com.anthropic.claudefordesktop/* "Claude desktop cache"
+    safe_clean ~/Library/Caches/com.anthropic.claudefordesktop/* "Claude 桌面端cache"
     safe_clean ~/Library/Logs/Claude/* "Claude logs"
     safe_clean ~/Library/Logs/com.openai.codex/* "Codex CLI logs"
     # Codex (OpenAI, Electron)
     if [[ -d ~/Library/Application\ Support/Codex ]]; then
-        safe_clean ~/Library/Application\ Support/Codex/Cache/* "Codex cache"
-        safe_clean ~/Library/Application\ Support/Codex/Code\ Cache/* "Codex code cache"
+        safe_clean ~/Library/Application\ Support/Codex/cache/* "Codex cache"
+        safe_clean ~/Library/Application\ Support/Codex/Code\ cache/* "Codex 代码cache"
         safe_clean ~/Library/Application\ Support/Codex/GPUCache/* "Codex GPU cache"
         safe_clean ~/Library/Application\ Support/Codex/DawnGraphiteCache/* "Codex Dawn cache"
         safe_clean ~/Library/Application\ Support/Codex/DawnWebGPUCache/* "Codex WebGPU cache"
@@ -190,11 +190,11 @@ clean_ai_apps() {
 # Design and creative tools.
 clean_design_tools() {
     safe_clean ~/Library/Caches/com.bohemiancoding.sketch3/* "Sketch cache"
-    safe_clean ~/Library/Application\ Support/com.bohemiancoding.sketch3/cache/* "Sketch app cache"
+    safe_clean ~/Library/Application\ Support/com.bohemiancoding.sketch3/cache/* "Sketch 应用cache"
     safe_clean ~/Library/Caches/Adobe/* "Adobe cache"
-    safe_clean ~/Library/Caches/com.adobe.*/* "Adobe app caches"
+    safe_clean ~/Library/Caches/com.adobe.*/* "Adobe 应用cache"
     safe_clean ~/Library/Caches/com.figma.Desktop/* "Figma cache"
-    safe_clean ~/Library/Application\ Support/Adobe/Common/Media\ Cache\ Files/* "Adobe media cache files"
+    safe_clean ~/Library/Application\ Support/Adobe/Common/Media\ cache\ Files/* "Adobe 媒体缓存文件"
 }
 # Video editing tools.
 final_cut_pro_is_running() {
@@ -210,7 +210,7 @@ final_cut_pro_path_has_protected_component() {
 
     case "$path" in
         */Original\ Media | */Original\ Media/* | \
-            */Current版本.flexolibrary | */Current版本.plist | */Settings.plist | \
+            */CurrentVersion.flexolibrary | */CurrentVersion.plist | */Settings.plist | \
             */Motion\ Templates | */Motion\ Templates/* | \
             */Final\ Cut\ Pro\ Backups | */Final\ Cut\ Pro\ Backups/*)
             return 0
@@ -288,7 +288,7 @@ clean_final_cut_pro_generated_caches() {
 
     [[ ${#fcp_cache_targets[@]} -gt 0 ]] || return 0
 
-    # Final Cut Pro generated cache cleanup (issue #843).
+    # Final Cut Pro 生成cache cleanup (issue #843).
     # Safety scope for the first pass:
     # - only scan ~/Movies, the default Apple library location;
     # - only delete exact generated-media directories documented by Apple as
@@ -298,7 +298,7 @@ clean_final_cut_pro_generated_caches() {
     # Future expansion can add explicit flags or configurable roots for
     # optimized media, Analysis Files, and external cache bundles after more
     # field feedback.
-    safe_clean "${fcp_cache_targets[@]}" "Final Cut Pro generated cache"
+    safe_clean "${fcp_cache_targets[@]}" "Final Cut Pro 生成cache"
 }
 
 clean_video_tools() {
@@ -306,7 +306,7 @@ clean_video_tools() {
     safe_clean ~/Library/Caches/com.apple.FinalCut/* "Final Cut Pro cache"
     clean_final_cut_pro_generated_caches
     safe_clean ~/Library/Caches/com.blackmagic-design.DaVinciResolve/* "DaVinci Resolve cache"
-    safe_clean ~/Movies/CacheClip/* "DaVinci Resolve CacheClip"
+    safe_clean ~/Movies/cacheClip/* "DaVinci Resolve cacheClip"
     safe_clean ~/Library/Caches/com.adobe.PremierePro.*/* "Premiere Pro cache"
 }
 # 3D and CAD tools.
@@ -318,20 +318,20 @@ clean_3d_tools() {
 }
 # Productivity apps.
 clean_productivity_apps() {
-    safe_clean ~/Library/Caches/com.tw93.MiaoYan/* "MiaoYan cache"
+    safe_clean ~/Library/Caches/com.tw93.MiaoYan/* "妙言cache"
     safe_clean ~/Library/Caches/com.klee.desktop/* "Klee cache"
-    safe_clean ~/Library/Caches/klee_desktop/* "Klee desktop cache"
-    safe_clean ~/Library/Caches/com.orabrowser.app/* "Ora browser cache"
+    safe_clean ~/Library/Caches/klee_desktop/* "Klee 桌面cache"
+    safe_clean ~/Library/Caches/com.orabrowser.app/* "Ora 浏览器cache"
     safe_clean ~/Library/Caches/com.filo.client/* "Filo cache"
     safe_clean ~/Library/Caches/com.flomoapp.mac/* "Flomo cache"
-    safe_clean ~/Library/Application\ Support/Quark/Cache/videoCache/* "Quark video cache"
-    safe_clean ~/Library/Containers/com.ranchero.NetNewsWire-Evergreen/Data/Library/Caches/* "NetNewsWire cache"
-    safe_clean ~/Library/Containers/com.ideasoncanvas.mindnode/Data/Library/Caches/* "MindNode cache"
+    safe_clean ~/Library/Application\ Support/Quark/cache/videoCache/* "夸克视频cache"
+    safe_clean ~/Library/Containers/com.ranchero.NetNewsWire-Evergreen/Data/Library/caches/* "NetNewsWire cache"
+    safe_clean ~/Library/Containers/com.ideasoncanvas.mindnode/Data/Library/caches/* "MindNode cache"
     safe_clean ~/.cache/kaku/* "Kaku cache"
 }
 # Music/media players (protect Spotify offline music).
 clean_media_players() {
-    local spotify_cache="$HOME/Library/Caches/com.spotify.client"
+    local spotify_cache="$HOME/Library/caches/com.spotify.client"
     local spotify_data="$HOME/Library/Application Support/Spotify"
     local has_offline_music=false
     # offline.bnk exists even with no offline downloads; only treat it as evidence
@@ -350,18 +350,18 @@ clean_media_players() {
         safe_clean ~/Library/Caches/com.spotify.client/* "Spotify cache"
     fi
     safe_clean ~/Library/Caches/com.apple.Music "Apple Music cache"
-    safe_clean ~/Library/Caches/com.apple.podcasts "Apple Podcasts cache"
+    safe_clean ~/Library/Caches/com.apple.podcasts "Apple 播客cache"
     # Apple Podcasts sandbox container: zombie sparse files and stale artwork cache (#387)
-    safe_clean ~/Library/Containers/com.apple.podcasts/Data/tmp/StreamedMedia "Podcasts streamed media"
-    safe_clean ~/Library/Containers/com.apple.podcasts/Data/tmp/*.heic "Podcasts artwork cache"
-    safe_clean ~/Library/Containers/com.apple.podcasts/Data/tmp/*.img "Podcasts image cache"
-    safe_clean ~/Library/Containers/com.apple.podcasts/Data/tmp/*CFNetworkDownload*.tmp "Podcasts download temp"
+    safe_clean ~/Library/Containers/com.apple.podcasts/Data/tmp/StreamedMedia "播客流媒体"
+    safe_clean ~/Library/Containers/com.apple.podcasts/Data/tmp/*.heic "播客封面cache"
+    safe_clean ~/Library/Containers/com.apple.podcasts/Data/tmp/*.img "播客图片cache"
+    safe_clean ~/Library/Containers/com.apple.podcasts/Data/tmp/*CFNetworkDownload*.tmp "播客下载临时文件"
     safe_clean ~/Library/Caches/com.apple.TV/* "Apple TV cache"
     safe_clean ~/Library/Caches/tv.plex.player.desktop "Plex cache"
-    safe_clean ~/Library/Caches/com.netease.163music "NetEase Music cache"
-    safe_clean ~/Library/Caches/com.tencent.QQMusic/* "QQ Music cache"
-    safe_clean ~/Library/Caches/com.kugou.mac/* "Kugou Music cache"
-    safe_clean ~/Library/Caches/com.kuwo.mac/* "Kuwo Music cache"
+    safe_clean ~/Library/Caches/com.netease.163music "网易云音乐cache"
+    safe_clean ~/Library/Caches/com.tencent.QQMusic/* "QQ 音乐cache"
+    safe_clean ~/Library/Caches/com.kugou.mac/* "酷狗音乐cache"
+    safe_clean ~/Library/Caches/com.kuwo.mac/* "酷我音乐cache"
 }
 # Video players.
 clean_video_players() {
@@ -369,13 +369,13 @@ clean_video_players() {
     safe_clean ~/Library/Caches/org.videolan.vlc "VLC cache"
     safe_clean ~/Library/Caches/io.mpv "MPV cache"
     safe_clean ~/Library/Caches/com.iqiyi.player "iQIYI cache"
-    safe_clean ~/Library/Caches/com.tencent.tenvideo "Tencent Video cache"
-    safe_clean ~/Library/Caches/tv.danmaku.bili/* "Bilibili cache"
-    safe_clean ~/Library/Caches/com.douyu.*/* "Douyu cache"
-    safe_clean ~/Library/Caches/com.huya.*/* "Huya cache"
+    safe_clean ~/Library/Caches/com.tencent.tenvideo "腾讯视频cache"
+    safe_clean ~/Library/Caches/tv.danmaku.bili/* "哔哩哔哩cache"
+    safe_clean ~/Library/Caches/com.douyu.*/* "斗鱼cache"
+    safe_clean ~/Library/Caches/com.huya.*/* "虎牙cache"
     safe_clean ~/Library/Caches/smart.stremio*/* "Stremio cache"
     if [[ -d ~/Library/Application\ Support/stremio ]]; then
-        safe_clean ~/Library/Application\ Support/stremio/stremio-server/stremio-cache/* "Stremio server cache"
+        safe_clean ~/Library/Application\ Support/stremio/stremio-server/stremio-cache/* "Stremio 服务器cache"
     fi
 }
 # Download managers.
@@ -391,32 +391,32 @@ clean_download_managers() {
 clean_gaming_platforms() {
     safe_clean ~/Library/Caches/com.valvesoftware.steam/* "Steam cache"
     if [[ -d ~/Library/Application\ Support/Steam ]]; then
-        safe_clean ~/Library/Application\ Support/Steam/htmlcache/* "Steam web cache"
-        safe_clean ~/Library/Application\ Support/Steam/appcache/* "Steam app cache"
-        safe_clean ~/Library/Application\ Support/Steam/depotcache/* "Steam depot cache"
-        safe_clean ~/Library/Application\ Support/Steam/steamapps/shadercache/* "Steam shader cache"
+        safe_clean ~/Library/Application\ Support/Steam/htmlCache/* "Steam 网页cache"
+        safe_clean ~/Library/Application\ Support/Steam/appCache/* "Steam 应用cache"
+        safe_clean ~/Library/Application\ Support/Steam/depotCache/* "Steam depot cache"
+        safe_clean ~/Library/Application\ Support/Steam/steamapps/shaderCache/* "Steam 着色器cache"
         safe_clean ~/Library/Application\ Support/Steam/logs/* "Steam logs"
     fi
     safe_clean ~/Library/Caches/com.epicgames.EpicGamesLauncher/* "Epic Games cache"
     safe_clean ~/Library/Caches/com.blizzard.Battle.net/* "Battle.net cache"
     if [[ -d ~/Library/Application\ Support/Battle.net ]]; then
-        safe_clean ~/Library/Application\ Support/Battle.net/Cache/* "Battle.net app cache"
+        safe_clean ~/Library/Application\ Support/Battle.net/cache/* "Battle.net 应用cache"
     fi
     safe_clean ~/Library/Caches/com.ea.*/* "EA Origin cache"
     safe_clean ~/Library/Caches/com.gog.galaxy/* "GOG Galaxy cache"
     safe_clean ~/Library/Caches/com.riotgames.*/* "Riot Games cache"
     if [[ -d ~/Library/Application\ Support/minecraft ]]; then
         safe_clean ~/Library/Application\ Support/minecraft/logs/* "Minecraft logs"
-        safe_clean ~/Library/Application\ Support/minecraft/crash-reports/* "Minecraft crash reports"
-        safe_clean ~/Library/Application\ Support/minecraft/webcache/* "Minecraft web cache"
-        safe_clean ~/Library/Application\ Support/minecraft/webcache2/* "Minecraft web cache 2"
+        safe_clean ~/Library/Application\ Support/minecraft/crash-reports/* "Minecraft 崩溃报告"
+        safe_clean ~/Library/Application\ Support/minecraft/webCache/* "Minecraft 网页cache"
+        safe_clean ~/Library/Application\ Support/minecraft/webCache2/* "Minecraft 网页cache 2"
     fi
     if [[ -d ~/.lunarclient ]]; then
-        safe_clean ~/.lunarclient/game-cache/* "Lunar Client game cache"
-        safe_clean ~/.lunarclient/launcher-cache/* "Lunar Client launcher cache"
+        safe_clean ~/.lunarclient/game-cache/* "Lunar Client 游戏cache"
+        safe_clean ~/.lunarclient/launcher-cache/* "Lunar Client 启动器cache"
         safe_clean ~/.lunarclient/logs/* "Lunar Client logs"
-        safe_clean ~/.lunarclient/offline/*/logs/* "Lunar Client offline logs"
-        safe_clean ~/.lunarclient/offline/files/*/logs/* "Lunar Client offline file logs"
+        safe_clean ~/.lunarclient/offline/*/logs/* "Lunar Client 离线logs"
+        safe_clean ~/.lunarclient/offline/files/*/logs/* "Lunar Client 离线文件logs"
     fi
     safe_clean ~/Library/Caches/net.pcsx2.PCSX2/* "PCSX2 cache"
     if [[ -d ~/Library/Application\ Support/PCSX2 ]]; then
@@ -430,9 +430,9 @@ clean_gaming_platforms() {
 }
 # Translation/dictionary apps.
 clean_translation_apps() {
-    safe_clean ~/Library/Caches/com.youdao.YoudaoDict "Youdao Dictionary cache"
-    safe_clean ~/Library/Caches/com.eudic.* "Eudict cache"
-    safe_clean ~/Library/Caches/com.bob-build.Bob "Bob Translation cache"
+    safe_clean ~/Library/Caches/com.youdao.YoudaoDict "有道词典cache"
+    safe_clean ~/Library/Caches/com.eudic.* "欧路词典cache"
+    safe_clean ~/Library/Caches/com.bob-build.Bob "Bob 翻译cache"
 }
 # Screenshot/recording tools.
 clean_screenshot_tools() {
@@ -452,15 +452,15 @@ clean_task_apps() {
 }
 # Shell/terminal utilities.
 clean_shell_utils() {
-    safe_clean ~/.zcompdump* "Zsh completion cache"
+    safe_clean ~/.zcompdump* "Zsh 补全cache"
     safe_clean ~/.lesshst "less history"
-    safe_clean ~/.viminfo.tmp "Vim temporary files"
+    safe_clean ~/.viminfo.tmp "Vim 临时文件"
     safe_clean ~/.wget-hsts "wget HSTS cache"
-    safe_clean ~/.cacher/logs/* "Cacher logs"
+    safe_clean ~/.cacher/logs/* "cacher logs"
     safe_clean ~/.kite/logs/* "Kite logs"
     safe_clean ~/Library/Caches/dev.warp.Warp-Stable/* "Warp cache"
-    safe_clean ~/Library/Logs/warp.log "Warp log"
-    safe_clean ~/Library/Caches/SentryCrash/Warp/* "Warp Sentry crash reports"
+    safe_clean ~/Library/Logs/warp.log "Warp logs"
+    safe_clean ~/Library/Caches/SentryCrash/Warp/* "Warp Sentry 崩溃报告"
     safe_clean ~/Library/Caches/com.mitchellh.ghostty/* "Ghostty cache"
 }
 # Input methods and system utilities.
@@ -468,12 +468,12 @@ clean_system_utils() {
     safe_clean ~/Library/Caches/com.runjuu.Input-Source-Pro/* "Input Source Pro cache"
     safe_clean ~/Library/Caches/macos-wakatime.WakaTime/* "WakaTime cache"
     # WeType input method (image and dict update cache, not engine or user dict)
-    safe_clean ~/Library/Application\ Support/WeType/com.onevcat.Kingfisher.ImageCache.WeType/* "WeType image cache"
-    safe_clean ~/Library/Application\ Support/WeType/DictUpdate/* "WeType dict update cache"
+    safe_clean ~/Library/Application\ Support/WeType/com.onevcat.Kingfisher.ImageCache.WeType/* "微信输入法图片cache"
+    safe_clean ~/Library/Application\ Support/WeType/DictUpdate/* "微信输入法词典更新cache"
     # mihomo-party proxy tool (Electron)
     if [[ -d ~/Library/Application\ Support/mihomo-party ]]; then
-        safe_clean ~/Library/Application\ Support/mihomo-party/Cache/* "mihomo-party cache"
-        safe_clean ~/Library/Application\ Support/mihomo-party/Code\ Cache/* "mihomo-party code cache"
+        safe_clean ~/Library/Application\ Support/mihomo-party/cache/* "mihomo-party cache"
+        safe_clean ~/Library/Application\ Support/mihomo-party/Code\ cache/* "mihomo-party code cache"
         safe_clean ~/Library/Application\ Support/mihomo-party/GPUCache/* "mihomo-party GPU cache"
         safe_clean ~/Library/Application\ Support/mihomo-party/DawnGraphiteCache/* "mihomo-party Dawn cache"
         safe_clean ~/Library/Application\ Support/mihomo-party/DawnWebGPUCache/* "mihomo-party WebGPU cache"
@@ -486,17 +486,17 @@ clean_system_utils() {
 clean_note_apps() {
     safe_clean ~/Library/Caches/notion.id/* "Notion cache"
     safe_clean ~/Library/Caches/md.obsidian/* "Obsidian cache"
-    safe_clean ~/Library/Caches/com.logseq.*/* "Logseq cache"
+    safe_clean ~/Library/Caches/com.logseq.*/* "logseq cache"
     safe_clean ~/Library/Caches/com.bear-writer.*/* "Bear cache"
     safe_clean ~/Library/Caches/com.evernote.*/* "Evernote cache"
-    safe_clean ~/Library/Caches/com.yinxiang.*/* "Yinxiang Note cache"
+    safe_clean ~/Library/Caches/com.yinxiang.*/* "印象笔记cache"
 }
 # Launchers and automation tools.
 clean_launcher_apps() {
     safe_clean ~/Library/Caches/com.runningwithcrayons.Alfred/* "Alfred cache"
     safe_clean ~/Library/Caches/cx.c3.theunarchiver/* "The Unarchiver cache"
     # Raycast: only clean network and FS caches; Clipboard subfolder contains user's clipboard history.
-    safe_clean ~/Library/Caches/com.raycast.macos/urlcache/* "Raycast URL cache"
+    safe_clean ~/Library/Caches/com.raycast.macos/urlCache/* "Raycast URL cache"
     safe_clean ~/Library/Caches/com.raycast.macos/fsCachedData/* "Raycast FS cache"
 }
 # Remote desktop tools.
@@ -504,7 +504,7 @@ clean_remote_desktop() {
     safe_clean ~/Library/Caches/com.teamviewer.*/* "TeamViewer cache"
     safe_clean ~/Library/Caches/com.anydesk.*/* "AnyDesk cache"
     safe_clean ~/Library/Caches/com.todesk.*/* "ToDesk cache"
-    safe_clean ~/Library/Caches/com.sunlogin.*/* "Sunlogin cache"
+    safe_clean ~/Library/Caches/com.sunlogin.*/* "向日葵cache"
 }
 # Main entry for GUI app cleanup.
 clean_user_gui_applications() {

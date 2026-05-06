@@ -31,7 +31,7 @@ show_optimize_help() {
     echo ""
     echo "选项:"
     echo "  --dry-run         预览优化操作，不实际执行更改"
-    echo "  --whitelist       管理受保护项"
+    echo "  --whitelist       管理受保护项目"
     echo "  --debug           显示详细的操作日志"
     echo "  -h, --help        显示此帮助信息"
 }

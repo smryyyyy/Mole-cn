@@ -3,10 +3,10 @@
 set -euo pipefail
 clean_user_essentials() {
     start_section_spinner "正在扫描 caches..."
-    safe_clean ~/Library/Caches/* "User app cache"
+    safe_clean ~/Library/Caches/* "用户应用cache"
     stop_section_spinner
 
-    safe_clean ~/Library/Logs/* "User app logs"
+    safe_clean ~/Library/Logs/* "用户应用logs"
 
     _clean_darwin_user_runtime_dirs
 
@@ -28,7 +28,7 @@ clean_user_essentials() {
         [[ "$trash_count" =~ ^[0-9]+$ ]] || trash_count="0"
 
         if [[ "$DRY_RUN" == "true" ]]; then
-            [[ $trash_count -gt 0 ]] && echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} Trash · would empty, $trash_count items" || echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Trash · already empty"
+            [[ $trash_count -gt 0 ]] && echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} Trash · would empty, $trash_count items" || echo -e "  ${GREEN}${ICON_SUCCESS}${NC} 废纸篓 · 已清空"
         elif [[ $trash_count -gt 0 ]]; then
             local emptied_via_finder=false
             # Skip AppleScript during tests to avoid permission dialogs
@@ -55,7 +55,7 @@ clean_user_essentials() {
                 fi
             fi
         else
-            echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Trash · already empty"
+            echo -e "  ${GREEN}${ICON_SUCCESS}${NC} 废纸篓 · 已清空"
         fi
     fi
 
@@ -81,10 +81,10 @@ _clean_recent_items() {
     )
     if [[ -d "$shared_dir" ]]; then
         for sfl_file in "${recent_lists[@]}"; do
-            [[ -e "$sfl_file" ]] && safe_clean "$sfl_file" "Recent items list" || true
+            [[ -e "$sfl_file" ]] && safe_clean "$sfl_file" "最近项目列表" || true
         done
     fi
-    safe_clean ~/Library/Preferences/com.apple.recentitems.plist "Recent items preferences" || true
+    safe_clean ~/Library/Preferences/com.apple.recentitems.plist "最近项目偏好设置" || true
 }
 
 # Internal: Clean incomplete browser downloads, skipping files currently open.
@@ -301,7 +301,7 @@ _clean_darwin_user_runtime_dirs() {
     temp_dir=$(getconf DARWIN_USER_TEMP_DIR 2> /dev/null || true)
     cache_dir=$(getconf DARWIN_USER_CACHE_DIR 2> /dev/null || true)
 
-    _clean_darwin_user_runtime_dir "$temp_dir" "temp" "Darwin user temp files"
+    _clean_darwin_user_runtime_dir "$temp_dir" "temp" "Darwin user 临时文件"
     _clean_darwin_user_runtime_dir "$cache_dir" "cache" "Darwin user cache files"
 }
 
@@ -325,7 +325,7 @@ clean_chrome_old_versions() {
     fi
 
     if is_google_chrome_running; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Google Chrome running · old versions cleanup skipped"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} Google Chrome running · 旧版本清理已跳过"
         return 0
     fi
 
@@ -336,7 +336,7 @@ clean_chrome_old_versions() {
     for app_path in "${app_paths[@]}"; do
         [[ -d "$app_path" ]] || continue
 
-        local versions_dir="$app_path/Contents/Frameworks/Google Chrome Framework.framework/版本s"
+        local versions_dir="$app_path/Contents/Frameworks/Google Chrome Framework.framework/versions"
         [[ -d "$versions_dir" ]] || continue
 
         local current_link="$versions_dir/Current"
@@ -442,7 +442,7 @@ clean_edge_old_versions() {
 
     # Match the exact Edge process name to avoid false positives (e.g., Microsoft Teams)
     if pgrep -x "Microsoft Edge" > /dev/null 2>&1; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Microsoft Edge running · old versions cleanup skipped"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} Microsoft Edge running · 旧版本清理已跳过"
         return 0
     fi
 
@@ -453,7 +453,7 @@ clean_edge_old_versions() {
     for app_path in "${app_paths[@]}"; do
         [[ -d "$app_path" ]] || continue
 
-        local versions_dir="$app_path/Contents/Frameworks/Microsoft Edge Framework.framework/版本s"
+        local versions_dir="$app_path/Contents/Frameworks/Microsoft Edge Framework.framework/versions"
         [[ -d "$versions_dir" ]] || continue
 
         local current_link="$versions_dir/Current"
@@ -600,7 +600,7 @@ clean_brave_old_versions() {
 
     # Match the exact Brave process name to avoid false positives
     if pgrep -x "Brave Browser" > /dev/null 2>&1; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Brave Browser running · old versions cleanup skipped"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} Brave Browser running · 旧版本清理已跳过"
         return 0
     fi
 
@@ -611,7 +611,7 @@ clean_brave_old_versions() {
     for app_path in "${app_paths[@]}"; do
         [[ -d "$app_path" ]] || continue
 
-        local versions_dir="$app_path/Contents/Frameworks/Brave Browser Framework.framework/版本s"
+        local versions_dir="$app_path/Contents/Frameworks/Brave Browser Framework.framework/versions"
         [[ -d "$versions_dir" ]] || continue
 
         local current_link="$versions_dir/Current"
@@ -762,9 +762,9 @@ clean_support_app_data() {
     fi
 
     # Do not touch Messages attachments, only 预览/sticker caches.
-    safe_clean ~/Library/Messages/StickerCache/* "Messages sticker cache"
+    safe_clean ~/Library/Messages/Stickercache/* "信息贴纸缓存"
     safe_clean ~/Library/Messages/Caches/Previews/Attachments/* "Messages 预览 attachment cache"
-    safe_clean ~/Library/Messages/Caches/Previews/StickerCache/* "Messages 预览 sticker cache"
+    safe_clean ~/Library/Messages/Caches/Previews/Stickercache/* "Messages 预览 sticker cache"
 }
 
 # App caches (merged: macOS system caches + Sandboxed apps).
@@ -822,48 +822,48 @@ clean_app_caches() {
     start_section_spinner "正在扫描 app caches..."
 
     # macOS system caches (merged from clean_macos_system_caches)
-    safe_clean ~/Library/Saved\ Application\ State/* "Saved application states" || true
-    safe_clean ~/Library/Caches/com.apple.photoanalysisd "Photo analysis cache" || true
+    safe_clean ~/Library/Saved\ Application\ State/* "已保存的应用状态" || true
+    safe_clean ~/Library/Caches/com.apple.photoanalysisd "照片分析cache" || true
     safe_clean ~/Library/Caches/com.apple.akd "Apple ID cache" || true
-    safe_clean ~/Library/Caches/com.apple.WebKit.Networking/* "WebKit network cache" || true
-    safe_clean ~/Library/DiagnosticReports/* "Diagnostic reports" || true
-    safe_clean ~/Library/Caches/com.apple.QuickLook.thumbnailcache "QuickLook thumbnails" || true
+    safe_clean ~/Library/Caches/com.apple.WebKit.Networking/* "WebKit 网络cache" || true
+    safe_clean ~/Library/DiagnosticReports/* "诊断报告" || true
+    safe_clean ~/Library/Caches/com.apple.QuickLook.thumbnailcache "QuickLook 缩略图" || true
     safe_clean ~/Library/Caches/Quick\ Look/* "QuickLook cache" || true
-    safe_clean ~/Library/Caches/com.apple.iconservices* "Icon services cache" || true
+    safe_clean ~/Library/Caches/com.apple.iconservices* "图标服务cache" || true
     _clean_incomplete_downloads
-    # Do not clean ~/Library/Autosave 信息rmation by default: it can contain
+    # Do not clean ~/Library/Autosave information by default: it can contain
     # recoverable user documents, not only disposable cache data.
-    safe_clean ~/Library/IdentityCaches/* "Identity caches" || true
-    safe_clean ~/Library/Suggestions/* "Siri suggestions cache" || true
-    safe_clean ~/Library/Calendars/Calendar\ Cache "Calendar cache" || true
-    safe_clean ~/Library/Application\ Support/AddressBook/Sources/*/Photos.cache "Address Book photo cache" || true
+    safe_clean ~/Library/Identitycaches/* "身份cache" || true
+    safe_clean ~/Library/Suggestions/* "Siri 建议cache" || true
+    safe_clean ~/Library/Calendars/Calendar\ cache "日历cache" || true
+    safe_clean ~/Library/Application\ Support/AddressBook/Sources/*/Photos.cache "通讯录照片cache" || true
     clean_support_app_data
 
     # Stop initial scan indicator before entering per-group scans.
     stop_section_spinner
 
     # Sandboxed app caches
-    safe_clean ~/Library/Containers/com.apple.wallpaper.agent/Data/Library/Caches/* "Wallpaper agent cache"
-    safe_clean ~/Library/Containers/com.apple.mediaanalysisd/Data/Library/Caches/* "Media analysis cache"
-    safe_clean ~/Library/Containers/com.apple.mediaanalysisd/Data/tmp/* "Media analysis temp files"
-    safe_clean ~/Library/Containers/com.apple.AppStore/Data/Library/Caches/* "App Store cache"
-    safe_clean ~/Library/Containers/com.apple.configurator.xpc.InternetService/Data/tmp/* "Apple Configurator temp files"
-    safe_clean ~/Library/Containers/com.apple.wallpaper.extension.aerials/Data/tmp/* "Wallpaper aerials temp files"
-    safe_clean ~/Library/Containers/com.apple.geod/Data/tmp/* "Geod temp files"
-    safe_clean ~/Library/Containers/com.apple.stocks/Data/Library/Caches/* "Stocks cache"
-    safe_clean ~/Library/Application\ Support/com.apple.wallpaper/aerials/thumbnails/* "Wallpaper aerials thumbnails"
-    safe_clean ~/Library/Caches/com.apple.helpd/* "macOS Help system cache"
-    safe_clean ~/Library/Caches/GeoServices/* "Maps geo tile cache"
-    safe_clean ~/Library/Containers/com.apple.AvatarUI.AvatarPickerMemojiPicker/Data/Library/Caches/* "Memoji picker cache"
-    safe_clean ~/Library/Containers/com.apple.AMPArtworkAgent/Data/Library/Caches/* "Music album art cache"
-    safe_clean ~/Library/Containers/com.apple.CoreDevice.CoreDeviceService/Data/Library/Caches/* "CoreDevice service cache"
-    safe_clean ~/Library/Containers/com.apple.NeptuneOneExtension/Data/Library/Caches/* "Apple Intelligence extension cache"
-    safe_clean ~/Library/Containers/com.apple.AppleMediaServicesUI.UtilityExtension/Data/tmp/* "Apple Media Services temp files"
-    safe_clean ~/Library/Caches/com.apple.AppleMediaServices/* "Apple Media Services cache"
+    safe_clean ~/Library/Containers/com.apple.wallpaper.agent/Data/Library/caches/* "壁纸代理cache"
+    safe_clean ~/Library/Containers/com.apple.mediaanalysisd/Data/Library/caches/* "媒体分析cache"
+    safe_clean ~/Library/Containers/com.apple.mediaanalysisd/Data/tmp/* "媒体分析临时文件"
+    safe_clean ~/Library/Containers/com.apple.AppStore/Data/Library/caches/* "App Store cache"
+    safe_clean ~/Library/Containers/com.apple.configurator.xpc.InternetService/Data/tmp/* "Apple Configurator 临时文件"
+    safe_clean ~/Library/Containers/com.apple.wallpaper.extension.aerials/Data/tmp/* "动态壁纸临时文件"
+    safe_clean ~/Library/Containers/com.apple.geod/Data/tmp/* "地理位置临时文件"
+    safe_clean ~/Library/Containers/com.apple.stocks/Data/Library/caches/* "股市cache"
+    safe_clean ~/Library/Application\ Support/com.apple.wallpaper/aerials/thumbnails/* "动态壁纸缩略图"
+    safe_clean ~/Library/Caches/com.apple.helpd/* "macOS 帮助系统cache"
+    safe_clean ~/Library/Caches/GeoServices/* "地图地理瓦片cache"
+    safe_clean ~/Library/Containers/com.apple.AvatarUI.AvatarPickerMemojiPicker/Data/Library/caches/* "拟我表情选择器cache"
+    safe_clean ~/Library/Containers/com.apple.AMPArtworkAgent/Data/Library/caches/* "音乐专辑封面cache"
+    safe_clean ~/Library/Containers/com.apple.CoreDevice.CoreDeviceService/Data/Library/caches/* "CoreDevice 服务cache"
+    safe_clean ~/Library/Containers/com.apple.NeptuneOneExtension/Data/Library/caches/* "Apple Intelligence 扩展cache"
+    safe_clean ~/Library/Containers/com.apple.AppleMediaServicesUI.UtilityExtension/Data/tmp/* "Apple 媒体服务临时文件"
+    safe_clean ~/Library/Caches/com.apple.AppleMediaServices/* "Apple 媒体服务cache"
     safe_clean ~/Library/Caches/com.apple.duetexpertd/* "Duet Expert cache"
     safe_clean ~/Library/Caches/com.apple.parsecd/* "Parsecd cache"
     safe_clean ~/Library/Caches/com.apple.python/* "Apple Python cache"
-    safe_clean ~/Library/Caches/com.apple.e5rt.e5bundlecache/* "Apple Intelligence runtime cache"
+    safe_clean ~/Library/Caches/com.apple.e5rt.e5bundlecache/* "Apple Intelligence 运行时cache"
     local containers_dir="$HOME/Library/Containers"
     [[ ! -d "$containers_dir" ]] && return 0
     start_section_spinner "正在扫描 sandboxed apps..."
@@ -879,7 +879,7 @@ clean_app_caches() {
     _ng_state=$(shopt -p nullglob || true)
     shopt -s nullglob
     for container_dir in "$containers_dir"/*; do
-        [[ -d "$container_dir/Data/Library/Caches" ]] || continue
+        [[ -d "$container_dir/Data/Library/caches" ]] || continue
         process_container_cache "$container_dir"
     done
     eval "$_ng_state"
@@ -926,7 +926,7 @@ process_container_cache() {
     if should_protect_data "$bundle_id"; then
         return 0
     fi
-    local cache_dir="$container_dir/Data/Library/Caches"
+    local cache_dir="$container_dir/Data/Library/caches"
     [[ -d "$cache_dir" ]] || return 0
     [[ -L "$cache_dir" ]] && return 0
     local item_count
@@ -1020,15 +1020,15 @@ clean_group_container_caches() {
         fi
 
         local -a candidates=(
-            "$container_dir/Logs"
-            "$container_dir/Library/Logs"
+            "$container_dir/logs"
+            "$container_dir/Library/logs"
         )
         if [[ "$protected_container" != "true" ]]; then
             candidates+=(
                 "$container_dir/tmp"
                 "$container_dir/Library/tmp"
-                "$container_dir/Caches"
-                "$container_dir/Library/Caches"
+                "$container_dir/caches"
+                "$container_dir/Library/caches"
             )
         fi
 
@@ -1304,37 +1304,37 @@ clean_browsers() {
     safe_clean ~/Library/Caches/com.apple.Safari/* "Safari cache"
     # Chrome/Chromium.
     safe_clean ~/Library/Caches/Google/Chrome/* "Chrome cache"
-    # Skip ScriptCache wipe while the browser is running: removing V8 bytecode
+    # Skip Scriptcache wipe while the browser is running: removing V8 bytecode
     # under a live Chromium process breaks loaded MV3 extension service workers
     # until the user toggles them in chrome://extensions. See #785.
     local _chrome_running=false
     pgrep -x "Google Chrome" > /dev/null 2>&1 && _chrome_running=true
     if [[ "$_chrome_running" != "true" ]]; then
-        safe_clean ~/Library/Application\ Support/Google/Chrome/*/Application\ Cache/* "Chrome app cache"
-        safe_clean ~/Library/Application\ Support/Google/Chrome/*/Code\ Cache/* "Chrome code cache"
+        safe_clean ~/Library/Application\ Support/Google/Chrome/*/Application\ cache/* "Chrome 应用cache"
+        safe_clean ~/Library/Application\ Support/Google/Chrome/*/Code\ cache/* "Chrome 代码cache"
         safe_clean ~/Library/Application\ Support/Google/Chrome/*/GPUCache/* "Chrome GPU cache"
-        safe_clean ~/Library/Application\ Support/Google/Chrome/*/DawnCache/* "Chrome Dawn cache"
-        safe_clean ~/Library/Application\ Support/Google/Chrome/*/GrShaderCache/* "Chrome GR shader cache"
-        safe_clean ~/Library/Application\ Support/Google/Chrome/*/GraphiteDawnCache/* "Chrome Graphite Dawn cache"
-        safe_clean ~/Library/Application\ Support/Google/Chrome/component_crx_cache/* "Chrome component CRX cache"
-        safe_clean ~/Library/Application\ Support/Google/Chrome/ShaderCache/* "Chrome shader cache"
-        safe_clean ~/Library/Application\ Support/Google/Chrome/GrShaderCache/* "Chrome GR shader cache"
-        safe_clean ~/Library/Application\ Support/Google/Chrome/GraphiteDawnCache/* "Chrome Dawn cache"
-        safe_clean ~/Library/Application\ Support/Google/Chrome/Crashpad/completed/* "Chrome crash reports"
+        safe_clean ~/Library/Application\ Support/Google/Chrome/*/Dawncache/* "Chrome Dawn cache"
+        safe_clean ~/Library/Application\ Support/Google/Chrome/*/GrShadercache/* "Chrome GR 着色器cache"
+        safe_clean ~/Library/Application\ Support/Google/Chrome/*/GraphiteDawncache/* "Chrome Graphite Dawn cache"
+        safe_clean ~/Library/Application\ Support/Google/Chrome/component_crx_cache/* "Chrome 组件 CRX cache"
+        safe_clean ~/Library/Application\ Support/Google/Chrome/Shadercache/* "Chrome 着色器cache"
+        safe_clean ~/Library/Application\ Support/Google/Chrome/GrShadercache/* "Chrome GR 着色器cache"
+        safe_clean ~/Library/Application\ Support/Google/Chrome/GraphiteDawncache/* "Chrome Dawn cache"
+        safe_clean ~/Library/Application\ Support/Google/Chrome/Crashpad/completed/* "Chrome 崩溃报告"
     else
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Chrome is running · Application Support cache cleanup skipped"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} Chrome 正在运行 · 应用支持缓存清理已跳过"
     fi
     local _chrome_profile
     for _chrome_profile in "$HOME/Library/Application Support/Google/Chrome"/*/; do
-        clean_service_worker_cache "Chrome" "$_chrome_profile/Service Worker/CacheStorage"
+        clean_service_worker_cache "Chrome" "$_chrome_profile/Service Worker/cacheStorage"
         if [[ "$_chrome_running" != "true" ]]; then
-            safe_clean "$_chrome_profile"/Service\ Worker/ScriptCache/* "Chrome Service Worker ScriptCache"
+            safe_clean "$_chrome_profile"/Service\ Worker/Scriptcache/* "Chrome Service Worker 脚本cache"
         fi
     done
     safe_clean ~/Library/Application\ Support/Google/GoogleUpdater/crx_cache/* "GoogleUpdater CRX cache"
-    safe_clean ~/Library/Application\ Support/Google/GoogleUpdater/*.old "GoogleUpdater old files"
+    safe_clean ~/Library/Application\ Support/Google/GoogleUpdater/*.old "GoogleUpdater 旧文件"
     safe_clean ~/Library/Caches/Chromium/* "Chromium cache"
-    safe_clean ~/.cache/puppeteer/* "Puppeteer browser cache"
+    safe_clean ~/.cache/puppeteer/* "Puppeteer 浏览器cache"
     safe_clean ~/Library/Caches/com.microsoft.edgemac/* "Edge cache"
     # Arc Browser.
     if [[ -d ~/Library/Application\ Support/Arc ]]; then
@@ -1343,20 +1343,20 @@ clean_browsers() {
         local _arc_running=false
         pgrep -x "Arc" > /dev/null 2>&1 && _arc_running=true
         if [[ "$_arc_running" != "true" ]]; then
-            safe_clean ~/Library/Application\ Support/Arc/*/Code\ Cache/* "Arc code cache"
+            safe_clean ~/Library/Application\ Support/Arc/*/Code\ cache/* "Arc 代码cache"
             safe_clean ~/Library/Application\ Support/Arc/*/GPUCache/* "Arc GPU cache"
-            safe_clean ~/Library/Application\ Support/Arc/*/DawnCache/* "Arc Dawn cache"
-            safe_clean ~/Library/Application\ Support/Arc/*/GrShaderCache/* "Arc GR shader cache"
-            safe_clean ~/Library/Application\ Support/Arc/*/GraphiteDawnCache/* "Arc Graphite Dawn cache"
-            safe_clean ~/Library/Application\ Support/Arc/ShaderCache/* "Arc shader cache"
-            safe_clean ~/Library/Application\ Support/Arc/GrShaderCache/* "Arc GR shader cache"
-            safe_clean ~/Library/Application\ Support/Arc/GraphiteDawnCache/* "Arc Dawn cache"
-            safe_clean ~/Library/Application\ Support/Arc/Crashpad/completed/* "Arc crash reports"
+            safe_clean ~/Library/Application\ Support/Arc/*/Dawncache/* "Arc Dawn cache"
+            safe_clean ~/Library/Application\ Support/Arc/*/GrShadercache/* "Arc GR 着色器cache"
+            safe_clean ~/Library/Application\ Support/Arc/*/GraphiteDawncache/* "Arc Graphite Dawn cache"
+            safe_clean ~/Library/Application\ Support/Arc/Shadercache/* "Arc 着色器cache"
+            safe_clean ~/Library/Application\ Support/Arc/GrShadercache/* "Arc GR 着色器cache"
+            safe_clean ~/Library/Application\ Support/Arc/GraphiteDawncache/* "Arc Dawn cache"
+            safe_clean ~/Library/Application\ Support/Arc/Crashpad/completed/* "Arc 崩溃报告"
         fi
         for _arc_profile in "$HOME/Library/Application Support/Arc"/*/; do
-            clean_service_worker_cache "Arc" "$_arc_profile/Service Worker/CacheStorage"
+            clean_service_worker_cache "Arc" "$_arc_profile/Service Worker/cacheStorage"
             if [[ "$_arc_running" != "true" ]]; then
-                safe_clean "$_arc_profile"/Service\ Worker/ScriptCache/* "Arc Service Worker ScriptCache"
+                safe_clean "$_arc_profile"/Service\ Worker/Scriptcache/* "Arc Service Worker 脚本cache"
             fi
         done
     fi
@@ -1367,22 +1367,22 @@ clean_browsers() {
         local _brave_running=false
         pgrep -x "Brave Browser" > /dev/null 2>&1 && _brave_running=true
         if [[ "$_brave_running" != "true" ]]; then
-            safe_clean ~/Library/Application\ Support/BraveSoftware/Brave-Browser/*/Application\ Cache/* "Brave app cache"
-            safe_clean ~/Library/Application\ Support/BraveSoftware/Brave-Browser/*/Code\ Cache/* "Brave code cache"
+            safe_clean ~/Library/Application\ Support/BraveSoftware/Brave-Browser/*/Application\ cache/* "Brave 应用cache"
+            safe_clean ~/Library/Application\ Support/BraveSoftware/Brave-Browser/*/Code\ cache/* "Brave 代码cache"
             safe_clean ~/Library/Application\ Support/BraveSoftware/Brave-Browser/*/GPUCache/* "Brave GPU cache"
-            safe_clean ~/Library/Application\ Support/BraveSoftware/Brave-Browser/*/DawnCache/* "Brave Dawn cache"
-            safe_clean ~/Library/Application\ Support/BraveSoftware/Brave-Browser/*/GrShaderCache/* "Brave GR shader cache"
-            safe_clean ~/Library/Application\ Support/BraveSoftware/Brave-Browser/*/GraphiteDawnCache/* "Brave Graphite Dawn cache"
-            safe_clean ~/Library/Application\ Support/BraveSoftware/Brave-Browser/component_crx_cache/* "Brave component CRX cache"
-            safe_clean ~/Library/Application\ Support/BraveSoftware/Brave-Browser/ShaderCache/* "Brave shader cache"
-            safe_clean ~/Library/Application\ Support/BraveSoftware/Brave-Browser/GrShaderCache/* "Brave GR shader cache"
-            safe_clean ~/Library/Application\ Support/BraveSoftware/Brave-Browser/GraphiteDawnCache/* "Brave Dawn cache"
-            safe_clean ~/Library/Application\ Support/BraveSoftware/Brave-Browser/Crashpad/completed/* "Brave crash reports"
+            safe_clean ~/Library/Application\ Support/BraveSoftware/Brave-Browser/*/Dawncache/* "Brave Dawn cache"
+            safe_clean ~/Library/Application\ Support/BraveSoftware/Brave-Browser/*/GrShadercache/* "Brave GR 着色器cache"
+            safe_clean ~/Library/Application\ Support/BraveSoftware/Brave-Browser/*/GraphiteDawncache/* "Brave Graphite Dawn cache"
+            safe_clean ~/Library/Application\ Support/BraveSoftware/Brave-Browser/component_crx_cache/* "Brave 组件 CRX cache"
+            safe_clean ~/Library/Application\ Support/BraveSoftware/Brave-Browser/Shadercache/* "Brave 着色器cache"
+            safe_clean ~/Library/Application\ Support/BraveSoftware/Brave-Browser/GrShadercache/* "Brave GR 着色器cache"
+            safe_clean ~/Library/Application\ Support/BraveSoftware/Brave-Browser/GraphiteDawncache/* "Brave Dawn cache"
+            safe_clean ~/Library/Application\ Support/BraveSoftware/Brave-Browser/Crashpad/completed/* "Brave 崩溃报告"
         fi
         for _brave_profile in "$HOME/Library/Application Support/BraveSoftware/Brave-Browser"/*/; do
-            clean_service_worker_cache "Brave" "$_brave_profile/Service Worker/CacheStorage"
+            clean_service_worker_cache "Brave" "$_brave_profile/Service Worker/cacheStorage"
             if [[ "$_brave_running" != "true" ]]; then
-                safe_clean "$_brave_profile"/Service\ Worker/ScriptCache/* "Brave Service Worker ScriptCache"
+                safe_clean "$_brave_profile"/Service\ Worker/Scriptcache/* "Brave Service Worker 脚本cache"
             fi
         done
     fi
@@ -1390,19 +1390,19 @@ clean_browsers() {
     if [[ -d ~/Library/Application\ Support/net.imput.helium ]]; then
         safe_clean ~/Library/Caches/net.imput.helium/* "Helium cache"
         safe_clean ~/Library/Application\ Support/net.imput.helium/*/GPUCache/* "Helium GPU cache"
-        safe_clean ~/Library/Application\ Support/net.imput.helium/component_crx_cache/* "Helium component cache"
-        safe_clean ~/Library/Application\ Support/net.imput.helium/extensions_crx_cache/* "Helium extensions cache"
-        safe_clean ~/Library/Application\ Support/net.imput.helium/GrShaderCache/* "Helium shader cache"
-        safe_clean ~/Library/Application\ Support/net.imput.helium/GraphiteDawnCache/* "Helium Dawn cache"
-        safe_clean ~/Library/Application\ Support/net.imput.helium/ShaderCache/* "Helium shader cache"
-        safe_clean ~/Library/Application\ Support/net.imput.helium/*/Application\ Cache/* "Helium app cache"
+        safe_clean ~/Library/Application\ Support/net.imput.helium/component_crx_cache/* "Helium 组件cache"
+        safe_clean ~/Library/Application\ Support/net.imput.helium/extensions_crx_cache/* "Helium 扩展cache"
+        safe_clean ~/Library/Application\ Support/net.imput.helium/GrShadercache/* "Helium 着色器cache"
+        safe_clean ~/Library/Application\ Support/net.imput.helium/GraphiteDawncache/* "Helium Dawn cache"
+        safe_clean ~/Library/Application\ Support/net.imput.helium/Shadercache/* "Helium 着色器cache"
+        safe_clean ~/Library/Application\ Support/net.imput.helium/*/Application\ cache/* "Helium 应用cache"
     fi
     # Yandex Browser.
     if [[ -d ~/Library/Application\ Support/Yandex ]]; then
         safe_clean ~/Library/Caches/Yandex/YandexBrowser/* "Yandex cache"
-        safe_clean ~/Library/Application\ Support/Yandex/YandexBrowser/ShaderCache/* "Yandex shader cache"
-        safe_clean ~/Library/Application\ Support/Yandex/YandexBrowser/GrShaderCache/* "Yandex GR shader cache"
-        safe_clean ~/Library/Application\ Support/Yandex/YandexBrowser/GraphiteDawnCache/* "Yandex Dawn cache"
+        safe_clean ~/Library/Application\ Support/Yandex/YandexBrowser/Shadercache/* "Yandex 着色器cache"
+        safe_clean ~/Library/Application\ Support/Yandex/YandexBrowser/GrShadercache/* "Yandex GR 着色器cache"
+        safe_clean ~/Library/Application\ Support/Yandex/YandexBrowser/GraphiteDawncache/* "Yandex Dawn cache"
         safe_clean ~/Library/Application\ Support/Yandex/YandexBrowser/*/GPUCache/* "Yandex GPU cache"
     fi
     local firefox_running=false
@@ -1422,20 +1422,20 @@ clean_browsers() {
         local _vivaldi_running=false
         pgrep -x "Vivaldi" > /dev/null 2>&1 && _vivaldi_running=true
         if [[ "$_vivaldi_running" != "true" ]]; then
-            safe_clean ~/Library/Application\ Support/Vivaldi/*/Code\ Cache/* "Vivaldi code cache"
+            safe_clean ~/Library/Application\ Support/Vivaldi/*/Code\ cache/* "Vivaldi 代码cache"
             safe_clean ~/Library/Application\ Support/Vivaldi/*/GPUCache/* "Vivaldi GPU cache"
-            safe_clean ~/Library/Application\ Support/Vivaldi/*/DawnCache/* "Vivaldi Dawn cache"
-            safe_clean ~/Library/Application\ Support/Vivaldi/*/GrShaderCache/* "Vivaldi GR shader cache"
-            safe_clean ~/Library/Application\ Support/Vivaldi/*/GraphiteDawnCache/* "Vivaldi Graphite Dawn cache"
-            safe_clean ~/Library/Application\ Support/Vivaldi/ShaderCache/* "Vivaldi shader cache"
-            safe_clean ~/Library/Application\ Support/Vivaldi/GrShaderCache/* "Vivaldi GR shader cache"
-            safe_clean ~/Library/Application\ Support/Vivaldi/GraphiteDawnCache/* "Vivaldi Dawn cache"
-            safe_clean ~/Library/Application\ Support/Vivaldi/Crashpad/completed/* "Vivaldi crash reports"
+            safe_clean ~/Library/Application\ Support/Vivaldi/*/Dawncache/* "Vivaldi Dawn cache"
+            safe_clean ~/Library/Application\ Support/Vivaldi/*/GrShadercache/* "Vivaldi GR 着色器cache"
+            safe_clean ~/Library/Application\ Support/Vivaldi/*/GraphiteDawncache/* "Vivaldi Graphite Dawn cache"
+            safe_clean ~/Library/Application\ Support/Vivaldi/Shadercache/* "Vivaldi 着色器cache"
+            safe_clean ~/Library/Application\ Support/Vivaldi/GrShadercache/* "Vivaldi GR 着色器cache"
+            safe_clean ~/Library/Application\ Support/Vivaldi/GraphiteDawncache/* "Vivaldi Dawn cache"
+            safe_clean ~/Library/Application\ Support/Vivaldi/Crashpad/completed/* "Vivaldi 崩溃报告"
         fi
         for _vivaldi_profile in "$HOME/Library/Application Support/Vivaldi"/*/; do
-            clean_service_worker_cache "Vivaldi" "$_vivaldi_profile/Service Worker/CacheStorage"
+            clean_service_worker_cache "Vivaldi" "$_vivaldi_profile/Service Worker/cacheStorage"
             if [[ "$_vivaldi_running" != "true" ]]; then
-                safe_clean "$_vivaldi_profile"/Service\ Worker/ScriptCache/* "Vivaldi Service Worker ScriptCache"
+                safe_clean "$_vivaldi_profile"/Service\ Worker/Scriptcache/* "Vivaldi Service Worker 脚本cache"
             fi
         done
     fi
@@ -1445,7 +1445,7 @@ clean_browsers() {
     if [[ "$firefox_running" == "true" ]]; then
         echo -e "  ${GRAY}${ICON_WARNING}${NC} Firefox is running · profile cache cleanup skipped"
     else
-        safe_clean ~/Library/Application\ Support/Firefox/Profiles/*/cache2/* "Firefox profile cache"
+        safe_clean ~/Library/Application\ Support/Firefox/Profiles/*/cache2/* "Firefox 配置文件cache"
     fi
     clean_chrome_old_versions
     clean_edge_old_versions
@@ -1469,8 +1469,8 @@ clean_cloud_storage() {
     else
         safe_clean ~/Library/Caches/com.google.GoogleDrive "Google Drive cache"
     fi
-    safe_clean ~/Library/Caches/com.baidu.netdisk "Baidu Netdisk cache"
-    safe_clean ~/Library/Caches/com.alibaba.teambitiondisk "Alibaba Cloud cache"
+    safe_clean ~/Library/Caches/com.baidu.netdisk "百度网盘cache"
+    safe_clean ~/Library/Caches/com.alibaba.teambitiondisk "阿里云盘cache"
     safe_clean ~/Library/Caches/com.box.desktop "Box cache"
     if pgrep -x "OneDrive" > /dev/null 2>&1; then
         echo -e "  ${GRAY}${ICON_WARNING}${NC} OneDrive is running · cache cleanup skipped"
@@ -1488,16 +1488,16 @@ clean_office_applications() {
     if [[ "${MO_DEBUG:-0}" == "1" ]]; then
         echo "[DEBUG] 正在清理 Word container cache..." >&2
     fi
-    safe_clean ~/Library/Containers/com.microsoft.Word/Data/Library/Caches/* "Microsoft Word container cache"
-    safe_clean ~/Library/Containers/com.microsoft.Word/Data/tmp/* "Microsoft Word temp files"
-    safe_clean ~/Library/Containers/com.microsoft.Word/Data/Library/Logs/* "Microsoft Word container logs"
+    safe_clean ~/Library/Containers/com.microsoft.Word/Data/Library/caches/* "Microsoft Word 容器cache"
+    safe_clean ~/Library/Containers/com.microsoft.Word/Data/tmp/* "Microsoft Word 临时文件"
+    safe_clean ~/Library/Containers/com.microsoft.Word/Data/Library/logs/* "Microsoft Word 容器logs"
     safe_clean ~/Library/Caches/com.microsoft.Excel "Microsoft Excel cache"
     if [[ "${MO_DEBUG:-0}" == "1" ]]; then
         echo "[DEBUG] 正在清理 Excel container cache..." >&2
     fi
-    safe_clean ~/Library/Containers/com.microsoft.Excel/Data/Library/Caches/* "Microsoft Excel container cache"
-    safe_clean ~/Library/Containers/com.microsoft.Excel/Data/tmp/* "Microsoft Excel temp files"
-    safe_clean ~/Library/Containers/com.microsoft.Excel/Data/Library/Logs/* "Microsoft Excel container logs"
+    safe_clean ~/Library/Containers/com.microsoft.Excel/Data/Library/caches/* "Microsoft Excel 容器cache"
+    safe_clean ~/Library/Containers/com.microsoft.Excel/Data/tmp/* "Microsoft Excel 临时文件"
+    safe_clean ~/Library/Containers/com.microsoft.Excel/Data/Library/logs/* "Microsoft Excel 容器logs"
     safe_clean ~/Library/Caches/com.microsoft.Powerpoint "Microsoft PowerPoint cache"
     safe_clean ~/Library/Caches/com.microsoft.Outlook/* "Microsoft Outlook cache"
     safe_clean ~/Library/Caches/com.apple.iWork.* "Apple iWork cache"
@@ -1512,7 +1512,7 @@ clean_virtualization_tools() {
     safe_clean ~/Library/Caches/com.vmware.fusion "VMware Fusion cache"
     safe_clean ~/Library/Caches/com.parallels.* "Parallels cache"
     safe_clean ~/VirtualBox\ VMs/.cache "VirtualBox cache"
-    safe_clean ~/.vagrant.d/tmp/* "Vagrant temporary files"
+    safe_clean ~/.vagrant.d/tmp/* "Vagrant 临时文件"
 }
 
 # Estimate item size for Application Support cleanup.
@@ -1635,11 +1635,11 @@ clean_application_support_logs() {
         # subtrees only; app-specific log/cache cleanup belongs in allowlisted
         # app modules above.
         local -a start_candidates=(
-            "$app_dir/Code Cache"
+            "$app_dir/Code cache"
             "$app_dir/GPUCache"
-            "$app_dir/DawnCache"
-            "$app_dir/GrShaderCache"
-            "$app_dir/GraphiteDawnCache"
+            "$app_dir/Dawncache"
+            "$app_dir/GrShadercache"
+            "$app_dir/GraphiteDawncache"
             "$app_dir/Crashpad/completed"
         )
         for candidate in "${start_candidates[@]}"; do
@@ -1700,7 +1700,7 @@ clean_application_support_logs() {
                                 app_label="${app_label:0:21}..."
                             fi
                             stop_section_spinner
-                            start_section_spinner "正在扫描 Application Support... $app_count/$total_apps [$app_label, $candidate_item_count items]"
+                            start_section_spinner "正在扫描 Application Support... $app_count/$total_apps [$app_label, $candidate_item_count 项]"
                             last_progress_update=$current_time
                         fi
                     fi
@@ -1723,7 +1723,7 @@ clean_application_support_logs() {
     )
     for container in "${known_group_containers[@]}"; do
         local container_path="$HOME/Library/Group Containers/$container"
-        local -a gc_candidates=("$container_path/Logs" "$container_path/Library/Logs")
+        local -a gc_candidates=("$container_path/logs" "$container_path/Library/logs")
         for candidate in "${gc_candidates[@]}"; do
             if [[ -d "$candidate" ]]; then
                 # Quick count check - skip if too many items
@@ -1774,7 +1774,7 @@ clean_application_support_logs() {
                                 container_label="${container_label:0:21}..."
                             fi
                             stop_section_spinner
-                            start_section_spinner "正在扫描 Application Support... group [$container_label, $candidate_item_count items]"
+                            start_section_spinner "正在扫描 Application Support... group [$container_label, $candidate_item_count 项]"
                             last_progress_update=$current_time
                         fi
                     fi
@@ -1890,11 +1890,11 @@ clean_cached_device_firmware() {
         local size_human
         size_human=$(bytes_to_human "$((total_size_kb * 1024))")
         if [[ "$DRY_RUN" == "true" ]]; then
-            echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} Cached device firmware${NC}, ${YELLOW}${cleaned_count} files, $size_human dry${NC}"
+            echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} cached device firmware${NC}, ${YELLOW}${cleaned_count} files, $size_human dry${NC}"
         else
             local line_color
             line_color=$(cleanup_result_color_kb "$total_size_kb")
-            echo -e "  ${line_color}${ICON_SUCCESS}${NC} Cached device firmware${NC}, ${line_color}${cleaned_count} files, $size_human${NC}"
+            echo -e "  ${line_color}${ICON_SUCCESS}${NC} cached device firmware${NC}, ${line_color}${cleaned_count} files, $size_human${NC}"
         fi
         files_cleaned=$((files_cleaned + cleaned_count))
         total_size_cleaned=$((total_size_cleaned + total_size_kb))
@@ -1924,7 +1924,7 @@ check_ios_device_backups() {
 
 # Large file candidates (report only, no deletion).
 check_large_file_candidates() {
-    local threshold_kb=$((1024 * 1024)) # 1GB
+    local threshOld_kb=$((1024 * 1024)) # 1GB
     local found_any=false
 
     _large_candidate_size_kb() {
@@ -1944,7 +1944,7 @@ check_large_file_candidates() {
         [[ -d "$path" ]] || return 0
         local size_kb=""
         size_kb=$(_large_candidate_size_kb "$path") || return 0
-        [[ "$size_kb" -ge "$threshold_kb" ]] || return 0
+        [[ "$size_kb" -ge "$threshOld_kb" ]] || return 0
         local size_human
         size_human=$(bytes_to_human "$((size_kb * 1024))")
         echo -e "  ${YELLOW}${ICON_WARNING}${NC} ${label}: ${GREEN}${size_human}${NC}${GRAY}, Path: $path${NC}"
@@ -1955,7 +1955,7 @@ check_large_file_candidates() {
     if [[ -d "$mail_dir" ]]; then
         local mail_kb
         mail_kb=$(get_path_size_kb "$mail_dir")
-        if [[ "$mail_kb" -ge "$threshold_kb" ]]; then
+        if [[ "$mail_kb" -ge "$threshOld_kb" ]]; then
             local mail_human
             mail_human=$(bytes_to_human "$((mail_kb * 1024))")
             echo -e "  ${YELLOW}${ICON_WARNING}${NC} Mail data: ${GREEN}${mail_human}${NC}${GRAY}, Path: $mail_dir${NC}"
@@ -1967,7 +1967,7 @@ check_large_file_candidates() {
     if [[ -d "$mail_downloads" ]]; then
         local downloads_kb
         downloads_kb=$(get_path_size_kb "$mail_downloads")
-        if [[ "$downloads_kb" -ge "$threshold_kb" ]]; then
+        if [[ "$downloads_kb" -ge "$threshOld_kb" ]]; then
             local downloads_human
             downloads_human=$(bytes_to_human "$((downloads_kb * 1024))")
             echo -e "  ${YELLOW}${ICON_WARNING}${NC} Mail downloads: ${GREEN}${downloads_human}${NC}${GRAY}, Path: $mail_downloads${NC}"
@@ -1993,7 +1993,7 @@ check_large_file_candidates() {
     if [[ -d "$updates_dir" ]]; then
         local updates_kb
         updates_kb=$(get_path_size_kb "$updates_dir")
-        if [[ "$updates_kb" -ge "$threshold_kb" ]]; then
+        if [[ "$updates_kb" -ge "$threshOld_kb" ]]; then
             local updates_human
             updates_human=$(bytes_to_human "$((updates_kb * 1024))")
             echo -e "  ${YELLOW}${ICON_WARNING}${NC} macOS updates cache: ${GREEN}${updates_human}${NC}${GRAY}, Path: $updates_dir${NC}"
@@ -2040,13 +2040,13 @@ check_large_file_candidates() {
     _report_large_review_dir "LM Studio models (review only)" "$HOME/.lmstudio/models"
     _report_large_review_dir "OrbStack data (review only)" "$HOME/OrbStack"
     _report_large_review_dir "Lima data (review only)" "$HOME/.lima"
-    _report_large_review_dir "Maven local repository (review only)" "$HOME/.m2/repository"
+    _report_large_review_dir "Maven 本地仓库 (review only)" "$HOME/.m2/repository"
     _report_large_review_dir "pnpm store (review only)" "$HOME/Library/pnpm/store"
     _report_large_review_dir "Conda packages (review only)" "$HOME/.conda/pkgs"
     _report_large_review_dir "Anaconda packages (review only)" "$HOME/anaconda3/pkgs"
 
     if [[ "$found_any" == "false" ]]; then
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} No large items detected in common locations"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} 未在常见位置发现大文件"
     fi
 
     unset -f _large_candidate_size_kb _report_large_review_dir
@@ -2060,9 +2060,9 @@ clean_apple_silicon_caches() {
     if [[ "${IS_M_SERIES:-false}" != "true" ]]; then
         return 0
     fi
-    start_section "Apple Silicon updates"
+    start_section "Apple 芯片更新"
     safe_clean /Library/Apple/usr/share/rosetta/rosetta_update_bundle "Rosetta 2 cache"
-    safe_clean ~/Library/Caches/com.apple.rosetta.update "Rosetta 2 user cache"
-    safe_clean ~/Library/Caches/com.apple.amp.mediasevicesd "Apple Silicon media service cache"
+    safe_clean ~/Library/Caches/com.apple.rosetta.update "Rosetta 2 用户cache"
+    safe_clean ~/Library/Caches/com.apple.amp.mediasevicesd "Apple Silicon 媒体服务cache"
     end_section
 }

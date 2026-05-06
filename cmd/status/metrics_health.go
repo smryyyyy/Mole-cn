@@ -170,11 +170,11 @@ func calculateHealthScore(cpu CPUStatus, mem MemoryStatus, disks []DiskStatus, d
 	case score >= 90:
 		msg = "Excellent"
 	case score >= 75:
-		msg = "Good"
+		msg = "良好"
 	case score >= 60:
-		msg = "Fair"
+		msg = "一般"
 	case score >= 40:
-		msg = "Poor"
+		msg = "较差"
 	default:
 		msg = "Critical"
 	}
@@ -193,7 +193,7 @@ func batteryHealthLabel(cycles int, capacity int) (string, string) {
 		return "Service Soon", "danger"
 	}
 	if cycles > batteryCycleWarn || (capacity > 0 && capacity < batteryCapWarn) {
-		return "Fair", "warn"
+		return "一般", "warn"
 	}
 	return "Healthy", "ok"
 }

@@ -18,26 +18,26 @@ func (m model) View() string {
 		if m.diskFree > 0 {
 			freeLabel = fmt.Sprintf("  %s(%s 可用)%s", colorGray, humanizeBytes(m.diskFree), colorReset)
 		}
-		fmt.Fprintf(&b, "%sAnalyze Disk%s%s\n", colorPurpleBold, colorReset, freeLabel)
+		fmt.Fprintf(&b, "%s分析磁盘%s%s\n", colorPurpleBold, colorReset, freeLabel)
 		if m.overviewScanning {
 			if allOverviewEntriesPending(m.entries) {
-				fmt.Fprintf(&b, "%sSelect a location to explore:%s  ", colorGray, colorReset)
+				fmt.Fprintf(&b, "%s选择要探索的位置:%s  ", colorGray, colorReset)
 				fmt.Fprintf(&b, "%s%s%s%s Analyzing disk usage...\n\n",
 					colorCyan, colorBold, spinnerFrames[m.spinner], colorReset)
 			} else {
-				fmt.Fprintf(&b, "%sSelect a location to explore:%s  ", colorGray, colorReset)
+				fmt.Fprintf(&b, "%s选择要探索的位置:%s  ", colorGray, colorReset)
 				fmt.Fprintf(&b, "%s%s%s%s %s\n\n", colorCyan, colorBold, spinnerFrames[m.spinner], colorReset, m.status)
 			}
 		} else {
 			if hasPendingOverviewEntries(m.entries) {
-				fmt.Fprintf(&b, "%sSelect a location to explore:%s  ", colorGray, colorReset)
+				fmt.Fprintf(&b, "%s选择要探索的位置:%s  ", colorGray, colorReset)
 				fmt.Fprintf(&b, "%s%s%s%s %s\n\n", colorCyan, colorBold, spinnerFrames[m.spinner], colorReset, m.status)
 			} else {
-				fmt.Fprintf(&b, "%sSelect a location to explore:%s\n\n", colorGray, colorReset)
+				fmt.Fprintf(&b, "%s选择要探索的位置:%s\n\n", colorGray, colorReset)
 			}
 		}
 	} else {
-		fmt.Fprintf(&b, "%sAnalyze Disk%s  %s%s%s", colorPurpleBold, colorReset, colorGray, displayPath(m.path), colorReset)
+		fmt.Fprintf(&b, "%s分析磁盘%s  %s%s%s", colorPurpleBold, colorReset, colorGray, displayPath(m.path), colorReset)
 		if !m.scanning {
 			fmt.Fprintf(&b, "  |  总计： %s", humanizeBytes(m.totalSize))
 		}

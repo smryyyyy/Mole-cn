@@ -8,7 +8,7 @@ mole_hints_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$mole_hints_dir/purge_shared.sh"
 
 # Quick reminder probe for project build artifacts handled by `mo purge`.
-# Designed to be very fast: shallow directory checks only, no deep find scans.
+# Designed to be very fast: shallow 目录前请手动检查 checks only, no deep find scans.
 # shellcheck disable=SC2329
 load_quick_purge_hint_paths() {
     local config_file="$HOME/.config/mole/purge_paths"
@@ -320,7 +320,7 @@ show_system_data_hint_notice() {
     local timeout_seconds="0.8"
     local max_hits=3
 
-    local threshold_kb=$((min_gb * 1024 * 1024))
+    local threshOld_kb=$((min_gb * 1024 * 1024))
     local -a clue_labels=()
     local -a clue_sizes=()
     local -a clue_paths=()
@@ -349,7 +349,7 @@ show_system_data_hint_notice() {
 
         local size_kb=""
         if size_kb=$(hint_get_path_size_kb_with_timeout "$path" "$timeout_seconds"); then
-            if [[ "$size_kb" -ge "$threshold_kb" ]]; then
+            if [[ "$size_kb" -ge "$threshOld_kb" ]]; then
                 clue_labels+=("${labels[$i]}")
                 clue_sizes+=("$size_kb")
                 clue_paths+=("${path/#$HOME/~}")
@@ -362,7 +362,7 @@ show_system_data_hint_notice() {
 
     if [[ ${#clue_labels[@]} -eq 0 ]]; then
         note_activity
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} No common System Data clues detected"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} 未发现常见的系统数据线索"
         return 0
     fi
 
@@ -599,7 +599,7 @@ show_orphan_dotdir_hint_notice() {
 
         # shellcheck disable=SC2088
         labels+=("~/${basename}${size_human}")
-        details+=("No matching binary in PATH, last modified ${age_d} days ago")
+        details+=("PATH 中未找到匹配的二进制文件， 上次修改 ${age_d} 天前")
 
         if [[ ${#labels[@]} -ge $max_hits ]]; then
             break
@@ -612,8 +612,8 @@ show_orphan_dotdir_hint_notice() {
 
     local i
     for i in "${!labels[@]}"; do
-        echo -e "  ${GREEN}${ICON_LIST}${NC} Potential orphan dotfile: ${labels[$i]}"
+        echo -e "  ${GREEN}${ICON_LIST}${NC} 潜在孤立点文件： ${labels[$i]}"
         echo -e "  ${GRAY}${ICON_SUBLIST}${NC} ${details[$i]}"
     done
-    echo -e "  ${GRAY}${ICON_REVIEW}${NC} Review manually before removing any ~/.<dir> directory"
+    echo -e "  ${GRAY}${ICON_REVIEW}${NC} 移除任何 ~/.<dir> 目录前请手动检查"
 }

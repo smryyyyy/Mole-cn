@@ -1,5 +1,5 @@
 #!/bin/bash
-# Cache Cleanup Module
+# cache Cleanup Module
 set -euo pipefail
 
 # shellcheck disable=SC1091
@@ -10,15 +10,15 @@ check_tcc_permissions() {
     local permission_flag="$HOME/.cache/mole/permissions_granted"
     [[ -f "$permission_flag" ]] && return 0
     local -a tcc_dirs=(
-        "$HOME/Library/Caches"
-        "$HOME/Library/Logs"
+        "$HOME/Library/caches"
+        "$HOME/Library/logs"
         "$HOME/Library/Application Support"
         "$HOME/Library/Containers"
         "$HOME/.cache"
     )
     # Quick permission probe (avoid deep scans).
     local needs_permission_check=false
-    if ! ls "$HOME/Library/Caches" > /dev/null 2>&1; then
+    if ! ls "$HOME/Library/caches" > /dev/null 2>&1; then
         needs_permission_check=true
     fi
     if [[ "$needs_permission_check" == "true" ]]; then

@@ -103,7 +103,7 @@ if [[ $# -eq 0 ]]; then
             if [[ "${MOLE_DRY_RUN:-0}" != "1" ]]; then
                 remove_stale_completion_entries "$config_fish" "Removed stale completion entries from config.fish" || true
             fi
-            log_error "mole not found in PATH, install Mole before enabling completion"
+            log_error "PATH 中未找到 mole，请先安装 Mole 再启用补全"
             exit 1
         fi
 
@@ -140,7 +140,7 @@ if [[ $# -eq 0 ]]; then
                     ;;
                 "" | $'\n' | $'\r' | [Yy]) ;;
                 *)
-                    log_error "Invalid key"
+                    log_error "无效按键"
                     exit 1
                     ;;
             esac
@@ -196,7 +196,7 @@ if [[ $# -eq 0 ]]; then
                 echo ""
             fi
         fi
-        log_error "mole not found in PATH, install Mole before enabling completion"
+        log_error "PATH 中未找到 mole，请先安装 Mole 再启用补全"
         exit 1
     fi
 
@@ -249,7 +249,7 @@ if [[ $# -eq 0 ]]; then
             ;;
         "" | $'\n' | $'\r' | [Yy]) ;;
         *)
-            log_error "Invalid key"
+            log_error "无效按键"
             exit 1
             ;;
     esac

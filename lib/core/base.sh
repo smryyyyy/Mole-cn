@@ -202,7 +202,7 @@ detect_architecture() {
     fi
 
     if [[ "$(uname -m)" == "arm64" ]]; then
-        export MOLE_ARCH_CACHE="Apple Silicon"
+        export MOLE_ARCH_CACHE="Apple 芯片"
     else
         export MOLE_ARCH_CACHE="Intel"
     fi

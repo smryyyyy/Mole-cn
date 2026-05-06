@@ -40,13 +40,13 @@ gpu_cache_dir_is_stale() {
     [[ -z "$recent_file" ]]
 }
 
-# System caches, logs, and temp files.
+# 系统cache, logs, and 临时文件.
 clean_deep_system() {
     stop_section_spinner
     local cache_cleaned=0
     start_section_spinner "正在清理 system caches..."
-    # Optimized: Single pass for /Library/Caches (3 patterns in 1 scan)
-    if sudo test -d "/Library/Caches" 2> /dev/null; then
+    # Optimized: Single pass for /Library/caches (3 patterns in 1 scan)
+    if sudo test -d "/Library/caches" 2> /dev/null; then
         while IFS= read -r -d '' file; do
             if should_protect_path "$file"; then
                 continue
@@ -54,14 +54,14 @@ clean_deep_system() {
             if safe_sudo_remove "$file"; then
                 cache_cleaned=1
             fi
-        done < <(sudo find "/Library/Caches" -maxdepth 5 -type f \( \
+        done < <(sudo find "/Library/caches" -maxdepth 5 -type f \( \
             \( -name "*.cache" -mtime "+$MOLE_TEMP_FILE_AGE_DAYS" \) -o \
             \( -name "*.tmp" -mtime "+$MOLE_TEMP_FILE_AGE_DAYS" \) -o \
             \( -name "*.log" -mtime "+$MOLE_LOG_AGE_DAYS" \) \
             \) -print0 2> /dev/null || true)
     fi
     stop_section_spinner
-    [[ $cache_cleaned -eq 1 ]] && log_success "System caches"
+    [[ $cache_cleaned -eq 1 ]] && log_success "系统cache"
     start_section_spinner "正在清理 system temporary files..."
     local tmp_cleaned=0
     local -a sys_temp_dirs=("/private/tmp" "/private/var/tmp")
@@ -73,13 +73,13 @@ clean_deep_system() {
         fi
     done
     stop_section_spinner
-    [[ $tmp_cleaned -eq 1 ]] && log_success "System temp files"
+    [[ $tmp_cleaned -eq 1 ]] && log_success "系统临时文件"
     start_section_spinner "正在清理 system crash reports..."
-    if sudo find "/Library/Logs/DiagnosticReports" -maxdepth 1 -type f -mtime "+$MOLE_CRASH_REPORT_AGE_DAYS" -print -quit 2> /dev/null | grep -q .; then
-        safe_sudo_find_delete "/Library/Logs/DiagnosticReports" "*" "$MOLE_CRASH_REPORT_AGE_DAYS" "f" || true
+    if sudo find "/Library/logs/DiagnosticReports" -maxdepth 1 -type f -mtime "+$MOLE_CRASH_REPORT_AGE_DAYS" -print -quit 2> /dev/null | grep -q .; then
+        safe_sudo_find_delete "/Library/logs/DiagnosticReports" "*" "$MOLE_CRASH_REPORT_AGE_DAYS" "f" || true
     fi
     stop_section_spinner
-    log_success "System crash reports"
+    log_success "系统崩溃报告"
     start_section_spinner "正在清理 system logs..."
     if sudo find "/private/var/log" -maxdepth 3 -type f \( -name "*.log" -o -name "*.gz" -o -name "*.asl" \) -mtime "+$MOLE_LOG_AGE_DAYS" -print -quit 2> /dev/null | grep -q .; then
         safe_sudo_find_delete "/private/var/log" "*.log" "$MOLE_LOG_AGE_DAYS" "f" || true
@@ -87,11 +87,11 @@ clean_deep_system() {
         safe_sudo_find_delete "/private/var/log" "*.asl" "$MOLE_LOG_AGE_DAYS" "f" || true
     fi
     stop_section_spinner
-    log_success "System logs"
+    log_success "系统logs"
     start_section_spinner "正在清理 third-party system logs..."
     local -a third_party_log_dirs=(
-        "/Library/Logs/Adobe"
-        "/Library/Logs/CreativeCloud"
+        "/Library/logs/Adobe"
+        "/Library/logs/CreativeCloud"
     )
     local third_party_logs_cleaned=0
     local third_party_log_dir=""
@@ -104,13 +104,13 @@ clean_deep_system() {
             fi
         fi
     done
-    if sudo find "/Library/Logs" -maxdepth 1 -type f -name "adobegc.log" -mtime "+$MOLE_LOG_AGE_DAYS" -print -quit 2> /dev/null | grep -q .; then
-        if safe_sudo_remove "/Library/Logs/adobegc.log"; then
+    if sudo find "/Library/logs" -maxdepth 1 -type f -name "adobegc.log" -mtime "+$MOLE_LOG_AGE_DAYS" -print -quit 2> /dev/null | grep -q .; then
+        if safe_sudo_remove "/Library/logs/adobegc.log"; then
             third_party_logs_cleaned=1
         fi
     fi
     stop_section_spinner
-    [[ $third_party_logs_cleaned -eq 1 ]] && log_success "Third-party system logs"
+    [[ $third_party_logs_cleaned -eq 1 ]] && log_success "第三方系统logs"
     start_section_spinner "正在扫描 system library updates..."
     if [[ -d "/Library/Updates" && ! -L "/Library/Updates" ]]; then
         local updates_cleaned=0
@@ -129,7 +129,7 @@ clean_deep_system() {
             fi
         done < <(find /Library/Updates -mindepth 1 -maxdepth 1 -print0 2> /dev/null || true)
         stop_section_spinner
-        [[ $updates_cleaned -gt 0 ]] && log_success "System library updates"
+        [[ $updates_cleaned -gt 0 ]] && log_success "系统库更新"
     else
         stop_section_spinner
     fi
@@ -159,7 +159,7 @@ clean_deep_system() {
     # and not matching the currently installed macOS version (recovery safety).
     local installer_cleaned=0
     local current_macos_version=""
-    current_macos_version=$(sw_vers -product版本 2> /dev/null | cut -d. -f1 || true)
+    current_macos_version=$(sw_vers -productversion 2> /dev/null | cut -d. -f1 || true)
     for installer_app in /Applications/Install\ macOS*.app; do
         [[ -d "$installer_app" ]] || continue
         local app_name
@@ -172,10 +172,10 @@ clean_deep_system() {
         # Skip if this installer matches the current macOS major version.
         # Users may need it for recovery or reinstallation.
         if [[ -n "$current_macos_version" ]]; then
-            local installer_plist="$installer_app/Contents/信息.plist"
+            local installer_plist="$installer_app/Contents/info.plist"
             if [[ -f "$installer_plist" ]]; then
                 local installer_version=""
-                installer_version=$(/usr/libexec/PlistBuddy -c "Print :DTPlatform版本" "$installer_plist" 2> /dev/null | cut -d. -f1 || true)
+                installer_version=$(/usr/libexec/PlistBuddy -c "Print :DTPlatformversion" "$installer_plist" 2> /dev/null | cut -d. -f1 || true)
                 if [[ -n "$installer_version" && "$installer_version" == *"$current_macos_version"* ]]; then
                     debug_log "Keeping $app_name: matches current macOS version ($current_macos_version)"
                     continue
@@ -212,12 +212,12 @@ clean_deep_system() {
         fi
     done < <(run_with_timeout 5 command find /private/var/folders -maxdepth 5 -type d -name "*.code_sign_clone" -path "*/X/*" -print0 2> /dev/null || true)
     stop_section_spinner
-    [[ $code_sign_cleaned -gt 0 ]] && log_success "Browser code signature caches, $code_sign_cleaned items"
+    [[ $code_sign_cleaned -gt 0 ]] && log_success "浏览器代码签名缓存, $code_sign_cleaned 项"
 
     start_section_spinner "正在清理 rebuildable system service caches..."
     local rebuildable_cache_cleaned=0
     local -a rebuildable_cache_dirs=(
-        "/Library/Caches/com.apple.iconservices.store"
+        "/Library/caches/com.apple.iconservices.store"
     )
     local rebuildable_cache_dir=""
     for rebuildable_cache_dir in "${rebuildable_cache_dirs[@]}"; do
@@ -252,7 +252,7 @@ clean_deep_system() {
     if [[ $gpu_cache_cleaned -gt 0 ]]; then
         local gpu_cache_label="items"
         [[ $gpu_cache_cleaned -eq 1 ]] && gpu_cache_label="item"
-        log_success "Accessible rebuildable GPU caches, $gpu_cache_cleaned $gpu_cache_label"
+        log_success "可重建的 GPU cache, $gpu_cache_cleaned $gpu_cache_label"
     fi
 
     local diag_base="/private/var/db/diagnostics"
@@ -261,12 +261,12 @@ clean_deep_system() {
     safe_sudo_find_delete "$diag_base" "*.tracev3" "30" "f" || true
     safe_sudo_find_delete "/private/var/db/DiagnosticPipeline" "*" "$MOLE_LOG_AGE_DAYS" "f" || true
     stop_section_spinner
-    log_success "System diagnostic logs"
+    log_success "系统诊断logs"
 
     start_section_spinner "正在清理 power logs..."
     safe_sudo_find_delete "/private/var/db/powerlog" "*" "$MOLE_LOG_AGE_DAYS" "f" || true
     stop_section_spinner
-    log_success "Power logs"
+    log_success "电源logs"
     start_section_spinner "正在清理 memory exception reports..."
     local mem_reports_dir="/private/var/db/reportmemoryexception/MemoryLimitViolations"
     local mem_cleaned=0
@@ -300,7 +300,7 @@ clean_deep_system() {
     fi
     stop_section_spinner
     if [[ $mem_cleaned -eq 1 ]]; then
-        log_success "Memory exception reports"
+        log_success "内存异常报告"
     fi
     return 0
 }
@@ -308,12 +308,12 @@ clean_deep_system() {
 clean_time_machine_failed_backups() {
     local tm_cleaned=0
     if ! command -v tmutil > /dev/null 2>&1; then
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} No incomplete backups found"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} 未发现不完整的备份"
         return 0
     fi
     # Fast pre-check: skip entirely if Time Machine is not configured (no tmutil needed)
     if ! defaults read /Library/Preferences/com.apple.TimeMachine AutoBackup 2> /dev/null | grep -qE '^[01]$'; then
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} No incomplete backups found"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} 未发现不完整的备份"
         return 0
     fi
     start_section_spinner "正在检查 Time Machine configuration..."
@@ -324,14 +324,14 @@ clean_time_machine_failed_backups() {
         if [[ "$spinner_active" == "true" ]]; then
             stop_section_spinner
         fi
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} No incomplete backups found"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} 未发现不完整的备份"
         return 0
     fi
     if [[ ! -d "/Volumes" ]]; then
         if [[ "$spinner_active" == "true" ]]; then
             stop_section_spinner
         fi
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} No incomplete backups found"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} 未发现不完整的备份"
         return 0
     fi
     if tm_is_running; then
@@ -358,7 +358,7 @@ clean_time_machine_failed_backups() {
         if [[ "$spinner_active" == "true" ]]; then
             stop_section_spinner
         fi
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} No incomplete backups found"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} 未发现不完整的备份"
         return 0
     fi
     if [[ "$spinner_active" == "true" ]]; then
@@ -477,7 +477,7 @@ clean_time_machine_failed_backups() {
         stop_section_spinner
     fi
     if [[ $tm_cleaned -eq 0 ]]; then
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} No incomplete backups found"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} 未发现不完整的备份"
     fi
 }
 # Returns 0 if a backup is actively running.

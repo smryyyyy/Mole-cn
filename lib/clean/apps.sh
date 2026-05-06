@@ -23,7 +23,7 @@ clean_ds_store_tree() {
         -path "*/.Trash" -prune -o
         -path "*/node_modules" -prune -o
         -path "*/.git" -prune -o
-        -path "*/Library/Caches" -prune -o
+        -path "*/Library/caches" -prune -o
     )
     local -a find_cmd=("command" "find" "$target")
     if [[ "$target" == "$HOME" ]]; then
@@ -66,7 +66,7 @@ clean_ds_store_tree() {
 # Usage: scan_installed_apps "output_file"
 scan_installed_apps() {
     local installed_bundles="$1"
-    # Cache installed app scan briefly to speed repeated runs.
+    # cache installed app scan briefly to speed repeated runs.
     local cache_file="$HOME/.cache/mole/installed_apps_cache"
     local cache_age_seconds=300 # 5 minutes
     if [[ -f "$cache_file" ]]; then
@@ -83,7 +83,7 @@ scan_installed_apps() {
                     debug_log "警告: 失败 to read cache, rebuilding"
                 fi
             else
-                debug_log "警告: Cache file empty or unreadable, rebuilding"
+                debug_log "警告: cache file empty or unreadable, rebuilding"
             fi
         fi
     fi
@@ -111,7 +111,7 @@ scan_installed_apps() {
             done < <(find "$app_dir" -name '*.app' -maxdepth 3 -type d 2> /dev/null)
             local count=0
             for app_path in "${app_paths[@]:-}"; do
-                local plist_path="$app_path/Contents/信息.plist"
+                local plist_path="$app_path/Contents/info.plist"
                 [[ ! -f "$plist_path" ]] && continue
                 local bundle_id=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$plist_path" 2> /dev/null || echo "")
                 if [[ -n "$bundle_id" && "$bundle_id" != "missing value" ]]; then
@@ -171,7 +171,7 @@ readonly ORPHAN_NEVER_DELETE_PATTERNS=(
     "com.apple.keychain*"
 )
 
-# Cache file for mdfind results (Bash 3.2 compatible, no associative arrays)
+# cache file for mdfind results (Bash 3.2 compatible, no associative arrays)
 ORPHAN_MDFIND_CACHE_FILE=""
 
 # Usage: is_bundle_orphaned "bundle_id" "directory_path" "installed_bundles_file"
@@ -303,7 +303,7 @@ is_claude_vm_bundle_orphaned() {
 
 # Orphaned app data sweep.
 clean_orphaned_app_data() {
-    if ! ls "$HOME/Library/Caches" > /dev/null 2>&1; then
+    if ! ls "$HOME/Library/caches" > /dev/null 2>&1; then
         stop_section_spinner
         echo -e "  ${GRAY}${ICON_WARNING}${NC} 已跳过: No permission to access Library folders"
         return 0
@@ -313,7 +313,7 @@ clean_orphaned_app_data() {
     scan_installed_apps "$installed_bundles"
     stop_section_spinner
     local app_count=$(wc -l < "$installed_bundles" 2> /dev/null | tr -d ' ')
-    echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Found $app_count active/installed apps"
+    echo -e "  ${GREEN}${ICON_SUCCESS}${NC} 发现 $app_count 个已安装/活跃应用"
     local orphaned_count=0
     local total_orphaned_kb=0
     start_section_spinner "正在扫描 orphaned app resources..."
@@ -330,7 +330,7 @@ clean_orphaned_app_data() {
                 local claude_vm_size_kb
                 claude_vm_size_kb=$(get_path_size_kb "$claude_vm_bundle")
                 if [[ -n "$claude_vm_size_kb" && "$claude_vm_size_kb" != "0" ]]; then
-                    if safe_clean "$claude_vm_bundle" "Orphaned Claude workspace VM"; then
+                    if safe_clean "$claude_vm_bundle" "孤立 Claude 工作区虚拟机"; then
                         orphaned_count=$((orphaned_count + 1))
                         total_orphaned_kb=$((total_orphaned_kb + claude_vm_size_kb))
                     fi
@@ -344,8 +344,8 @@ clean_orphaned_app_data() {
     # CRITICAL: NEVER add Application Scripts/ (could break Shortcuts/Automator workflows).
     # CRITICAL: NEVER add Group Containers/ (TeamID.BundleID names cause false-positive orphan checks).
     local -a resource_types=(
-        "$HOME/Library/Caches|Caches|com.*:org.*:net.*:io.*"
-        "$HOME/Library/Logs|Logs|com.*:org.*:net.*:io.*"
+        "$HOME/Library/caches|caches|com.*:org.*:net.*:io.*"
+        "$HOME/Library/logs|logs|com.*:org.*:net.*:io.*"
         "$HOME/Library/Saved Application State|States|*.savedState"
     )
     for resource_type in "${resource_types[@]}"; do
@@ -423,7 +423,7 @@ clean_orphaned_system_services() {
         return 0
     fi
 
-    start_section_spinner "正在扫描 orphaned system services..."
+    start_section_spinner "正在扫描孤立的系统服务..."
 
     local orphaned_count=0
     local -a orphaned_files=()
@@ -692,7 +692,7 @@ clean_orphaned_system_services() {
 
     # Report and clean
     if [[ $orphaned_count -gt 0 ]]; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Found $orphaned_count orphaned system services"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} 发现 $orphaned_count 个孤立系统服务"
 
         local removed_count=0
         local skipped_protected_count=0
@@ -735,11 +735,11 @@ clean_orphaned_system_services() {
         fi
         if [[ "${DRY_RUN:-false}" != "true" ]]; then
             if [[ $removed_count -gt 0 ]]; then
-                echo -e "  ${GREEN}${ICON_SUCCESS}${NC} Cleaned $removed_count orphaned services, about $orphaned_kb_display"
+                echo -e "  ${GREEN}${ICON_SUCCESS}${NC} 已清理 $removed_count 个孤立服务，约 $orphaned_kb_display"
                 note_activity
             fi
             if [[ $skipped_protected_count -gt 0 || $failed_count -gt 0 ]]; then
-                echo -e "  ${GRAY}${ICON_WARNING}${NC} Orphaned services skipped $skipped_protected_count protected, failed $failed_count"
+                echo -e "  ${GRAY}${ICON_WARNING}${NC} 孤立服务已跳过 $skipped_protected_count 个受保护，失败 $failed_count"
             fi
         fi
     fi

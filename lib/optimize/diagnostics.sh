@@ -114,9 +114,9 @@ opt_diag_family_label() {
     case "$1" in
         cloudshell) printf '%s\n' "CloudShell / AliEntSafe" ;;
         syspolicyd) printf '%s\n' "syspolicyd" ;;
-        windowserver) printf '%s\n' "WindowServer" ;;
-        spotlight) printf '%s\n' "Spotlight indexing" ;;
-        coresim_disk_images) printf '%s\n' "CoreSimulator disk images" ;;
+        windowserver) printf '%s\n' "窗口服务器" ;;
+        spotlight) printf '%s\n' "Spotlight 索引" ;;
+        coresim_disk_images) printf '%s\n' "CoreSimulator 磁盘映像" ;;
         *) printf '%s\n' "$1" ;;
     esac
 }
@@ -124,19 +124,19 @@ opt_diag_family_label() {
 opt_diag_family_note() {
     case "$1" in
         cloudshell)
-            printf '%s\n' "External enterprise agent pressure detected. Mole will not terminate enterprise security processes; restart or policy checks must happen outside Mole."
+            printf '%s\n' "检测到外部企业代理压力。Mole 不会终止企业安全进程；restart or policy checks must happen outside Mole."
             ;;
         syspolicyd)
-            printf '%s\n' "Gatekeeper and code-signature assessment activity is elevated."
+            printf '%s\n' "Gatekeeper 和代码签名评估活动较高。"
             ;;
         windowserver)
-            printf '%s\n' "Desktop composition is busy. When another family is higher, treat this as a likely symptom rather than the root cause."
+            printf '%s\n' "桌面合成繁忙。当其他指标更高时，将其视为可能的症状而非根本原因。"
             ;;
         spotlight)
-            printf '%s\n' "Metadata indexing or import work is consuming CPU."
+            printf '%s\n' "元数据索引或导入工作正在消耗 CPU。"
             ;;
         coresim_disk_images)
-            printf '%s\n' "Simulator runtime disk-image services are active."
+            printf '%s\n' "模拟器运行时磁盘映像服务正在运行。"
             ;;
         *)
             printf '%s\n' ""
@@ -378,10 +378,10 @@ run_optimize_diagnostics() {
     done
 
     if [[ -z "$primary_family" ]]; then
-        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} No obvious sustained high-CPU bottleneck detected"
+        echo -e "  ${GREEN}${ICON_SUCCESS}${NC} 未检测到明显的高 CPU 持续占用瓶颈"
     else
         label=$(opt_diag_family_label "$primary_family")
-        echo -e "  ${YELLOW}${ICON_WARNING}${NC} 可能的瓶颈k: ${label} (~${primary_avg}% CPU sustained)"
+        echo -e "  ${YELLOW}${ICON_WARNING}${NC} 可能的瓶颈：${label}（约 ${primary_avg}% CPU 持续占用）"
         echo -e "  ${GRAY}${ICON_REVIEW}${NC} $(opt_diag_family_note "$primary_family")"
 
         if [[ $sustained_count -gt 1 ]]; then

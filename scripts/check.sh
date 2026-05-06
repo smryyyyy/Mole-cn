@@ -197,10 +197,10 @@ fi
 
 ((TOTAL_CHECKS++))
 if ! grep -q "cache_meta\|cache_dir_mtime" bin/uninstall.sh; then
-    echo -e "${GREEN}  ${ICON_SUCCESS} Cache validation simplified${NC}"
+    echo -e "${GREEN}  ${ICON_SUCCESS} 缓存 validation simplified${NC}"
     ((OPTIMIZATION_SCORE++))
 else
-    echo -e "${YELLOW}  ${ICON_WARNING} Cache still uses redundant metadata${NC}"
+    echo -e "${YELLOW}  ${ICON_WARNING} 缓存 still uses redundant metadata${NC}"
 fi
 
 ((TOTAL_CHECKS++))

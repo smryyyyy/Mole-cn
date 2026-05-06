@@ -264,7 +264,7 @@ get_first_macos_software_update_summary() {
         /^[[:space:]]*Title:/ {
             title=$0
             sub(/^[[:space:]]*Title: */, "", title)
-            sub(/, 版本:.*/, "", title)
+            sub(/, version:.*/, "", title)
             sub(/, Size:.*/, "", title)
             combined=tolower(label " " title)
             if (combined ~ /macos|background security improvement|rapid security response|security response/) {
@@ -330,7 +330,7 @@ check_homebrew_updates() {
     export BREW_CASK_OUTDATED_COUNT=0
 
     if ! command -v brew > /dev/null 2>&1; then
-        printf "  ${GRAY}${ICON_EMPTY}${NC} %-12s %s\n" "Homebrew" "Not installed"
+        printf "  ${GRAY}${ICON_EMPTY}${NC} %-12s %s\n" "Homebrew" "未安装"
         return
     fi
 
@@ -462,7 +462,7 @@ check_macos_update() {
             printf "  ${GRAY}%s${NC} %-12s ${YELLOW}%s${NC}\n" "$ICON_WARNING" "macOS" "Update available"
         fi
     else
-        printf "  ${GREEN}✓${NC} %-12s %s\n" "macOS" "System up to date"
+        printf "  ${GREEN}✓${NC} %-12s %s\n" "macOS" "系统已是最新"
     fi
 }
 
@@ -545,7 +545,7 @@ check_all_updates() {
     # Only redirect stdout, keep stderr for spinner display
     get_software_updates > /dev/null
 
-    echo -e "${BLUE}${ICON_ARROW}${NC} System Updates"
+    echo -e "${BLUE}${ICON_ARROW}${NC} 系统更新"
     check_homebrew_updates
     check_appstore_updates
     check_macos_update
@@ -581,7 +581,7 @@ get_macos_update_labels() {
 }
 
 # ============================================================================
-# System Health Checks
+# 系统健康 Checks
 # ============================================================================
 
 check_disk_space() {
@@ -594,11 +594,11 @@ check_disk_space() {
     export DISK_FREE_GB=$free_num
 
     if [[ $free_num -lt 20 ]]; then
-        echo -e "  ${RED}✗${NC} Disk Space   ${RED}${free_gb}GB free${NC}, Critical"
+        echo -e "  ${RED}✗${NC} 磁盘空间   ${RED}${free_gb}GB 可用${NC}, 严重"
     elif [[ $free_num -lt 50 ]]; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Disk Space   ${YELLOW}${free_gb}GB free${NC}, Low"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} 磁盘空间   ${YELLOW}${free_gb}GB 可用${NC}, 偏低"
     else
-        echo -e "  ${GREEN}✓${NC} Disk Space   ${free_gb}GB free"
+        echo -e "  ${GREEN}✓${NC} 磁盘空间   ${free_gb}GB 可用"
     fi
 }
 
@@ -606,7 +606,7 @@ check_memory_usage() {
     local mem_total
     mem_total=$(sysctl -n hw.memsize 2> /dev/null || echo "0")
     if [[ -z "$mem_total" || "$mem_total" -le 0 ]]; then
-        echo -e "  ${GRAY}-${NC} Memory       Unable to determine"
+        echo -e "  ${GRAY}-${NC} 内存       Unable to determine"
         return
     fi
 
@@ -618,7 +618,7 @@ check_memory_usage() {
     [[ -z "$page_size" ]] && page_size=4096
 
     local free_pages inactive_pages spec_pages
-    free_pages=$(echo "$vm_output" | awk '/Pages free/ {gsub(/\./,"",$3); print $3}')
+    free_pages=$(echo "$vm_output" | awk '/Pages 可用/ {gsub(/\./,"",$3); print $3}')
     inactive_pages=$(echo "$vm_output" | awk '/Pages inactive/ {gsub(/\./,"",$3); print $3}')
     spec_pages=$(echo "$vm_output" | awk '/Pages speculative/ {gsub(/\./,"",$3); print $3}')
 
@@ -626,7 +626,7 @@ check_memory_usage() {
     inactive_pages=${inactive_pages:-0}
     spec_pages=${spec_pages:-0}
 
-    # Estimate used percent: (total - free - inactive - speculative) / total
+    # Estimate 已使用 percent: (total - 可用 - inactive - speculative) / total
     local total_pages=$((mem_total / page_size))
     local free_total=$((free_pages + inactive_pages + spec_pages))
     local used_pages=$((total_pages - free_total))
@@ -640,11 +640,11 @@ check_memory_usage() {
     ((used_percent < 0)) && used_percent=0
 
     if [[ $used_percent -gt 90 ]]; then
-        echo -e "  ${RED}✗${NC} Memory       ${RED}${used_percent}% used${NC}, Critical"
+        echo -e "  ${RED}✗${NC} 内存       ${RED}${used_percent}% 已使用${NC}, Critical"
     elif [[ $used_percent -gt 80 ]]; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Memory       ${YELLOW}${used_percent}% used${NC}, High"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} 内存       ${YELLOW}${used_percent}% 已使用${NC}, High"
     else
-        echo -e "  ${GREEN}✓${NC} Memory       ${used_percent}% used"
+        echo -e "  ${GREEN}✓${NC} 内存       ${used_percent}% 已使用"
     fi
 }
 
@@ -657,7 +657,7 @@ check_login_items() {
     if [[ -t 0 ]]; then
         # Show spinner while getting login items
         if [[ -t 1 ]]; then
-            MOLE_SPINNER_PREFIX="  " start_inline_spinner "正在检查 login items..."
+            MOLE_SPINNER_PREFIX="  " start_inline_spinner "正在检查登录项..."
         fi
 
         while IFS= read -r login_item; do
@@ -672,20 +672,20 @@ check_login_items() {
     fi
 
     if [[ $login_items_count -gt 15 ]]; then
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Login Items  ${YELLOW}${login_items_count} apps${NC}"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} 登录项  ${YELLOW}${login_items_count} 个应用${NC}"
     elif [[ $login_items_count -gt 0 ]]; then
-        echo -e "  ${GREEN}✓${NC} Login Items  ${login_items_count} apps"
+        echo -e "  ${GREEN}✓${NC} 登录项  ${login_items_count} 个应用"
     else
-        echo -e "  ${GREEN}✓${NC} Login Items  None"
+        echo -e "  ${GREEN}✓${NC} 登录项  None"
         return
     fi
 
     # Show items in a single line (compact)
-    local 预览_limit=3
-    ((预览_limit > login_items_count)) && 预览_limit=$login_items_count
+    local preview_limit=3
+    ((preview_limit > login_items_count)) && preview_limit=$login_items_count
 
     local items_display=""
-    for ((i = 0; i < 预览_limit; i++)); do
+    for ((i = 0; i < preview_limit; i++)); do
         if [[ $i -eq 0 ]]; then
             items_display="${login_items_list[$i]}"
         else
@@ -693,8 +693,8 @@ check_login_items() {
         fi
     done
 
-    if ((login_items_count > 预览_limit)); then
-        local remaining=$((login_items_count - 预览_limit))
+    if ((login_items_count > preview_limit)); then
+        local remaining=$((login_items_count - preview_limit))
         items_display="${items_display} +${remaining}"
     fi
 
@@ -749,19 +749,19 @@ check_swap_usage() {
     if command -v sysctl > /dev/null 2>&1; then
         local swap_info=$(sysctl vm.swapusage 2> /dev/null || echo "")
         if [[ -n "$swap_info" ]]; then
-            local swap_used=$(echo "$swap_info" | grep -o "used = [0-9.]*[GM]" | awk 'NR==1{print $3}')
+            local swap_used=$(echo "$swap_info" | grep -o "已使用 = [0-9.]*[GM]" | awk 'NR==1{print $3}')
             swap_used=${swap_used:-0M}
             local swap_num="${swap_used//[GM]/}"
 
             if [[ "$swap_used" == *"G"* ]]; then
                 local swap_gb=${swap_num%.*}
                 if [[ $swap_gb -gt 2 ]]; then
-                    echo -e "  ${GRAY}${ICON_WARNING}${NC} Swap Usage   ${YELLOW}${swap_used}${NC}, High"
+                    echo -e "  ${GRAY}${ICON_WARNING}${NC} 交换空间使用   ${YELLOW}${swap_used}${NC}, High"
                 else
-                    echo -e "  ${GREEN}✓${NC} Swap Usage   ${swap_used}"
+                    echo -e "  ${GREEN}✓${NC} 交换空间使用   ${swap_used}"
                 fi
             else
-                echo -e "  ${GREEN}✓${NC} Swap Usage   ${swap_used}"
+                echo -e "  ${GREEN}✓${NC} 交换空间使用   ${swap_used}"
             fi
         fi
     fi
@@ -785,11 +785,11 @@ check_disk_smart() {
     fi
 
     if [[ "$smart_status" == "Verified" ]]; then
-        echo -e "  ${GREEN}✓${NC} Disk Health  SMART Verified"
+        echo -e "  ${GREEN}✓${NC} 磁盘健康  SMART 已验证"
     elif [[ "$smart_status" == "Failing" ]]; then
-        echo -e "  ${RED}✗${NC} Disk Health  ${RED}SMART Failing — back up immediately${NC}"
+        echo -e "  ${RED}✗${NC} 磁盘健康  ${RED}SMART 故障 — 请立即备份${NC}"
     else
-        echo -e "  ${GRAY}${ICON_WARNING}${NC} Disk Health  ${YELLOW}SMART: ${smart_status}${NC}"
+        echo -e "  ${GRAY}${ICON_WARNING}${NC} 磁盘健康  ${YELLOW}SMART: ${smart_status}${NC}"
     fi
 }
 
@@ -820,11 +820,11 @@ check_orphan_launch_agents() {
     local s=""
     ((count > 1)) && s="s"
     echo -e "  ${GRAY}${ICON_WARNING}${NC} Launch Agents ${YELLOW}${count} orphan${s}${NC}"
-    local 预览="${orphans[0]}"
-    ((count > 1)) && 预览="${预览}, ${orphans[1]}"
-    ((count > 2)) && 预览="${预览}, ${orphans[2]}"
-    ((count > 3)) && 预览="${预览} +$((count - 3))"
-    echo -e "    ${GRAY}${预览}${NC}"
+    local preview="${orphans[0]}"
+    ((count > 1)) && preview="${preview}, ${orphans[1]}"
+    ((count > 2)) && preview="${preview}, ${orphans[2]}"
+    ((count > 3)) && preview="${preview} +$((count - 3))"
+    echo -e "    ${GRAY}${preview}${NC}"
 }
 
 check_brew_health() {
@@ -856,10 +856,10 @@ check_brew_health() {
         local s=""
         ((n > 1)) && s="s"
         echo -e "  ${GRAY}${ICON_WARNING}${NC} Brew Taps    ${YELLOW}${n} unused tap${s}${NC}"
-        local 预览="${stale_taps[0]}"
-        ((n > 1)) && 预览="${预览}, ${stale_taps[1]}"
-        ((n > 2)) && 预览="${预览} +$((n - 2))"
-        echo -e "    ${GRAY}${预览}${NC}"
+        local preview="${stale_taps[0]}"
+        ((n > 1)) && preview="${preview}, ${stale_taps[1]}"
+        ((n > 2)) && preview="${preview} +$((n - 2))"
+        echo -e "    ${GRAY}${preview}${NC}"
     fi
 }
 
@@ -888,16 +888,16 @@ check_nonstandard_apps() {
     local s=""
     ((count > 1)) && s="s"
     echo -e "  ${GRAY}${ICON_INFO}${NC} Pkg Apps     ${BLUE}${count} app${s}${NC} in /usr/local or /opt"
-    local 预览="${nonstandard_apps[0]}"
-    ((count > 1)) && 预览="${预览}, ${nonstandard_apps[1]}"
-    ((count > 2)) && 预览="${预览}, ${nonstandard_apps[2]}"
-    ((count > 3)) && 预览="${预览} +$((count - 3))"
-    echo -e "    ${GRAY}${预览}${NC}"
-    echo -e "    ${GRAY}Run 'mo uninstall' to manage these apps${NC}"
+    local preview="${nonstandard_apps[0]}"
+    ((count > 1)) && preview="${preview}, ${nonstandard_apps[1]}"
+    ((count > 2)) && preview="${preview}, ${nonstandard_apps[2]}"
+    ((count > 3)) && preview="${preview} +$((count - 3))"
+    echo -e "    ${GRAY}${preview}${NC}"
+    echo -e "    ${GRAY}Run 'mo uninstall' to manage these 个应用${NC}"
 }
 
 check_system_health() {
-    echo -e "${BLUE}${ICON_ARROW}${NC} System Health"
+    echo -e "${BLUE}${ICON_ARROW}${NC} 系统健康"
     check_disk_space
     check_memory_usage
     check_swap_usage

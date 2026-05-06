@@ -418,47 +418,55 @@ format_last_used_summary() {
             return 0
             ;;
         "从未" | "Recently" | "今天" | "昨天" | "今年" | "很久以前" | "Recent" | "Today" | "Yesterday" | "This year" | "Old")
-            echo "$value"
+            # 统一转换为中文
+            local val="$value"
+            [[ "$val" == "Today" ]] && val="今天"
+            [[ "$val" == "Yesterday" ]] && val="昨天"
+            [[ "$val" == "Recent" ]] && val="最近"
+            [[ "$val" == "This year" ]] && val="今年"
+            [[ "$val" == "Old" ]] && val="很久以前"
+            [[ "$val" == "Recently" ]] && val="最近"
+            echo "$val"
             return 0
             ;;
     esac
 
     if [[ $value =~ ^([0-9]+)[[:space:]]*[天]前$ ]]; then
-        echo "${BASH_REMATCH[1]}d前"
+        echo "${BASH_REMATCH[1]} 天前"
         return 0
     fi
     if [[ $value =~ ^([0-9]+)[[:space:]]*[周]前$ ]]; then
-        echo "${BASH_REMATCH[1]}w前"
+        echo "${BASH_REMATCH[1]} 周前"
         return 0
     fi
     if [[ $value =~ ^([0-9]+)[[:space:]]*个?月前$ ]]; then
-        echo "${BASH_REMATCH[1]}m前"
+        echo "${BASH_REMATCH[1]} 个月前"
         return 0
     fi
     if [[ $value =~ ^([0-9]+)[[:space:]]*年前$ ]]; then
-        echo "${BASH_REMATCH[1]}y前"
+        echo "${BASH_REMATCH[1]} 年前"
         return 0
     fi
 
     # 兼容英文格式
     if [[ $value =~ ^([0-9]+)[[:space:]]+days?\ ago$ ]]; then
-        echo "${BASH_REMATCH[1]}d前"
+        echo "${BASH_REMATCH[1]} 天前"
         return 0
     fi
     if [[ $value =~ ^([0-9]+)[[:space:]]+weeks?\ ago$ ]]; then
-        echo "${BASH_REMATCH[1]}w前"
+        echo "${BASH_REMATCH[1]} 周前"
         return 0
     fi
     if [[ $value =~ ^([0-9]+)[[:space:]]+months?\ ago$ ]]; then
-        echo "${BASH_REMATCH[1]}m前"
+        echo "${BASH_REMATCH[1]} 个月前"
         return 0
     fi
     if [[ $value =~ ^([0-9]+)[[:space:]]+month\(s\)\ ago$ ]]; then
-        echo "${BASH_REMATCH[1]}m前"
+        echo "${BASH_REMATCH[1]} 个月前"
         return 0
     fi
     if [[ $value =~ ^([0-9]+)[[:space:]]+years?\ ago$ ]]; then
-        echo "${BASH_REMATCH[1]}y前"
+        echo "${BASH_REMATCH[1]} 年前"
         return 0
     fi
     echo "$value"

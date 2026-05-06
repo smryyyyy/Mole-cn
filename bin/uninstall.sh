@@ -274,7 +274,7 @@ start_uninstall_metadata_refresh() {
             fi
         fi
         if [[ ! -w "$MOLE_UNINSTALL_META_CACHE_FILE" ]]; then
-            _refresh_debug "Cache file not writable, aborting"
+            _refresh_debug "缓存 file not writable, aborting"
             exit 0
         fi
 
@@ -864,24 +864,24 @@ scan_applications() {
                     days_ago = 0
                 }
                 if (days_ago == 0) {
-                    return "Today"
+                    return "今天"
                 }
                 if (days_ago == 1) {
-                    return "Yesterday"
+                    return "昨天"
                 }
                 if (days_ago < 7) {
-                    return days_ago " days ago"
+                    return days_ago " 天前"
                 }
                 if (days_ago < 30) {
                     weeks_ago = int(days_ago / 7)
-                    return weeks_ago == 1 ? "1 week ago" : weeks_ago " weeks ago"
+                    return weeks_ago == 1 ? "1 周前" : weeks_ago " 周前"
                 }
                 if (days_ago < 365) {
                     months_ago = int(days_ago / 30)
-                    return months_ago == 1 ? "1 month ago" : months_ago " months ago"
+                    return months_ago == 1 ? "1 个月前" : months_ago " 个月前"
                 }
                 years_ago = int(days_ago / 365)
-                return years_ago == 1 ? "1 year ago" : years_ago " years ago"
+                return years_ago == 1 ? "1 年前" : years_ago " 年前"
             }
             {
                 app_path = $1

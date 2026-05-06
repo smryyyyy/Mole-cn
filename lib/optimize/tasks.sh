@@ -73,7 +73,7 @@ needs_permissions_repair() {
 has_bluetooth_hid_connected() {
     local bt_report
     bt_report=$(system_profiler SPBluetoothDataType 2> /dev/null || echo "")
-    if ! echo "$bt_report" | grep -q "Connected: Yes"; then
+    if ! echo "$bt_report" | grep -q "已连接"; then
         return 1
     fi
 
@@ -143,15 +143,15 @@ flush_dns_cache() {
 # Basic system maintenance.
 opt_system_maintenance() {
     if flush_dns_cache; then
-        opt_msg "DNS cache flushed"
+        opt_msg "DNS 缓存已刷新"
     fi
 
     local spotlight_status
     spotlight_status=$(mdutil -s / 2> /dev/null || echo "")
-    if echo "$spotlight_status" | grep -qi "Indexing disabled"; then
+    if echo "$spotlight_status" | grep -qi "索引已禁用"; then
         echo -e "  ${GRAY}${ICON_EMPTY}${NC} Spotlight indexing disabled"
     else
-        opt_msg "Spotlight index verified"
+        opt_msg "Spotlight 索引已验证"
     fi
 }
 
@@ -165,7 +165,7 @@ opt_cache_refresh() {
         "$HOME/Library/Caches/com.apple.iconservices"
     )
     if [[ "${MO_DEBUG:-}" == "1" ]]; then
-        debug_operation_start "Finder Cache Refresh" "Refresh QuickLook thumbnails and icon services"
+        debug_operation_start "Finder 缓存刷新" "Refresh QuickLook thumbnails and icon services"
         debug_operation_detail "Method" "Remove cache files and rebuild via qlmanage"
         debug_operation_detail "Expected outcome" "Faster Finder 预览 generation, fixed icon display issues"
         debug_risk_level "LOW" "Caches are automatically rebuilt"
@@ -213,8 +213,8 @@ opt_cache_refresh() {
     done
 
     export OPTIMIZE_CACHE_CLEANED_KB="${total_cache_size}"
-    opt_msg "QuickLook thumbnails refreshed"
-    opt_msg "Icon services cache rebuilt"
+    opt_msg "QuickLook 缩略图已刷新"
+    opt_msg "图标服务缓存已重建"
 }
 
 # Removed: opt_maintenance_scripts - macOS handles log rotation automatically via launchd
@@ -227,8 +227,8 @@ opt_saved_state_cleanup() {
         debug_operation_start "App Saved State Cleanup" "Remove old application saved states"
         debug_operation_detail "Method" "Find and remove .savedState folders older than $MOLE_SAVED_STATE_AGE_DAYS days"
         debug_operation_detail "Location" "$HOME/Library/Saved Application State"
-        debug_operation_detail "Expected outcome" "Reduced disk usage, apps start with clean state"
-        debug_risk_level "LOW" "Old saved states, apps will create new ones"
+        debug_operation_detail "Expected outcome" "Reduced disk usage, 个应用 start with clean state"
+        debug_risk_level "LOW" "Old saved states, 个应用 will create new ones"
     fi
 
     local state_dir="$HOME/Library/Saved Application State"
@@ -242,7 +242,7 @@ opt_saved_state_cleanup() {
         done < <(command find "$state_dir" -type d -name "*.savedState" -mtime "+$MOLE_SAVED_STATE_AGE_DAYS" -print0 2> /dev/null)
     fi
 
-    opt_msg "App saved states optimized"
+    opt_msg "应用保存状态已优化"
 }
 
 # Removed: opt_swap_cleanup - Direct virtual memory operations pose system crash risk
@@ -266,9 +266,9 @@ opt_fix_broken_configs() {
 
     export OPTIMIZE_CONFIGS_REPAIRED="${broken_prefs}"
     if [[ $broken_prefs -gt 0 ]]; then
-        opt_msg "Repaired $broken_prefs corrupted preference files"
+        opt_msg "已修复 $broken_prefs 个损坏的偏好文件"
     else
-        opt_msg "All preference files valid"
+        opt_msg "所有偏好文件有效"
     fi
 }
 
@@ -282,14 +282,14 @@ opt_network_optimization() {
     fi
 
     if [[ "${MOLE_DNS_FLUSHED:-0}" == "1" ]]; then
-        opt_msg "DNS cache already refreshed"
-        opt_msg "mDNSResponder already restarted"
+        opt_msg "DNS 缓存已刷新"
+        opt_msg "mDNSResponder 已重启"
         return 0
     fi
 
     if flush_dns_cache; then
         opt_msg "DNS cache refreshed"
-        opt_msg "mDNSResponder restarted"
+        opt_msg "mDNSResponder 已重启"
     else
         echo -e "  ${YELLOW}${ICON_WARNING}${NC} 失败 to refresh DNS cache"
     fi
@@ -298,7 +298,7 @@ opt_network_optimization() {
 # Quarantine database cleanup (Gatekeeper download history).
 opt_quarantine_cleanup() {
     if [[ "${MO_DEBUG:-}" == "1" ]]; then
-        debug_operation_start "Quarantine Database Cleanup" "Clear Gatekeeper download tracking history"
+        debug_operation_start "隔离数据库清理" "Clear Gatekeeper download tracking history"
         debug_operation_detail "Method" "DELETE + VACUUM on QuarantineEventsV2 SQLite database"
         debug_operation_detail "Safety" "Only clears download tracking metadata, does not affect file quarantine flags"
         debug_operation_detail "Expected outcome" "Reduced database size, cleared download tracking history"
@@ -313,12 +313,12 @@ opt_quarantine_cleanup() {
     local quarantine_db="$HOME/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2"
 
     if [[ ! -f "$quarantine_db" ]]; then
-        opt_msg "Quarantine database already clean"
+        opt_msg "隔离数据库已清理"
         return 0
     fi
 
     if should_protect_path "$quarantine_db"; then
-        opt_msg "Quarantine database already clean"
+        opt_msg "隔离数据库已清理"
         return 0
     fi
 
@@ -327,7 +327,7 @@ opt_quarantine_cleanup() {
     row_count=$(run_with_timeout 5 sqlite3 "$quarantine_db" "SELECT COUNT(*) FROM LSQuarantineEvent;" 2> /dev/null || echo "0")
 
     if [[ ! "$row_count" =~ ^[0-9]+$ ]] || [[ "$row_count" -eq 0 ]]; then
-        opt_msg "Quarantine database already clean"
+        opt_msg "隔离数据库已清理"
         return 0
     fi
 
@@ -339,21 +339,21 @@ opt_quarantine_cleanup() {
         set -e
 
         if [[ $exit_code -eq 0 ]]; then
-            opt_msg "Quarantine history cleared ($row_count entries)"
+            opt_msg "隔离区历史已清除（$row_count 条记录）"
         else
             echo -e "  ${YELLOW}${ICON_WARNING}${NC} 失败 to clean quarantine database"
         fi
     else
-        opt_msg "Quarantine history cleared ($row_count entries)"
+        opt_msg "隔离区历史已清除（$row_count 条记录）"
     fi
 }
 
 # SQLite vacuum for Mail/Messages/Safari (safety checks applied).
 opt_sqlite_vacuum() {
     if [[ "${MO_DEBUG:-}" == "1" ]]; then
-        debug_operation_start "Database Optimization" "Vacuum SQLite databases for Mail, Safari, and Messages"
+        debug_operation_start "数据库优化" "Vacuum SQLite databases for Mail, Safari, and Messages"
         debug_operation_detail "Method" "Run VACUUM command on databases after integrity check"
-        debug_operation_detail "Safety checks" "Skip if apps are running, verify integrity first, 20s timeout"
+        debug_operation_detail "Safety checks" "Skip if 个应用 are running, verify integrity first, 20s timeout"
         debug_operation_detail "Expected outcome" "Reduced database size, faster app performance"
         debug_risk_level "LOW" "Only optimizes databases, does not delete data"
     fi
@@ -373,7 +373,7 @@ opt_sqlite_vacuum() {
     done
 
     if [[ ${#busy_apps[@]} -gt 0 ]]; then
-        echo -e "  ${YELLOW}${ICON_WARNING}${NC} Close these apps before database optimization: ${busy_apps[*]}"
+        echo -e "  ${YELLOW}${ICON_WARNING}${NC} Close these 个应用 before database optimization: ${busy_apps[*]}"
         return 0
     fi
 
@@ -415,18 +415,18 @@ opt_sqlite_vacuum() {
                 continue
             fi
 
-            # Skip if freelist is tiny (already compact).
+            # Skip if 可用list is tiny (already compact).
             local page_info=""
-            page_info=$(run_with_timeout 5 sqlite3 "$db_file" "PRAGMA page_count; PRAGMA freelist_count;" 2> /dev/null || echo "")
+            page_info=$(run_with_timeout 5 sqlite3 "$db_file" "PRAGMA page_count; PRAGMA 可用list_count;" 2> /dev/null || echo "")
             local page_count=""
-            local freelist_count=""
+            local 可用list_count=""
             page_count="${page_info%%$'\n'*}"
             if [[ "$page_info" == *$'\n'* ]]; then
-                freelist_count="${page_info#*$'\n'}"
-                freelist_count="${freelist_count%%$'\n'*}"
+                可用list_count="${page_info#*$'\n'}"
+                可用list_count="${可用list_count%%$'\n'*}"
             fi
-            if [[ "$page_count" =~ ^[0-9]+$ && "$freelist_count" =~ ^[0-9]+$ && "$page_count" -gt 0 ]]; then
-                if ((freelist_count * 100 < page_count * 5)); then
+            if [[ "$page_count" =~ ^[0-9]+$ && "$可用list_count" =~ ^[0-9]+$ && "$page_count" -gt 0 ]]; then
+                if ((可用list_count * 100 < page_count * 5)); then
                     skipped=$((skipped + 1))
                     continue
                 fi
@@ -472,15 +472,15 @@ opt_sqlite_vacuum() {
 
     export OPTIMIZE_DATABASES_COUNT="${vacuumed}"
     if [[ $vacuumed -gt 0 ]]; then
-        opt_msg "Optimized $vacuumed databases for Mail, Safari, Messages"
+        opt_msg "已优化 Mail、Safari、Messages 的 $vacuumed 个数据库"
     elif [[ $timed_out -eq 0 && $failed -eq 0 ]]; then
-        opt_msg "All databases already optimized"
+        opt_msg "所有数据库已优化"
     else
         echo -e "  ${YELLOW}${ICON_WARNING}${NC} Database optimization incomplete"
     fi
 
     if [[ $skipped -gt 0 ]]; then
-        opt_msg "Already optimal for $skipped databases"
+        opt_msg "$skipped 个数据库已处于最佳状态"
     fi
 
     if [[ $timed_out -gt 0 ]]; then
@@ -503,7 +503,7 @@ opt_launch_services_rebuild() {
     fi
 
     if [[ -t 1 ]]; then
-        MOLE_SPINNER_PREFIX="  " start_inline_spinner "Repairing LaunchServices..."
+        MOLE_SPINNER_PREFIX="  " start_inline_spinner "正在修复 LaunchServices..."
     fi
 
     local lsregister
@@ -531,10 +531,10 @@ opt_launch_services_rebuild() {
         fi
 
         if [[ $success -eq 0 ]]; then
-            opt_msg "LaunchServices repaired"
-            opt_msg "File associations refreshed"
+            opt_msg "LaunchServices 已修复"
+            opt_msg "文件关联已刷新"
         else
-            echo -e "  ${YELLOW}${ICON_WARNING}${NC} 失败 to rebuild LaunchServices"
+            echo -e "  ${YELLOW}${ICON_WARNING}${NC} 重建 LaunchServices 失败"
         fi
     else
         if [[ -t 1 ]]; then
@@ -563,11 +563,11 @@ browser_family_is_running() {
 
 opt_font_cache_rebuild() {
     if [[ "${MO_DEBUG:-}" == "1" ]]; then
-        debug_operation_start "Font Cache Rebuild" "Clear and rebuild font cache"
+        debug_operation_start "字体缓存重建" "Clear and rebuild font cache"
         debug_operation_detail "Method" "Run atsutil databases -remove"
         debug_operation_detail "Safety checks" "Skip when browsers or browser helpers are running to avoid cache rebuild conflicts"
         debug_operation_detail "Expected outcome" "Fixed font display issues, removed corrupted font cache"
-        debug_risk_level "LOW" "System automatically rebuilds font database"
+        debug_risk_level "LOW" "系统 automatically rebuilds font database"
     fi
 
     local success=false
@@ -601,7 +601,7 @@ opt_font_cache_rebuild() {
             local running_list
             running_list=$(printf "%s, " "${running_browsers[@]}")
             running_list="${running_list%, }"
-            echo -e "  ${YELLOW}${ICON_WARNING}${NC} Font cache rebuild skipped · ${running_list} still running"
+            echo -e "  ${YELLOW}${ICON_WARNING}${NC} 字体缓存重建已跳过 · ${running_list} 仍在运行"
             return 0
         fi
 
@@ -613,8 +613,8 @@ opt_font_cache_rebuild() {
     fi
 
     if [[ "$success" == "true" ]]; then
-        opt_msg "Font cache cleared"
-        opt_msg "System will rebuild font database automatically"
+        opt_msg "字体缓存已清除"
+        opt_msg "系统将自动重建字体数据库"
     else
         echo -e "  ${YELLOW}${ICON_WARNING}${NC} 失败 to clear font cache"
     fi
@@ -637,19 +637,19 @@ opt_memory_pressure_relief() {
 
     if [[ "${MOLE_DRY_RUN:-0}" != "1" ]]; then
         if ! is_memory_pressure_high; then
-            opt_msg "Memory pressure already optimal"
+            opt_msg "内存压力已处于最佳状态"
             return 0
         fi
 
         if sudo purge > /dev/null 2>&1; then
-            opt_msg "Inactive memory released"
-            opt_msg "System responsiveness improved"
+            opt_msg "非活跃内存已释放"
+            opt_msg "系统响应速度已提升"
         else
             echo -e "  ${YELLOW}${ICON_WARNING}${NC} 失败 to release memory pressure"
         fi
     else
-        opt_msg "Inactive memory released"
-        opt_msg "System responsiveness improved"
+        opt_msg "非活跃内存已释放"
+        opt_msg "系统响应速度已提升"
     fi
 }
 
@@ -659,7 +659,7 @@ opt_network_stack_optimize() {
     local arp_flushed="false"
 
     if has_active_vpn_interface; then
-        opt_msg "Network stack refresh skipped, active VPN detected"
+        opt_msg "网络堆栈刷新已跳过，检测到活跃 VPN"
         return 0
     fi
 
@@ -675,7 +675,7 @@ opt_network_stack_optimize() {
         fi
 
         if [[ "$route_ok" == "true" && "$dns_ok" == "true" ]]; then
-            opt_msg "Network stack already optimal"
+            opt_msg "网络堆栈已处于最佳状态"
             return 0
         fi
 
@@ -692,7 +692,7 @@ opt_network_stack_optimize() {
     fi
 
     if [[ "$route_flushed" == "true" ]]; then
-        opt_msg "Network routing table refreshed"
+        opt_msg "网络路由表已刷新"
     fi
     if [[ "$arp_flushed" == "true" ]]; then
         opt_msg "ARP cache cleared"
@@ -707,7 +707,7 @@ opt_network_stack_optimize() {
 # User directory permissions repair.
 opt_disk_permissions_repair() {
     if [[ "${MO_DEBUG:-}" == "1" ]]; then
-        debug_operation_start "Disk Permissions Repair" "Reset user directory permissions"
+        debug_operation_start "磁盘 Permissions Repair" "Reset user directory permissions"
         debug_operation_detail "Method" "Run diskutil resetUserPermissions on user home directory"
         debug_operation_detail "Condition" "Only runs if permissions issues are detected"
         debug_operation_detail "Expected outcome" "Fixed file access issues, correct ownership"
@@ -719,7 +719,7 @@ opt_disk_permissions_repair() {
 
     if [[ "${MOLE_DRY_RUN:-0}" != "1" ]]; then
         if ! needs_permissions_repair; then
-            opt_msg "User directory permissions already optimal"
+            opt_msg "用户目录权限已处于最佳状态"
             return 0
         fi
 
@@ -737,14 +737,14 @@ opt_disk_permissions_repair() {
         fi
 
         if [[ "$success" == "true" ]]; then
-            opt_msg "User directory permissions repaired"
-            opt_msg "File access issues resolved"
+            opt_msg "用户目录权限已修复"
+            opt_msg "文件访问问题已解决"
         else
             echo -e "  ${YELLOW}${ICON_WARNING}${NC} 失败 to repair permissions, may not be needed"
         fi
     else
-        opt_msg "User directory permissions repaired"
-        opt_msg "File access issues resolved"
+        opt_msg "用户目录权限已修复"
+        opt_msg "文件访问问题已解决"
     fi
 }
 
@@ -759,7 +759,7 @@ opt_bluetooth_reset() {
     fi
 
     local spinner_started="false"
-    local disconnect_notice="Bluetooth devices may disconnect briefly during refresh"
+    local disconnect_notice="蓝牙设备可能在刷新期间短暂断开"
     if [[ -t 1 ]]; then
         MOLE_SPINNER_PREFIX="  " start_inline_spinner "正在检查 Bluetooth..."
         spinner_started="true"
@@ -770,7 +770,7 @@ opt_bluetooth_reset() {
             if [[ "$spinner_started" == "true" ]]; then
                 stop_inline_spinner
             fi
-            opt_msg "Bluetooth already optimal"
+            opt_msg "蓝牙已处于最佳状态"
             return 0
         fi
 
@@ -787,7 +787,7 @@ opt_bluetooth_reset() {
         fi
 
         if [[ "$bt_audio_active" == "false" ]]; then
-            if system_profiler SPBluetoothDataType 2> /dev/null | grep -q "Connected: Yes"; then
+            if system_profiler SPBluetoothDataType 2> /dev/null | grep -q "已连接"; then
                 local -a media_apps=("Music" "Spotify" "VLC" "QuickTime Player" "TV" "Podcasts" "Safari" "Google Chrome" "Chrome" "Firefox" "Arc" "IINA" "mpv")
                 for app in "${media_apps[@]}"; do
                     if pgrep -x "$app" > /dev/null 2>&1; then
@@ -802,7 +802,7 @@ opt_bluetooth_reset() {
             if [[ "$spinner_started" == "true" ]]; then
                 stop_inline_spinner
             fi
-            opt_msg "Bluetooth already optimal"
+            opt_msg "蓝牙已处于最佳状态"
             return 0
         fi
 
@@ -815,21 +815,21 @@ opt_bluetooth_reset() {
             if pgrep -x bluetoothd > /dev/null 2>&1; then
                 sudo pkill -KILL bluetoothd > /dev/null 2>&1 || true
             fi
-            opt_msg "Bluetooth module restarted"
-            opt_msg "Connectivity issues resolved"
+            opt_msg "蓝牙模块已重启"
+            opt_msg "连接问题已解决"
         else
             if [[ "$spinner_started" == "true" ]]; then
                 stop_inline_spinner
             fi
-            opt_msg "Bluetooth already optimal"
+            opt_msg "蓝牙已处于最佳状态"
         fi
     else
         if [[ "$spinner_started" == "true" ]]; then
             stop_inline_spinner
         fi
         echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} ${disconnect_notice}"
-        opt_msg "Bluetooth module restarted"
-        opt_msg "Connectivity issues resolved"
+        opt_msg "蓝牙模块已重启"
+        opt_msg "连接问题已解决"
     fi
 }
 
@@ -838,12 +838,12 @@ opt_spotlight_index_optimize() {
     local spotlight_status
     spotlight_status=$(mdutil -s / 2> /dev/null || echo "")
 
-    if echo "$spotlight_status" | grep -qi "Indexing disabled"; then
+    if echo "$spotlight_status" | grep -qi "索引已禁用"; then
         echo -e "  ${GRAY}${ICON_EMPTY}${NC} Spotlight indexing is disabled"
         return 0
     fi
 
-    if echo "$spotlight_status" | grep -qi "Indexing enabled" && ! echo "$spotlight_status" | grep -qi "Indexing and searching disabled"; then
+    if echo "$spotlight_status" | grep -qi "索引已启用" && ! echo "$spotlight_status" | grep -qi "索引和搜索已禁用"; then
         local slow_count=0
         local test_start test_end test_duration
         for _ in 1 2; do
@@ -859,26 +859,26 @@ opt_spotlight_index_optimize() {
 
         if [[ $slow_count -ge 2 ]]; then
             if ! is_ac_power; then
-                opt_msg "Spotlight index already optimal"
+                opt_msg "Spotlight 索引已处于最佳状态"
                 return 0
             fi
 
             if [[ "${MOLE_DRY_RUN:-0}" != "1" ]]; then
                 echo -e "  ${BLUE}${ICON_INFO}${NC} Spotlight search is slow, rebuilding index, may take 1-2 hours"
                 if sudo mdutil -E / > /dev/null 2>&1; then
-                    opt_msg "Spotlight index rebuild started"
+                    opt_msg "Spotlight 索引重建已启动"
                     echo -e "  ${GRAY}Indexing will continue in background${NC}"
                 else
                     echo -e "  ${YELLOW}${ICON_WARNING}${NC} 失败 to rebuild Spotlight index"
                 fi
             else
-                opt_msg "Spotlight index rebuild started"
+                opt_msg "Spotlight 索引重建已启动"
             fi
         else
-            opt_msg "Spotlight index already optimal"
+            opt_msg "Spotlight 索引已处于最佳状态"
         fi
     else
-        opt_msg "Spotlight index verified"
+        opt_msg "Spotlight 索引已验证"
     fi
 }
 
@@ -905,9 +905,9 @@ opt_dock_refresh() {
     fi
 
     if [[ "$refreshed" == "true" ]]; then
-        opt_msg "Dock cache cleared"
+        opt_msg "Dock 缓存已清除"
     fi
-    opt_msg "Dock refreshed"
+    opt_msg "Dock 已刷新"
 }
 
 # Prevent .DS_Store on network and USB volumes.
@@ -939,12 +939,12 @@ opt_prevent_network_dsstore() {
     done
 
     if [[ $changed -eq 0 && $already -gt 0 ]]; then
-        opt_msg ".DS_Store prevention already enabled on network & USB volumes"
+        opt_msg ".DS_Store 防护已在网络和 USB 卷上启用"
         return 0
     fi
 
     if [[ $changed -gt 0 ]]; then
-        opt_msg ".DS_Store prevention enabled on network & USB volumes"
+        opt_msg ".DS_Store 防护已在网络和 USB 卷上启用"
     fi
 }
 
@@ -953,7 +953,7 @@ opt_launch_agents_cleanup() {
     local agents_dir="$HOME/Library/LaunchAgents"
 
     if [[ ! -d "$agents_dir" ]]; then
-        opt_msg "Launch Agents all healthy"
+        opt_msg "启动代理均正常"
         return 0
     fi
 
@@ -976,7 +976,7 @@ opt_launch_agents_cleanup() {
     done
 
     if [[ $broken_count -eq 0 ]]; then
-        opt_msg "Launch Agents all healthy"
+        opt_msg "启动代理均正常"
         return 0
     fi
 
@@ -985,7 +985,7 @@ opt_launch_agents_cleanup() {
         safe_remove "$plist" true > /dev/null 2>&1 || true
     done
 
-    opt_msg "Cleaned $broken_count broken Launch Agent(s)"
+    opt_msg "已清理 $broken_count 个损坏的启动代理"
 }
 
 # macOS periodic maintenance scripts (daily/weekly/monthly).
@@ -994,7 +994,7 @@ opt_launch_agents_cleanup() {
 opt_periodic_maintenance() {
     # Check if periodic command exists (removed in macOS 26+)
     if ! command -v periodic > /dev/null 2>&1; then
-        opt_msg "Periodic maintenance skipped (not available on this macOS version)"
+        opt_msg "定期维护已跳过（此 macOS 版本不支持）"
         return 0
     fi
 
@@ -1015,14 +1015,14 @@ opt_periodic_maintenance() {
 
     if [[ "${MOLE_DRY_RUN:-0}" != "1" ]]; then
         if ! sudo -n true 2> /dev/null; then
-            opt_msg "Periodic maintenance skipped (requires sudo)"
+            opt_msg "定期维护已跳过（需要 sudo）"
             return 0
         fi
         # Capture stderr so --debug can surface the real failure reason
         # (missing /etc/periodic scripts, SIP, broken launchd, etc.).
         local periodic_output rc
         if periodic_output=$(sudo periodic daily weekly monthly 2>&1); then
-            opt_msg "Periodic maintenance triggered"
+            opt_msg "定期维护已触发"
         else
             rc=$?
             echo -e "  ${YELLOW}${ICON_WARNING}${NC} 失败 to run periodic maintenance (exit=$rc)"
@@ -1031,7 +1031,7 @@ opt_periodic_maintenance() {
             fi
         fi
     else
-        opt_msg "Periodic maintenance triggered"
+        opt_msg "定期维护已触发"
     fi
 }
 
@@ -1039,7 +1039,7 @@ opt_periodic_maintenance() {
 opt_shared_file_list_repair() {
     local sfl_dir="$HOME/Library/Application Support/com.apple.sharedfilelist"
     if [[ ! -d "$sfl_dir" ]]; then
-        opt_msg "Shared file lists directory not found"
+        opt_msg "共享文件列表目录未找到"
         return 0
     fi
 
@@ -1057,9 +1057,9 @@ opt_shared_file_list_repair() {
     done < <(command find "$sfl_dir" \( -name "*.sfl2" -o -name "*.sfl3" \) -type f ! -path "*ApplicationRecentDocuments*" 2> /dev/null || true)
 
     if [[ $repaired -gt 0 ]]; then
-        opt_msg "Repaired $repaired corrupted shared file list(s)"
+        opt_msg "已修复 $repaired 个损坏的共享文件列表"
     else
-        opt_msg "Shared file lists all healthy"
+        opt_msg "共享文件列表均正常"
     fi
 }
 
@@ -1070,7 +1070,7 @@ opt_notification_cleanup() {
     local nc_db="$nc_db_dir/db"
 
     if [[ ! -f "$nc_db" ]]; then
-        opt_msg "Notification Center database not found"
+        opt_msg "通知中心数据库未找到"
         return 0
     fi
 
@@ -1079,7 +1079,7 @@ opt_notification_cleanup() {
 
     # Only clean if database exceeds 50MB (51200 KB)
     if [[ $db_size -lt 51200 ]]; then
-        opt_msg "Notification Center database is healthy ($(bytes_to_human $((db_size * 1024))))"
+        opt_msg "通知中心数据库正常 ($(bytes_to_human $((db_size * 1024))))"
         return 0
     fi
 
@@ -1091,7 +1091,7 @@ opt_notification_cleanup() {
                 2> /dev/null || sql_ok=$?
             if [[ $sql_ok -eq 0 ]]; then
                 killall NotificationCenter 2> /dev/null || true
-                opt_msg "Notification Center database cleaned (was $(bytes_to_human $((db_size * 1024))))"
+                opt_msg "通知中心数据库已清理（原大小 $(bytes_to_human $((db_size * 1024))))"
             else
                 echo -e "  ${YELLOW}${ICON_WARNING}${NC} Notification Center cleanup skipped (database busy or locked)"
             fi
@@ -1099,22 +1099,22 @@ opt_notification_cleanup() {
             echo -e "  ${YELLOW}${ICON_WARNING}${NC} sqlite3 not available"
         fi
     else
-        opt_msg "Notification Center database cleaned (was $(bytes_to_human $((db_size * 1024))))"
+        opt_msg "通知中心数据库已清理（原大小 $(bytes_to_human $((db_size * 1024))))"
     fi
 }
 
 # Verify filesystem integrity via diskutil.
 # Disabled by default: diskutil verifyVolume triggers kernel-level I/O that
 # cannot be interrupted by SIGKILL when the volume has APFS inconsistencies,
-# causing the system to freeze. Set MOLE_ENABLE_DISK_VERIFY=1 to opt in.
+# causing the system to 可用ze. Set MOLE_ENABLE_DISK_VERIFY=1 to opt in.
 opt_disk_verify() {
     if [[ "${MOLE_ENABLE_DISK_VERIFY:-0}" != "1" ]]; then
-        opt_msg "Disk verify skipped (set MOLE_ENABLE_DISK_VERIFY=1 to enable)"
+        opt_msg "磁盘验证已跳过（设置 MOLE_ENABLE_DISK_VERIFY=1 以启用）"
         return 0
     fi
 
     if [[ "${MOLE_DRY_RUN:-0}" == "1" ]]; then
-        opt_msg "Disk verify · skipped in dry-run"
+        opt_msg "磁盘验证 · 预览模式下已跳过"
         return 0
     fi
 
@@ -1128,11 +1128,11 @@ opt_disk_verify() {
     fi
 
     if echo "$output" | grep -qi "appears to be OK\|volume appears to be ok"; then
-        opt_msg "Disk filesystem verified OK"
+        opt_msg "磁盘文件系统验证通过"
     elif echo "$output" | grep -qi "error\|corrupt\|invalid"; then
-        echo -e "  ${YELLOW}${ICON_WARNING}${NC} Disk issues detected · run: sudo diskutil repairVolume /"
+        echo -e "  ${YELLOW}${ICON_WARNING}${NC} 磁盘 issues detected · run: sudo diskutil repairVolume /"
     else
-        opt_msg "Disk verify complete"
+        opt_msg "磁盘验证完成"
     fi
 }
 
@@ -1142,7 +1142,7 @@ opt_coreduet_cleanup() {
     local knowledge_db="$knowledge_dir/knowledgeC.db"
 
     if [[ ! -f "$knowledge_db" ]]; then
-        opt_msg "Knowledge database not found"
+        opt_msg "知识数据库未找到"
         return 0
     fi
 
@@ -1163,7 +1163,7 @@ opt_coreduet_cleanup() {
 
     # Skip if combined size < 100MB (102400 KB)
     if [[ $total_size -lt 102400 ]]; then
-        opt_msg "Knowledge database is healthy ($(bytes_to_human $((total_size * 1024))))"
+        opt_msg "知识数据库正常 ($(bytes_to_human $((total_size * 1024))))"
         return 0
     fi
 
@@ -1179,7 +1179,7 @@ opt_coreduet_cleanup() {
                 "DELETE FROM ZOBJECT WHERE ZCREATIONDATE < (strftime('%s','now','-90 days') - strftime('%s','2001-01-01')); VACUUM;" \
                 2> /dev/null || sql_ok=$?
             if [[ $sql_ok -eq 0 ]]; then
-                opt_msg "Knowledge database cleaned (was $(bytes_to_human $((total_size * 1024))))"
+                opt_msg "知识数据库已清理（原大小 $(bytes_to_human $((total_size * 1024))))"
             else
                 echo -e "  ${YELLOW}${ICON_WARNING}${NC} Knowledge database cleanup skipped (database busy or locked)"
             fi
@@ -1187,11 +1187,11 @@ opt_coreduet_cleanup() {
             echo -e "  ${YELLOW}${ICON_WARNING}${NC} sqlite3 not available"
         fi
     else
-        opt_msg "Knowledge database cleaned (was $(bytes_to_human $((total_size * 1024))))"
+        opt_msg "知识数据库已清理（原大小 $(bytes_to_human $((total_size * 1024))))"
     fi
 }
 
-# Audit login items for broken entries referencing missing apps.
+# Audit login items for broken entries referencing missing 个应用.
 # Check if a login item name corresponds to an installed app.
 # Login item names often differ from .app bundle names (e.g. "AliLangClient" -> "AliLang.app",
 # "Top Calendar" -> "TopCalendar.app"), so we try multiple matching strategies.
@@ -1212,7 +1212,7 @@ _login_item_app_exists() {
     if [[ "$stripped" != "$nospace" ]] && mdfind "kMDItemFSName == '${stripped}.app'" 2> /dev/null | grep -q .; then
         return 0
     fi
-    # 4. Recursive filesystem fallback for nested helper apps inside parent
+    # 4. Recursive filesystem fallback for nested helper 个应用 inside parent
     #    bundles. Spotlight often misses helpers under Contents/.
     local candidate roots app_name
     local -a app_names=("${name}.app")
@@ -1233,7 +1233,7 @@ _login_item_app_exists() {
         fi
     done
     # 5. Fallback: check sfltool dumpbtm for the actual on-disk path.
-    #    Nested helper apps (e.g. DBnginMenuHelper.app inside DBngin.app) are
+    #    Nested helper 个应用 (e.g. DBnginMenuHelper.app inside DBngin.app) are
     #    invisible to mdfind but still have a valid URL in the BTM database.
     local btm_path
     btm_path=$(sfltool dumpbtm 2> /dev/null | awk -v item="$name" '
@@ -1253,15 +1253,15 @@ _login_item_app_exists() {
 
 opt_login_items_audit() {
     if [[ "${MOLE_TEST_NO_AUTH:-0}" == "1" ]]; then
-        opt_msg "Login items audit · skipped in test mode"
+        opt_msg "登录项审计 · 测试模式下已跳过"
         return 0
     fi
 
     local items_output
-    items_output=$(osascript -e 'tell application "System Events" to get the name of every login item' 2> /dev/null || true)
+    items_output=$(osascript -e 'tell application "系统 Events" to get the name of every login item' 2> /dev/null || true)
 
     if [[ -z "$items_output" ]]; then
-        opt_msg "No login items found"
+        opt_msg "未发现登录项"
         return 0
     fi
 
@@ -1282,14 +1282,14 @@ opt_login_items_audit() {
         if _login_item_app_exists "$item"; then
             continue
         fi
-        echo -e "  ${YELLOW}${ICON_WARNING}${NC} Broken login item: $item (app not found)"
+        echo -e "  ${YELLOW}${ICON_WARNING}${NC} 损坏的登录项： $item (应用未找到)"
         broken=$((broken + 1))
     done
 
     if [[ $broken -eq 0 ]]; then
-        opt_msg "Login items all healthy ($checked checked)"
+        opt_msg "登录项全部正常（已检查 $checked 项）"
     else
-        echo -e "  ${YELLOW}${ICON_WARNING}${NC} $broken broken login item(s) · remove via System Settings > General > Login Items"
+        echo -e "  ${YELLOW}${ICON_WARNING}${NC} $broken 个损坏的登录项 · remove via 系统 Settings > General > 登录项"
     fi
 }
 

@@ -275,9 +275,9 @@ perform_purge() {
 
 # Show help message
 show_help() {
-    echo -e "${PURPLE_BOLD}Mole Purge${NC}, Clean old project build artifacts"
+    echo -e "${PURPLE_BOLD}Mole 清理${NC} - 移除旧的项目构建产物"
     echo ""
-    echo -e "${YELLOW}用法：${NC} mo purge [options]"
+    echo -e "${YELLOW}用法：${NC} mo purge [选项]"
     echo ""
     echo -e "${YELLOW}选项：${NC}"
     echo "  --paths         编辑自定义扫描目录"
@@ -316,7 +316,7 @@ main() {
                 ;;
             *)
                 echo "未知选项： $arg"
-                echo "使用 'mo purge --help' 查看用法信息"
+                echo "使用 'mo purge --help' 查看用法info"
                 exit 1
                 ;;
         esac

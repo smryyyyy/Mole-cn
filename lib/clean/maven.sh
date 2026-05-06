@@ -2,7 +2,7 @@
 # Maven Repository Cleanup Module
 set -euo pipefail
 
-# Maven local repository cleanup.
+# Maven 本地仓库 cleanup.
 # Path: ~/.m2/repository
 # Note: This path is in the default whitelist. Remove from whitelist to enable cleanup.
 clean_maven_repository() {
@@ -11,5 +11,5 @@ clean_maven_repository() {
     # Only clean if the directory exists
     [[ -d "$maven_repo" ]] || return 0
 
-    safe_clean "$maven_repo"/* "Maven local repository"
+    safe_clean "$maven_repo"/* "Maven 本地仓库"
 }

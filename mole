@@ -320,7 +320,7 @@ show_help() {
     echo
     printf "%s%s%s\n" "$BLUE" "命令" "$NC"
     printf "  %s%-28s%s %s\n" "$GREEN" "mo" "$NC" "主菜单"
-    for entry in "${MOLE_命令[@]}"; do
+    for entry in "${MOLE_COMMANDS[@]}"; do
         local name="${entry%%:*}"
         local desc="${entry#*:}"
         local display="mo $name"

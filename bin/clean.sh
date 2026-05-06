@@ -372,15 +372,15 @@ classify_cleanup_risk() {
         return
     fi
 
-    # 中风险：旧备份、下载文件
+    # 中风险：old备份、下载文件
     if [[ "$description" =~ [Bb]ackup || "$description" =~ [Dd]ownload || "$description" =~ [Oo]rphan ]]; then
         echo "MEDIUM|备份或下载的文件"
         return
     fi
 
-    # 低风险：缓存、日志、临时文件（自动重新生成）
+    # 低风险：cache、logs、临时文件（自动重新生成）
     if [[ "$description" =~ [Cc]ache || "$description" =~ [Ll]og || "$description" =~ [Tt]emp || "$description" =~ [Tt]humbnail ]]; then
-        echo "LOW|缓存/日志文件，可自动重新生成"
+        echo "LOW|cache/日志文件，可自动重新生成"
         return
     fi
 
@@ -953,7 +953,7 @@ perform_cleanup() {
             echo -e "${YELLOW}预览模式${NC}，仅预览，不执行删除"
             echo ""
         fi
-        echo -e "${GREEN}${ICON_LIST}${NC} 用户应用缓存"
+        echo -e "${GREEN}${ICON_LIST}${NC} 用户应用cache"
         if [[ ${#WHITELIST_PATTERNS[@]} -gt 0 ]]; then
             local -a expanded_defaults
             expanded_defaults=()
@@ -1023,10 +1023,10 @@ perform_cleanup() {
 
         if [[ $custom_count -gt 0 || $predefined_count -gt 0 ]]; then
             local summary=""
-            [[ $predefined_count -gt 0 ]] && summary+="$predefined_count core"
+            [[ $predefined_count -gt 0 ]] && summary+="$predefined_count 个核心"
             [[ $custom_count -gt 0 && $predefined_count -gt 0 ]] && summary+=" + "
-            [[ $custom_count -gt 0 ]] && summary+="$custom_count custom"
-            summary+=" patterns active"
+            [[ $custom_count -gt 0 ]] && summary+="$custom_count 个自定义"
+            summary+=" 规则已激活"
 
             echo -e "${BLUE}${ICON_SUCCESS}${NC} 白名单：$summary"
 
@@ -1086,7 +1086,7 @@ perform_cleanup() {
         end_section
 
         # ===== 3. App caches (merged sandboxed and standard app caches) =====
-        start_section "应用缓存"
+        start_section "应用cache"
         clean_app_caches
         end_section
 

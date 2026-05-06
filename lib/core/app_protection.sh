@@ -463,7 +463,7 @@ readonly DATA_PROTECTED_BUNDLES=(
     "com.alibaba.DingTalkMac"
     "com.alibaba.AliLang.osx"
     "com.alibaba.alilang3.osx.ShipIt"
-    "com.alibaba.AlilangMgr.QueryNetwork信息"
+    "com.alibaba.AlilangMgr.QueryNetworkInfo"
     "us.zoom.xos"
     "com.microsoft.teams*"
     "com.slack.Slack"
@@ -1150,7 +1150,7 @@ find_app_files() {
         "$HOME/Library/Input Methods/$bundle_id.app"
         "$HOME/Library/Screen Savers/$app_name.saver"
         "$HOME/Library/Frameworks/$app_name.framework"
-        "$HOME/Library/Autosave 信息rmation/$bundle_id"
+        "$HOME/Library/Autosave information/$bundle_id"
         "$HOME/Library/Contextual Menu Items/$app_name.plugin"
         "$HOME/Library/Spotlight/$app_name.mdimporter"
         "$HOME/Library/ColorPickers/$app_name.colorPicker"
@@ -1221,7 +1221,7 @@ find_app_files() {
                 */Library/WebKit | */Library/WebKit/ | \
                 */Library/HTTPStorages | */Library/HTTPStorages/ | \
                 */Library/Application\ Scripts | */Library/Application\ Scripts/ | \
-                */Library/Autosave\ 信息rmation | */Library/Autosave\ 信息rmation/ | \
+                */Library/Autosave\ information | */Library/Autosave\ information/ | \
                 */Library/Group\ Containers | */Library/Group\ Containers/)
                 continue
                 ;;
@@ -1420,10 +1420,10 @@ get_diagnostic_report_paths_for_app() {
     [[ -z "$app_path" || -z "$app_name" || -z "$directory" ]] && return 0
     [[ ! -d "$directory" ]] && return 0
 
-    if [[ -f "$app_path/Contents/信息.plist" ]]; then
-        exec_name=$(defaults read "$app_path/Contents/信息.plist" CFBundleExecutable 2> /dev/null || echo "")
+    if [[ -f "$app_path/Contents/info.plist" ]]; then
+        exec_name=$(defaults read "$app_path/Contents/info.plist" CFBundleExecutable 2> /dev/null || echo "")
         if [[ -z "$exec_name" ]]; then
-            exec_name=$(grep -A1 "CFBundleExecutable" "$app_path/Contents/信息.plist" 2> /dev/null | grep "<string>" | sed -n 's/.*<string>\([^<]*\)<\/string>.*/\1/p' | head -1)
+            exec_name=$(grep -A1 "CFBundleExecutable" "$app_path/Contents/info.plist" 2> /dev/null | grep "<string>" | sed -n 's/.*<string>\([^<]*\)<\/string>.*/\1/p' | head -1)
         fi
     fi
     prefix="${exec_name:-$nospace_name}"
@@ -1717,8 +1717,8 @@ force_kill_app() {
 
     # Get the executable name from bundle if app_path is provided
     local exec_name=""
-    if [[ -n "$app_path" && -e "$app_path/Contents/信息.plist" ]]; then
-        exec_name=$(defaults read "$app_path/Contents/信息.plist" CFBundleExecutable 2> /dev/null || echo "")
+    if [[ -n "$app_path" && -e "$app_path/Contents/info.plist" ]]; then
+        exec_name=$(defaults read "$app_path/Contents/info.plist" CFBundleExecutable 2> /dev/null || echo "")
     fi
 
     # Use executable name for precise matching, fallback to app name
