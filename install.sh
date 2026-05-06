@@ -158,12 +158,12 @@ resolve_source_dir() {
     if [[ "$branch" != "main" && "$branch" != "dev" ]]; then
         branch="$(normalize_release_tag "$branch")"
     fi
-    local url="https://github.com/tw93/mole/archive/refs/heads/main.tar.gz"
+    local url="https://github.com/smryyyyy/Mole-cn/archive/refs/heads/main.tar.gz"
 
     if [[ "$branch" == "dev" ]]; then
-        url="https://github.com/tw93/mole/archive/refs/heads/dev.tar.gz"
+        url="https://github.com/smryyyyy/Mole-cn/archive/refs/heads/dev.tar.gz"
     elif [[ "$branch" != "main" ]]; then
-        url="https://github.com/tw93/mole/archive/refs/tags/${branch}.tar.gz"
+        url="https://github.com/smryyyyy/Mole-cn/archive/refs/tags/${branch}.tar.gz"
     fi
 
     start_line_spinner "Fetching Mole source, ${branch}..."
@@ -198,7 +198,7 @@ resolve_source_dir() {
             git_args+=("--branch" "$branch")
         fi
 
-        if git clone "${git_args[@]}" https://github.com/tw93/mole.git "$tmp/mole" > /dev/null 2>&1; then
+        if git clone "${git_args[@]}" https://github.com/smryyyyy/Mole-cn.git "$tmp/mole" > /dev/null 2>&1; then
             stop_line_spinner
             SOURCE_DIR="$tmp/mole"
             return 0
@@ -247,7 +247,7 @@ get_latest_release_tag_from_git() {
     if ! command -v git > /dev/null 2>&1; then
         return 1
     fi
-    git ls-remote --tags --refs https://github.com/tw93/mole.git 2> /dev/null |
+    git ls-remote --tags --refs https://github.com/smryyyyy/Mole-cn.git 2> /dev/null |
         awk -F/ '{print $NF}' |
         grep -E '^V[0-9]' |
         sort -V |
@@ -547,7 +547,7 @@ download_binary() {
         fi
         return 1
     fi
-    local url="https://github.com/tw93/mole/releases/download/V${version}/${binary_name}-darwin-${arch_suffix}"
+    local url="https://github.com/smryyyyy/Mole-cn/releases/download/V${version}/${binary_name}-darwin-${arch_suffix}"
 
     # Skip preflight network checks to avoid false negatives.
 
@@ -569,7 +569,7 @@ download_binary() {
     local fallback_tag
     fallback_tag=$(get_latest_release_tag 2> /dev/null || true)
     if [[ -n "$fallback_tag" && "$fallback_tag" != "V${version}" ]]; then
-        local fallback_url="https://github.com/tw93/mole/releases/download/${fallback_tag}/${binary_name}-darwin-${arch_suffix}"
+        local fallback_url="https://github.com/smryyyyy/Mole-cn/releases/download/${fallback_tag}/${binary_name}-darwin-${arch_suffix}"
         if [[ -t 1 ]]; then
             start_line_spinner "正在从 ${fallback_tag} 重试 ${binary_name}..."
         else
