@@ -353,7 +353,7 @@ run_optimize_diagnostics() {
     threshold=$(opt_diag_cpu_threshold)
 
     echo ""
-    echo -e "${BLUE}PERFORMANCE DIAGNOSIS${NC}"
+    echo -e "${BLUE}性能诊断${NC}"
 
     local families="cloudshell syspolicyd windowserver spotlight coresim_disk_images"
     local sustained_count=0
@@ -381,7 +381,7 @@ run_optimize_diagnostics() {
         echo -e "  ${GREEN}${ICON_SUCCESS}${NC} No obvious sustained high-CPU bottleneck detected"
     else
         label=$(opt_diag_family_label "$primary_family")
-        echo -e "  ${YELLOW}${ICON_WARNING}${NC} Likely bottleneck: ${label} (~${primary_avg}% CPU sustained)"
+        echo -e "  ${YELLOW}${ICON_WARNING}${NC} 可能的瓶颈k: ${label} (~${primary_avg}% CPU sustained)"
         echo -e "  ${GRAY}${ICON_REVIEW}${NC} $(opt_diag_family_note "$primary_family")"
 
         if [[ $sustained_count -gt 1 ]]; then
