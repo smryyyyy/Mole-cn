@@ -225,7 +225,7 @@ get_source_commit_hash() {
     fi
     # Fallback to GitHub API
     curl -fsSL --connect-timeout 3 \
-        "https://api.github.com/repos/tw93/mole/commits/main" 2> /dev/null |
+        "https://api.github.com/repos/smryyyyy/Mole-cn/commits/main" 2> /dev/null |
         sed -n 's/.*"sha"[[:space:]]*:[[:space:]]*"\([a-f0-9]\{7\}\).*/\1/p' | head -1
 }
 
@@ -235,7 +235,7 @@ get_latest_release_tag() {
         return 1
     fi
     tag=$(curl -fsSL --connect-timeout 2 --max-time 3 \
-        "https://api.github.com/repos/tw93/mole/releases/latest" 2> /dev/null |
+        "https://api.github.com/repos/smryyyyy/Mole-cn/releases/latest" 2> /dev/null |
         sed -n 's/.*"tag_name":[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1)
     if [[ -z "$tag" ]]; then
         return 1
