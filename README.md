@@ -102,19 +102,20 @@ Mole 采用安全优先的默认设置：路径验证、受保护目录规则、
 ```bash
 $ mo clean
 
-正在扫描缓存目录...
+Scanning cache directories...
 
-  ✓ 用户应用缓存                                           45.2GB
-  ✓ 浏览器缓存 (Chrome, Safari, Firefox)                  10.5GB
-  ✓ 开发者工具 (Xcode, Node.js, npm)                      23.3GB
-  ✓ 系统日志和临时文件                                      3.8GB
-  ✓ 应用特定缓存 (Spotify, Dropbox, Slack)                 8.4GB
-  ✓ 废纸篓                                                 12.3GB
+  ✓ User app cache                                           45.2GB
+  ✓ Browser cache (Chrome, Safari, Firefox)                  10.5GB
+  ✓ Developer tools (Xcode, Node.js, npm)                    23.3GB
+  ✓ System logs and temp files                                3.8GB
+  ✓ App-specific cache (Spotify, Dropbox, Slack)              8.4GB
+  ✓ Trash                                                    12.3GB
 
 ====================================================================
-已释放空间：95.5GB | 当前可用空间：223.5GB
+Space freed: 95.5GB | Free space now: 223.5GB
 ====================================================================
 ```
+
 
 注意：在 `mo clean` -> 开发者工具中，Mole 会移除未使用的 CoreSimulator `Volumes/Cryptex` 条目，并跳过 `IN_USE`（使用中）的项目。
 
@@ -123,24 +124,24 @@ $ mo clean
 ```bash
 $ mo uninstall
 
-选择要移除的应用
+Select Apps to Remove
 ═══════════════════════════
-▶ ☑ Photoshop 2024            (4.2G) | 旧版本
-  ☐ IntelliJ IDEA             (2.8G) | 近期使用
-  ☐ Premiere Pro              (3.4G) | 近期使用
+▶ ☑ Photoshop 2024            (4.2G) | Old
+  ☐ IntelliJ IDEA             (2.8G) | Recent
+  ☐ Premiere Pro              (3.4G) | Recent
 
-正在卸载：Photoshop 2024
+Uninstalling: Photoshop 2024
 
-  ✓ 已移除应用程序
-  ✓ 清理了分布在 12 个位置的 52 个相关文件
-    - Application Support、Caches、Preferences
-    - Logs、WebKit 存储、Cookies
-    - Extensions、Plugins、Launch daemons
+  ✓ Removed application
+  ✓ Cleaned 52 related files across 12 locations
+    - Application Support, Caches, Preferences
+    - Logs, WebKit storage, Cookies
+    - Extensions, Plugins, Launch daemons
 
-提示：在 macOS 15 及更高版本中，本地网络权限条目可能在应用移除后仍然存在。当已卸载的应用声明了本地网络使用时，Mole 会发出警告，但不会自动重置 `/Volumes/Data/Library/Preferences/com.apple.networkextension*.plist`，因为该重置是全局性的且需要恢复模式。
+Note: On macOS 15 and later, Local Network permission entries can outlive app removal. Mole warns when an uninstalled app declares Local Network usage, but it does not auto-reset `/Volumes/Data/Library/Preferences/com.apple.networkextension*.plist` because that reset is global and requires Recovery mode.
 
 ====================================================================
-已释放空间：12.8GB
+Space freed: 12.8GB
 ====================================================================
 ```
 
@@ -149,20 +150,20 @@ $ mo uninstall
 ```bash
 $ mo optimize
 
-系统：5/32 GB 内存 | 333/460 GB 磁盘 (72%) | 持续运行 6 天
+System: 5/32 GB RAM | 333/460 GB Disk (72%) | Uptime 6d
 
-  ✓ 重建系统数据库并清除缓存
-  ✓ 重置网络服务
-  ✓ 刷新 Finder 和 Dock
-  ✓ 清理诊断和崩溃日志
-  ✓ 移除交换文件并重启动态分页器
-  ✓ 重建启动服务和 Spotlight 索引
+  ✓ Rebuild system databases and clear caches
+  ✓ Reset network services
+  ✓ Refresh Finder and Dock
+  ✓ Clean diagnostic and crash logs
+  ✓ Remove swap files and restart dynamic pager
+  ✓ Rebuild launch services and spotlight index
 
 ====================================================================
-系统优化完成
+System optimization completed
 ====================================================================
 
-使用 `mo optimize --whitelist` 排除特定的优化项。
+Use `mo optimize --whitelist` to exclude specific optimizations.
 ```
 
 ### 磁盘空间分析器
@@ -172,16 +173,17 @@ $ mo optimize
 ```bash
 $ mo analyze
 
-分析磁盘  ~/Documents  |  总计：156.8GB
+Analyze Disk  ~/Documents  |  Total: 156.8GB
 
- ▶  1. ███████████████████  48.2%  |  📁 Library                     75.4GB  >6个月
+ ▶  1. ███████████████████  48.2%  |  📁 Library                     75.4GB  >6mo
     2. ██████████░░░░░░░░░  22.1%  |  📁 Downloads                   34.6GB
     3. ████░░░░░░░░░░░░░░░  14.3%  |  📁 Movies                      22.4GB
     4. ███░░░░░░░░░░░░░░░░  10.8%  |  📁 Documents                   16.9GB
     5. ██░░░░░░░░░░░░░░░░░   5.2%  |  📄 backup_2023.zip              8.2GB
 
-  ↑↓←→ 导航  |  O 打开  |  F 显示  |  ⌫ 删除  |  L 大文件  |  Q 退出
+  ↑↓←→ Navigate  |  O Open  |  F Show  |  ⌫ Delete  |  L Large files  |  Q Quit
 ```
+
 
 ### 实时系统状态
 
@@ -190,24 +192,24 @@ $ mo analyze
 ```bash
 $ mo status
 
-Mole 状态  健康 ● 92  MacBook Pro · M4 Pro · 32GB · macOS 14.5
+Mole Status  Health ● 92  MacBook Pro · M4 Pro · 32GB · macOS 14.5
 
-⚙ CPU                                    ▦ 内存
-总计    ████████████░░░░░░░  45.2%       已用    ███████████░░░░░░░  58.4%
-负载    0.82 / 1.05 / 1.23 (8 核)        总计    14.2 / 24.0 GB
-核心 1  ███████████████░░░░  78.3%       空闲    ████████░░░░░░░░░░  41.6%
-核心 2  ████████████░░░░░░░  62.1%       可用    9.8 GB
+⚙ CPU                                    ▦ Memory
+Total   ████████████░░░░░░░  45.2%       Used    ███████████░░░░░░░  58.4%
+Load    0.82 / 1.05 / 1.23 (8 cores)     Total   14.2 / 24.0 GB
+Core 1  ███████████████░░░░  78.3%       Free    ████████░░░░░░░░░░  41.6%
+Core 2  ████████████░░░░░░░  62.1%       Avail   9.8 GB
 
-▤ 磁盘                                   ⚡ 电源
-已用    █████████████░░░░░░  67.2%       电量    ██████████████████  100%
-空闲    156.3 GB                          状态    已充满
-读取    ▮▯▯▯▯  2.1 MB/s                  健康    正常 · 423 次循环
-写入    ▮▮▮▯▯  18.3 MB/s                  温度    58°C · 1200 RPM
+▤ Disk                                   ⚡ Power
+Used    █████████████░░░░░░  67.2%       Level   ██████████████████  100%
+Free    156.3 GB                         Status  Charged
+Read    ▮▯▯▯▯  2.1 MB/s                  Health  Normal · 423 cycles
+Write   ▮▮▮▯▯  18.3 MB/s                 Temp    58°C · 1200 RPM
 
-⇅ 网络                                   ▶ 进程
-下载    ▁▁█▂▁▁▁▁▁▁▁▁▇▆▅▂  0.54 MB/s       Code       ▮▮▮▮▯  42.1%
-上传    ▄▄▄▃▃▃▄▆▆▇█▁▁▁▁▁  0.02 MB/s       Chrome     ▮▮▮▯▯  28.3%
-代理    HTTP · 192.168.1.100               Terminal   ▮▯▯▯▯  12.5%
+⇅ Network                                ▶ Processes
+Down    ▁▁█▂▁▁▁▁▁▁▁▁▇▆▅▂  0.54 MB/s      Code       ▮▮▮▮▯  42.1%
+Up      ▄▄▄▃▃▃▄▆▆▇█▁▁▁▁▁  0.02 MB/s      Chrome     ▮▮▮▯▯  28.3%
+Proxy   HTTP · 192.168.1.100             Terminal   ▮▯▯▯▯  12.5%
 ```
 
 健康评分基于 CPU、内存、磁盘、温度和 I/O 负载，并配有颜色编码范围。
@@ -263,13 +265,13 @@ $ mo status | jq '.health_score'
 ```bash
 mo purge
 
-选择要清理的类别 - 18.5GB (已选 8 项)
+Select Categories to Clean - 18.5GB (8 selected)
 
 ➤ ● my-react-app       3.2GB | node_modules
   ● old-project        2.8GB | node_modules
   ● rust-app           4.1GB | target
   ● next-blog          1.9GB | node_modules
-  ○ current-work       856MB | node_modules  | 近期使用
+  ○ current-work       856MB | node_modules  | Recent
   ● django-api         2.3GB | venv
   ● vue-dashboard      1.7GB | node_modules
   ● backend-service    2.5GB | node_modules
@@ -302,14 +304,14 @@ mo purge
 ```bash
 mo installer
 
-选择要移除的安装程序 - 3.8GB (已选 5 项)
+Select Installers to Remove - 3.8GB (5 selected)
 
-➤ ● Photoshop_2024.dmg     1.2GB | 下载
-  ● IntelliJ_IDEA.dmg       850.6MB | 下载
-  ● Illustrator_Setup.pkg   920.4MB | 下载
+➤ ● Photoshop_2024.dmg     1.2GB | Downloads
+  ● IntelliJ_IDEA.dmg       850.6MB | Downloads
+  ● Illustrator_Setup.pkg   920.4MB | Downloads
   ● PyCharm_Pro.dmg         640.5MB | Homebrew
-  ● Acrobat_Reader.dmg      220.4MB | 下载
-  ○ AppCode_Legacy.zip      410.6MB | 下载
+  ● Acrobat_Reader.dmg      220.4MB | Downloads
+  ○ AppCode_Legacy.zip      410.6MB | Downloads
 ```
 
 ## 快速启动器
