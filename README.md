@@ -16,7 +16,7 @@
   <img src="https://gw.alipayobjects.com/zos/k/ro/ZzF8e8.png" alt="Mole - 释放 95.50GB" width="1000" />
 </p>
 
-## 功能特点
+## 功能特点 
 
 - **一体化工具包**：在一个**单一二进制文件**中集成了 CleanMyMac、AppCleaner、DaisyDisk 和 iStat Menus 的功能
 - **深度清理**：清除缓存、日志、浏览器残留和孤立的应用程序数据，**回收数 GB 的磁盘空间**
