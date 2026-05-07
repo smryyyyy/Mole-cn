@@ -253,16 +253,12 @@ get_latest_release_tag_from_git() {
         sort -V |
         tail -n 1
 }
-
 normalize_release_tag() {
     local tag="$1"
-    while [[ "$tag" =~ ^[vV] ]]; do
-        tag="${tag#v}"
-        tag="${tag#V}"
-    done
-    if [[ -n "$tag" ]]; then
-        printf 'V%s\n' "$tag"
-    fi
+    # 只去掉可能存在的 v/V 前缀，然后原样返回
+    tag="${tag#v}"
+    tag="${tag#V}"
+    printf '%s\n' "$tag"
 }
 
 get_installed_version() {
@@ -547,7 +543,7 @@ download_binary() {
         fi
         return 1
     fi
-    local url="https://github.com/smryyyyy/Mole-cn/releases/download/V${version}/${binary_name}-darwin-${arch_suffix}"
+    local url="https://github.com/smryyyyy/Mole-cn/releases/download/${version}/${binary_name}-go"
 
     # Skip preflight network checks to avoid false negatives.
 
@@ -569,7 +565,7 @@ download_binary() {
     local fallback_tag
     fallback_tag=$(get_latest_release_tag 2> /dev/null || true)
     if [[ -n "$fallback_tag" && "$fallback_tag" != "V${version}" ]]; then
-        local fallback_url="https://github.com/smryyyyy/Mole-cn/releases/download/${fallback_tag}/${binary_name}-darwin-${arch_suffix}"
+        local fallback_url="https://github.com/smryyyyy/Mole-cn/releases/download/${fallback_tag}/${binary_name}-go"
         if [[ -t 1 ]]; then
             start_line_spinner "正在从 ${fallback_tag} 重试 ${binary_name}..."
         else
