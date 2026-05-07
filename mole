@@ -13,7 +13,7 @@ source "$SCRIPT_DIR/lib/core/commands.sh"
 trap cleanup_temp_files EXIT INT TERM
 
 # 版本 and update helpers
-VERSION="1.37.0"
+VERSION="0.0.1"
 MOLE_TAGLINE="深度清理并优化你的 Mac。"
 
 is_touchid_configured() {
