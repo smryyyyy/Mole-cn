@@ -29,7 +29,6 @@
 **通过脚本安装**
 
 ```bash
-# 可选参数：-s latest 使用主分支代码，-s 1.17.0 使用特定版本
 curl -fsSL https://raw.githubusercontent.com/smryyyyy/Mole-cn/main/install.sh | bash
 ```
 
