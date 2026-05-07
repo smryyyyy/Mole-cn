@@ -71,7 +71,7 @@ safe_rm() {
             log_error "safe_rm: refusing to remove temp root: $target"
             return 1
             ;;
-        "$tmp_root"/* | /tmp/*) ;;
+       "$tmp_root"/* | "$tmp_root"*/ | /tmp/* | /tmp/*/) ;;
         *)
             log_error "safe_rm: refusing to remove non-temp path: $target"
             return 1
