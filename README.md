@@ -29,7 +29,7 @@
 **通过脚本安装**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/smryyyyy/Mole-cn/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/smryyyyy/Mole-cn/main/install.sh | bash -s -- -v
 ```
 
 > 注意：Mole 专为 macOS 构建。实验性的 Windows 版本可在 [windows 分支](https://github.com/tw93/Mole/tree/windows) 获取，供早期体验者使用。
